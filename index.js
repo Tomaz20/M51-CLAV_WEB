@@ -26,7 +26,7 @@ app.use(express.static(__dirname + '/Client'));
 app.use("/styles", express.static(__dirname + '/Styles'));
 
 //Starts and listens
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 3030;
 app.listen(port, function() {
     console.log("Listening on " + port );
 });
