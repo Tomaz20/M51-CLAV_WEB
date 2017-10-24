@@ -126,7 +126,7 @@ module.exports = function (app) {
                     }
                 }`;
 
-            console.log(fetchQuery);
+            
 
             return client.query(fetchQuery)
                 .execute()
@@ -166,7 +166,7 @@ module.exports = function (app) {
                         clav:orgSigla ?Sigla;
                 }`;
 
-            console.log(fetchQuery);
+            
 
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
@@ -205,7 +205,7 @@ module.exports = function (app) {
                         clav:diplomaTipo ?Tipo;
                 }`;
 
-            console.log(fetchQuery);
+            
 
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
@@ -241,7 +241,7 @@ module.exports = function (app) {
                     clav:`+ id + ` clav:exemploNA ?Exemplo.
                 }`;
 
-            console.log(fetchQuery);
+            
 
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
@@ -278,7 +278,7 @@ module.exports = function (app) {
                     ?id clav:conteudo ?Nota .
                 }`;
 
-            console.log(fetchQuery);
+            
 
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
@@ -315,7 +315,7 @@ module.exports = function (app) {
                     ?id clav:conteudo ?Nota .
                 }`;
 
-            console.log(fetchQuery);
+            
 
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
@@ -362,7 +362,7 @@ module.exports = function (app) {
                 }
             `;
 
-            console.log(fetchQuery);
+            
 
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
@@ -405,7 +405,7 @@ module.exports = function (app) {
                 }
             `;
 
-            console.log(fetchQuery);
+            
 
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
