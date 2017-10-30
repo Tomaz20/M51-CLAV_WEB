@@ -7,11 +7,22 @@ var newOrg = new Vue({
     },
     methods: {
         add: function(){
-            var params = "?name="+this.name+"&initials="+this.initials;
-                
-            this.$http.get('/createOrg'+params)
+            var dataObj={
+                name: this.name,
+                initials: this.initials,
+            }
+
+            this.$http.post('/createOrg',dataObj,{
+                headers: {
+                    'content-type' : 'application/json'
+                }
+            })
             .then( function(response) { 
                 this.message = response.body;
+                
+                if(response.body=="Inserido!"){
+                    window.location.href = '/organizacao?id=org_'+this.initials;
+                }
             })
             .catch( function(error) { 
                 console.error(error); 

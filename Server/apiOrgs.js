@@ -81,8 +81,8 @@ module.exports = function (app) {
             var fetchQuery= `
                 SELECT * WHERE {
                     ?id clav:temDono clav:`+id+` .
-                    ?id clav:codigo ?Codigo;
-                        clav:titulo ?Titulo;
+                    ?id clav:codigo ?Code;
+                        clav:titulo ?Title;
                 }`
             ;
 
@@ -120,8 +120,8 @@ module.exports = function (app) {
                     ?id clav:temParticipante clav:`+id+` ;
                         ?Type clav:`+id+` ;
                     
-                        clav:titulo ?Titulo ;
-                        clav:codigo ?Codigo .
+                        clav:titulo ?Title ;
+                        clav:codigo ?Code .
                     
                     filter (?Type!=clav:temParticipante && ?Type!=clav:temDono)
                 }`
@@ -145,9 +145,8 @@ module.exports = function (app) {
             });
     })
 
-    app.get('/createOrg', function (req, res) {
+    app.post('/createOrg', function (req, res) {
         const { SparqlClient, SPARQL } = require('sparql-client-2');
-        var url = require('url');
 
         const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
                 updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
@@ -193,10 +192,10 @@ module.exports = function (app) {
                 .catch(error => console.error("Error in create:\n" + error));
         }
 
-        //Parsing url to get parameters
-        var parts = url.parse(req.url, true);
-        var initials = parts.query.initials;
-        var name = parts.query.name;
+        //Getting data to insert
+        var parts = req.body;
+        var initials = parts.initials;
+        var name = parts.name;
         var id = "org_" + initials;
 
         //Executing queries
@@ -216,9 +215,8 @@ module.exports = function (app) {
             .catch(error => console.error("General error:\n" + error));
     })
 
-    app.get('/updateOrg', function (req, res) {
+    app.put('/updateOrg', function (req, res) {
         const { SparqlClient, SPARQL } = require('sparql-client-2');
-        var url = require('url');
 
         const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
                 updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
@@ -291,12 +289,13 @@ module.exports = function (app) {
                 .then(response => Promise.resolve(response))
                 .catch(error => console.error("Error in update:\n" + error));
         }
-
-        //Parsing url to get parameters
-        var parts = url.parse(req.url, true);
-        var initials = parts.query.initials;
-        var name = parts.query.name;
-        var id = parts.query.id;
+        
+        //Getting data
+        var dataObj = req.body;
+        
+        var initials = dataObj.initials;
+        var name = dataObj.name;
+        var id = dataObj.id;
 
         //Executing queries
         checkOrg(name, initials)
@@ -316,9 +315,8 @@ module.exports = function (app) {
         
     })
 
-    app.get('/deleteOrg', function (req, res) {
+    app.post('/deleteOrg', function (req, res) {
         const { SparqlClient, SPARQL } = require('sparql-client-2');
-        var url = require('url');
 
         const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
                 updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
@@ -344,8 +342,8 @@ module.exports = function (app) {
                 });
         }
 
-        var parts = url.parse(req.url, true);
-        var id = parts.query.id;
+        //Getting data
+        var id = req.body.id;
 
         //Answer the request
         deleteOrg(id)

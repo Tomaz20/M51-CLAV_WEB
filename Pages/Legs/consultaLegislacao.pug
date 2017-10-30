@@ -24,6 +24,47 @@ block corpo
                                 v-model="item.edit"
                             )
 
+                    //- PROCESSOS
+                    tr
+                        td(style="width:10%")
+                            label Processos Regulamentados:
+                        //- edição
+                        td(v-if="editProcesses" style="width:80%")
+                            table
+                                tr
+                                    td(width="60%")
+                                        v-select.custom-select(
+                                            v-model="newClass"
+                                            :options="classList"
+                                        )
+                                    td
+                                        button(
+                                            @click="newProcesses.unshift(newClass.value)"
+                                        ) +
+                                tr(v-if="newProcesses.length")
+                                    td(colspan="2")
+                                        ul(style="padding-left:20px")
+                                            li(v-for="(c,index) in newProcesses")
+                                                | {{ c.Code }} - {{ c.Title }}
+                                                button(
+                                                    @click="newProcesses.splice(index,1)"
+                                                ) x
+                        td(v-else style="width:80%")
+                            ul(v-if="processesReady" style="padding-left:20px" :class="{'is-collapsed' : processesCollapsed }")
+                                li(v-for="c in processes")
+                                    a(:href="'/classe?id='+c.id") {{ c.Code }}
+                                    |  - {{ c.Title }}
+                            button(@click="processesCollapsed=!processesCollapsed" v-if="processes.length>4")
+                                | Mostrar mais...
+                        //-
+                         td(style="width:10%")
+                            label(style="padding-right:5px") Editar
+                            input(
+                                type="checkbox"
+                                v-model="editProcesses"
+                            )
+
+
                 h3(v-else) Loading...
 
             input.btn.btn-xs.btn-default.col-sm-1(

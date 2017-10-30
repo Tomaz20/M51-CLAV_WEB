@@ -45,6 +45,14 @@ var leg = new Vue({
         updateReady: false,
         delConfirm: false,
         ready: false,
+
+        classList:[],
+        processes: [],
+        newProcess: "",
+        newProcesses: [],
+        editProcesses: false,
+        processesCollapsed: true,
+        processesReady: false,
     },
     methods: {
         getParameterByName: function(name, url) {
@@ -55,6 +63,69 @@ var leg = new Vue({
             if (!results) return null;
             if (!results[2]) return '';
             return decodeURIComponent(results[2].replace(/\+/g, " "));
+        },
+        loadClasses: function () {
+            var classesToParse = [];
+            var keys = ["id", "Code", "Title"];
+
+            this.$http.get("/classesn?level=3")
+                .then(function (response) {
+                    classesToParse = response.body;
+                })
+                .then(function () {
+                    this.classList = this.parseList(classesToParse, keys).map(function(item){
+                        return {
+                            label: item.Code+" - "+item.Title,
+                            value: item,
+                        }
+                    }).sort(function (a, b) {
+                        return a.label.localeCompare(b.label);
+                    });
+                    
+                    this.classesReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        loadProcesses: function () {
+            var classesToParse = [];
+            var keys = ["id", "Code", "Title"];
+
+            this.$http.get("/procsLeg?id=" + this.id)
+                .then(function (response) {
+                    classesToParse = response.body;
+                })
+                .then(function () {
+                    this.processes = JSON.parse(JSON.stringify(this.parseList(classesToParse, keys)));
+                    this.newProcesses = JSON.parse(JSON.stringify(this.parseList(classesToParse, keys)));
+
+                    this.processesReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        parseList: function (content, keys) {
+            var dest = [];
+            var temp = {};
+
+            // parsing the JSON
+            for (var i = 0; i < content.length; i++) {
+                for (var j = 0; j < keys.length; j++) {
+                    temp[keys[j]] = content[i][keys[j]].value;
+
+                    if (keys[j] == "id") {
+                        temp.id = temp.id.replace(/[^#]+#(.*)/, '$1');
+                    }
+                }
+
+                dest[i] = JSON.parse(JSON.stringify(temp));
+            }
+
+            return dest.sort(function (a, b) {
+                return a.id.localeCompare(b.id);
+            });
         },   
         parse: function(){    
             this.legData.year.original=this.content[0].Ano.value;
@@ -67,17 +138,29 @@ var leg = new Vue({
             this.ready=true;
         },
         update: function(){
-            var args='?id='+this.id;
+            var dataObj = {
+                id: this.id,
+                year: null,
+                date: null,
+                number: null,
+                type: null,
+                title: null,
+                link: null,
+            };
 
-            keys=["year","date","number","type","title","link"];
+            keys=Object.keys(this.legData);
 
-            for(var i=0;i<6;i++){
+            for(var i=0;i<keys.length;i++){
                 if(this.legData[keys[i]].edit && this.legData[keys[i]].new){
-                    args+='&'+keys[i]+'='+this.legData[keys[i]].new;
+                    dataObj[keys[i]]=this.legData[keys[i]].new;
                 }
             }
 
-            this.$http.get('/updateLeg'+args)
+            this.$http.put('/updateLeg',dataObj,{
+                headers: {
+                    'content-type' : 'application/json'
+                }
+            })
             .then( function(response) { 
                 this.message = response.body;
             })
@@ -94,9 +177,10 @@ var leg = new Vue({
             this.delConfirm=false;
         },
         deleteLeg: function(){
-            this.$http.get('/deleteLeg?id='+this.id)
+            this.$http.post('/deleteLeg',{id: this.id})
             .then( function(response) { 
                 this.message = response.body;
+                window.location.href = '/legislacoes';
             })
             .catch( function(error) { 
                 console.error(error); 

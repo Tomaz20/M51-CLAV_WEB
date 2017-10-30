@@ -31,17 +31,29 @@ var newLeg = new Vue({
     },
     methods: {
         add: function(){
-            var args='?id='+this.id;
-            
-            keys=["year","date","number","type","title","link"];
+            var dataObj = {
+                year: null,
+                date: null,
+                number: null,
+                type: null,
+                title: null,
+                link: null,
+            };
 
-            for(var i=0;i<6;i++){
-                args+='&'+keys[i]+'='+this.legData[keys[i]].value;
+            keys=Object.keys(dataObj);
+
+            for(var i=0;i<keys.length;i++){
+                dataObj[keys[i]]=this.legData[keys[i]].value;
             }
 
-            this.$http.get('/createLeg'+args)
+            this.$http.post('/createLeg',dataObj,{
+                headers: {
+                    'content-type' : 'application/json'
+                }
+            })
             .then( function(response) { 
                 this.message = response.body;
+                window.location.href = '/legislacoes';
             })
             .catch( function(error) { 
                 console.error(error); 

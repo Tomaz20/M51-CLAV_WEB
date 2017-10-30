@@ -52,7 +52,7 @@
 .cascata-drop {
     border-right:1px solid #ddd; 
     margin-right: 5px;
-    width: 4%;
+    width: 5%;
 }
 
 .drop-row {
@@ -71,3 +71,29 @@
     padding-bottom: 5px;
     padding-top: 10px;
 }
+
+
+.custom-select div{  
+    border-color: rgb(122, 122, 122) !important;
+    height: 27px;
+}
+
+.custom-select i {
+    padding-top: 5px;
+}
+
+.custom-select input {
+    height: 27px !important;
+}
+
+.custom-select span {
+    margin: 0px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.is-collapsed li:nth-child(n+5) {
+    display: none;
+}
+

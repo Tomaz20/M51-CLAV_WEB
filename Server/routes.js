@@ -44,7 +44,7 @@ module.exports = function(app) {
         res.render('Pages/Classes/consultaClasse');
     });
 
-    app.get('/test', function(req, res) {
-        res.send('Ola');
+    app.get('/novaTabSel', function(req, res) {
+        res.render('Pages/TabsSel/adicionarTabela');
     });
 }

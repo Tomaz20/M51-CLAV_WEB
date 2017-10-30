@@ -401,7 +401,7 @@ module.exports = function (app) {
                     ?id clav:orgNome ?Nome ;
                         clav:orgSigla ?Sigla .
                     
-                    filter (?Type!=clav:temParticipante)
+                    filter (?Type!=clav:temParticipante && ?Type!=clav:temDono)
                 }
             `;
 

@@ -7,7 +7,8 @@ var classes = new Vue({
         ready: false,
         content: [],
         cwidth: ['15%','81%'],
-        subTemp: []
+        subTemp: [],
+        nEdits: 0,
     },
     methods: {
         swap: function(array,pos1,pos2){
@@ -24,7 +25,6 @@ var classes = new Vue({
             if(!this.subReady[id]){
                 //split the id; example: '1.1.2' becomes ['1','1','2']
                 var path = id.split('.');
-
                 this.loadSub(path,this.tableData,params);
             }
         },
@@ -40,6 +40,7 @@ var classes = new Vue({
 
                     //let child components know that the rows are ready to render
                     this.subReady[params.id]=true;
+                    this.nEdits++;
                 })
                 .catch( function(error) { 
                     console.error(error); 

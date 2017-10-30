@@ -1,0 +1,4 @@
+TODOS:
+    -implementar tabelas de seleção
+
+    -deploy no servidor

@@ -158,19 +158,21 @@ block corpo
                         td(style="width:10%")
                             label Tipo de Processo: 
                         td(v-if="edit.ProcType" style="width:80%")
-                            input(
+                            input#pc(
                                 type="radio"
                                 value="PC"
                                 v-model="newClass.ProcType"
                             ) 
-                            |  Processo Comum
+                            label(for="pc" style="font-weight:normal")
+                                |  Processo Comum
                             br
-                            input(
+                            input#pe(
                                 type="radio"
                                 value="PE"
                                 v-model="newClass.ProcType"
                             )
-                            |  Processo Específico
+                            label(for="pe" style="font-weight:normal")
+                                |  Processo Específico
 
                         td(v-else style="width:80%")
                             | {{ clas.ProcType }}  
@@ -186,19 +188,21 @@ block corpo
                         td(style="width:10%")
                             label Processo Transversal: 
                         td(v-if="edit.ProcTrans" style="width:80%")
-                            input(
+                            input#ptS(
                                 type="radio"
                                 value="S"
                                 v-model="newClass.ProcTrans"
                             ) 
-                            |  Sim
+                            label(for="ptS" style="font-weight:normal")
+                                |  Sim
                             br
-                            input(
+                            input#ptN(
                                 type="radio"
                                 value="N"
                                 v-model="newClass.ProcTrans"
                             )
-                            |  Não
+                            label(for="ptN" style="font-weight:normal")
+                                |  Não
                         td(v-else style="width:80%")
                             | {{ clas.ProcTrans }}  
                         td(style="width:10%")
@@ -217,17 +221,19 @@ block corpo
                             table
                                 tr
                                     td
-                                        select( v-model="newClass.Owner")
-                                            option(v-for="(o,index) in orgList" :value="o")
-                                                | {{ o.Sigla }}
+                                        v-select.custom-select(
+                                            v-model="newClass.Owner"
+                                            :options="orgList"
+                                        )
+                                    td
                                         button(
-                                            @click="addOwner(orgList.indexOf(newClass.Owner))"
+                                            @click="addOwner(orgList.indexOf(newClass.Owner.value))"
                                         ) +
                                 tr(v-if="clas.Owners")
-                                    td
+                                    td( colspan="2")
                                         ul(style="padding-left:20px")
                                             li(v-for="(o,index) in newClass.Owners")
-                                                | {{ o.Sigla }}
+                                                | {{ o.Sigla }} - {{ o.Nome }} 
                                                 button(
                                                     @click="remOwner(index)"
                                                 ) x
@@ -252,18 +258,22 @@ block corpo
                         td(v-if="edit.Participants" style="width:80%")
                             table
                                 tr
+                                    td(width="30%")
+                                        v-select.custom-select(
+                                            v-model="newClass.ParticipantType"
+                                            :options="Object.keys(clas.Participants)"
+                                        )
+                                    td(width="30%")
+                                        v-select.custom-select(
+                                            v-model="newClass.Participant"
+                                            :options="orgList"
+                                        )
                                     td
-                                        select( v-model="newClass.ParticipantType")
-                                            option(v-for="key in Object.keys(clas.Participants)")
-                                                | {{ key }}
-                                        select( v-model="newClass.Participant")
-                                            option(v-for="(o,index) in orgList" :value="o")
-                                                | {{ o.Sigla }}
                                         button(
-                                            @click="addParticipant()"
+                                            @click="addParticipant(newClass.ParticipantType,newClass.Participant.value)"
                                         ) +
                                 tr
-                                    td
+                                    td(colspan=3)
                                         ul(v-if="relProcsReady" style="padding-left:20px")
                                             li(v-for="key in Object.keys(newClass.Participants)" v-if="newClass.Participants[key].length>0")
                                                 b {{ key }}
@@ -299,14 +309,16 @@ block corpo
                             table
                                 tr
                                     td
-                                        select( v-model="newClass.RelProc")
-                                            option(v-for="(c,index) in classList" :value="c")
-                                                | {{ c.Code }}
+                                        v-select.custom-select( 
+                                            v-model="newClass.RelProc"
+                                            :options="classList"
+                                        )
+                                    td
                                         button(
-                                            @click="addRelProc(classList.indexOf(newClass.RelProc))"
+                                            @click="addRelProc(newClass.RelProc.value)"
                                         ) +
                                 tr
-                                    td
+                                    td(colspan="2")
                                         ul(style="padding-left:20px")
                                             li(v-for="(c,index) in newClass.RelProcs")
                                                 | {{ c.Code }} - {{ c.Title }}
@@ -353,14 +365,16 @@ block corpo
                             table
                                 tr
                                     td
-                                        select( v-model="newClass.Leg")
-                                            option(v-for="(l,index) in legList" :value="l")
-                                                | {{l.Tipo}} - {{ l.Número }}
+                                        v-select.custom-select( 
+                                            v-model="newClass.Leg"
+                                            :options="legList"
+                                        )
+                                    td
                                         button(
-                                            @click="addLeg(legList.indexOf(newClass.Leg))"
+                                            @click="addLeg(newClass.Leg.value)"
                                         ) +
                                 tr(v-if="clas.Legs")
-                                    td
+                                    td(colspan="2")
                                         ul(style="padding-left:20px")
                                             li(v-for="(l,index) in newClass.Legs")
                                                 | {{ l.Tipo }} - {{ l.Número }} - {{ l.Titulo }}

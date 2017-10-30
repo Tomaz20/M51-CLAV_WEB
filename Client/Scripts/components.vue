@@ -50,137 +50,137 @@ Vue.component('custom-table-simple', {
         'cwidth',
         'add'
     ],
-    data: function(){ 
-        return{
+    data: function () {
+        return {
             "rows": [],
-            "rowsShow" : [[]],
-            "filt" : '',
-            "order" : 0,
-            "activePage" : 1,
-            "pages" : [0],
+            "rowsShow": [[]],
+            "filt": '',
+            "order": 0,
+            "activePage": 1,
+            "pages": [0],
             "rowsPerPage": 10,
             "nPages": 1,
         };
     },
     watch: {
-        filt: function(){
+        filt: function () {
             this.filter();
         },
-        rows: function(){
+        rows: function () {
             this.loadPages();
         },
-        rowsPerPage: function(){
+        rowsPerPage: function () {
             this.loadPages();
         },
-        activePage: function(){
+        activePage: function () {
             this.loadPages();
             this.prepPage();
         },
     },
     methods: {
         filter: function () { //filter rows according to what is written in the input box
-            regex= new RegExp(this.filt,"gi");
-                
-            this.rows=this.completeRows.filter(function (item) {
-                    
-                for (var i=0; i<item.length; i++) {
-                    if(regex.test(item[i])){
+            regex = new RegExp(this.filt, "gi");
+
+            this.rows = this.completeRows.filter(function (item) {
+
+                for (var i = 0; i < item.length; i++) {
+                    if (regex.test(item[i])) {
                         return true;
                     }
                 }
                 return false;
             })
-            if(this.rows.length==0){
-                this.rows=[["Sem resultados correspondentes..."]];
+            if (this.rows.length == 0) {
+                this.rows = [["Sem resultados correspondentes..."]];
             }
         },
-        sort: function(index) { //sort rows by header[index]
-            if(this.order==index){
+        sort: function (index) { //sort rows by header[index]
+            if (this.order == index) {
                 this.rows.reverse();
-                this.order=-index;
+                this.order = -index;
             } else {
-                this.rows.sort(function(a,b) {
+                this.rows.sort(function (a, b) {
                     if (typeof a[index] === 'string' || a[index] instanceof String)
                         return a[index].localeCompare(b[index]);
                     else
-                        return a[index]-b[index];
+                        return a[index] - b[index];
                 })
-                this.order=index;
+                this.order = index;
             }
         },
-        rowClick: function(index) { //emit event when a row is clicked 
+        rowClick: function (index) { //emit event when a row is clicked 
             this.$emit('row-clicked', this.rowsShow[index]);
         },
-        addClick: function(index) { //emit event when the '+' button is clicked
+        addClick: function (index) { //emit event when the '+' button is clicked
             this.$emit('add-clicked');
         },
-        loadPages: function(){ //process page numbers
-            var page=this.activePage;
+        loadPages: function () { //process page numbers
+            var page = this.activePage;
             var ret = [];
-            
-            var n = Math.ceil(this.rows.length/this.rowsPerPage);         
 
-            this.nPages=n;
+            var n = Math.ceil(this.rows.length / this.rowsPerPage);
 
-            if(n>7){
-                if(page<5){
-                    ret=[1,2,3,4,5,"...",n];
+            this.nPages = n;
+
+            if (n > 7) {
+                if (page < 5) {
+                    ret = [1, 2, 3, 4, 5, "...", n];
                 }
-                else if(page>n-4){
-                    ret=[1,"...",n-4,n-3,n-2,n-1,n];
+                else if (page > n - 4) {
+                    ret = [1, "...", n - 4, n - 3, n - 2, n - 1, n];
                 }
-                else{
-                    ret=[1,"...",page-1,page,page+1,"...",n];
+                else {
+                    ret = [1, "...", page - 1, page, page + 1, "...", n];
                 }
             }
             else {
-                for(var i=1; i<=n; i++) {
+                for (var i = 1; i <= n; i++) {
                     ret.push(i);
                 }
             }
 
-            this.pages=ret;
+            this.pages = ret;
 
-            if(page>n){
+            if (page > n) {
                 this.loadPage(n);
             } else {
                 this.prepPage();
             }
         },
-        loadPage: function(page){ //change active page
-            if(page!=this.activePage && page>0 && page<=this.nPages){
-                this.activePage=page;
+        loadPage: function (page) { //change active page
+            if (page != this.activePage && page > 0 && page <= this.nPages) {
+                this.activePage = page;
             }
         },
-        prepPage: function(){ //process rows to be shown 
-            var beggining = (this.activePage-1)*this.rowsPerPage;
-            var end = beggining+parseInt(this.rowsPerPage);
+        prepPage: function () { //process rows to be shown 
+            var beggining = (this.activePage - 1) * this.rowsPerPage;
+            var end = beggining + parseInt(this.rowsPerPage);
 
-            this.rowsShow=this.rows.slice(beggining,end);        
+            this.rowsShow = this.rows.slice(beggining, end);
         },
-        nextPage: function(){
-            this.loadPage(this.activePage+1);
+        nextPage: function () {
+            this.loadPage(this.activePage + 1);
         },
-        prevPage: function(){
-            this.loadPage(this.activePage-1);
+        prevPage: function () {
+            this.loadPage(this.activePage - 1);
         },
-        firstLoad: function(){ //loads info upon first render
+        firstLoad: function () { //loads info upon first render
             var ret = [];
-            
-            var n = Math.ceil(this.completeRows.length/this.rowsPerPage);
 
-            for(var i=1; i<=n; i++) {
+            var n = Math.ceil(this.completeRows.length / this.rowsPerPage);
+
+            for (var i = 1; i <= n; i++) {
                 ret.push(i);
             }
 
-            this.pages=ret;
+            this.pages = ret;
 
-            this.rowsShow=this.completeRows.slice(0,this.rowsPerPage);
+            this.rowsShow = this.completeRows.slice(0, this.rowsPerPage);
         },
     },
-    beforeMount: function(){
+    beforeMount: function () {
         this.firstLoad();
-        this.rows=this.completeRows;
+        this.rows = this.completeRows;
     }
 })
 
@@ -195,21 +195,40 @@ Vue.component('row-waterfall', {
                             <td v-if="row.sublevel" 
                                 class="cascata-drop"
                             >
-                                <label
-                                    :for="'toggle'+id"
-                                    :class="[drop[id] ? 'glyphicon glyphicon-chevron-down' : 'glyphicon glyphicon-chevron-right']"
-                                />
-                                <input
-                                    :id="'toggle'+id" 
-                                    type="checkbox" 
-                                    v-model="drop[id]" 
-                                    @click="dropClicked"
-                                    class="drop-row"
-                                /> 
+                                <span>
+                                    <label
+                                        :for="'toggle'+id"
+                                        :class="[row.drop ? 'glyphicon glyphicon-chevron-down' : 'glyphicon glyphicon-chevron-right']"
+                                    />
+                                    <input
+                                        :id="'toggle'+id" 
+                                        type="checkbox" 
+                                        v-model="row.drop" 
+                                        @click="dropClicked"
+                                        class="drop-row"
+                                    />
+                                </span>
+                                <span v-if="selectOn">
+                                    <input
+                                        :id="'select'+id" 
+                                        type="checkbox" 
+                                        v-model="row.selected" 
+                                        @click="selectClicked"
+                                    /> 
+                                </span> 
                             </td>
                             <td v-else 
                                 class="cascata-drop" 
                             >
+                                <span style="padding-right:18px"></span>
+                                <span v-if="selectOn">
+                                    <input
+                                        :id="'select'+id" 
+                                        type="checkbox" 
+                                        v-model="row.selected" 
+                                        @click="selectClicked"
+                                    /> 
+                                </span> 
                             </td>
                             <td 
                                 v-for="(item,index) in row.content"
@@ -220,21 +239,21 @@ Vue.component('row-waterfall', {
                             </td>
                         </tr>
                         
-                        <row-waterfall v-if="drop[id] && subReady[id]" 
+                        <row-waterfall v-if="row.drop && row.subReady" 
                             v-for="(line,index) in row.sublevel"
 
+                            :select-on="selectOn"
                             :id="genId(index)" 
                             :row="line" 
                             :key="index"  
                             :cwidth="cwidth"
-                            :sub-ready="subReady"
 
                             @eventWaterfall="eventPass($event)"
 
                             :table-class="tableClass+' cascata'"
                         />
                         
-                        <tr v-if="drop[id] && !subReady[id]">
+                        <tr v-if="row.drop && !row.subReady">
                             <td colspan=4> Loading... </td>
                         </tr>
                     </tbody>
@@ -243,19 +262,30 @@ Vue.component('row-waterfall', {
         </tr> 
     `,
     props: [
-        'row', 
-        'tableClass', 
-        'cwidth', 
-        'id', 
-        'subReady', 
-        'root'
+        'row',
+        'tableClass',
+        'cwidth',
+        'id',
+        'selectOn',
+        'root',
     ],
     data: function () {
         return {
             drop: {},
+            selected: {},
         }
     },
     methods: {
+        selectClicked: function () { //emit event when a row is selected
+            var eventContent = {
+                type: "select",
+                params: {
+                    id: this.id,
+                    rowData: this.row
+                }
+            };
+            this.$emit('eventWaterfall', eventContent);
+        },
         dropClicked: function () { //emit event when a row is expanded
             var eventContent = {
                 type: "drop",
@@ -330,10 +360,10 @@ Vue.component('custom-table-waterfall', {
                     <row-waterfall 
                         v-for="(row,index) in rowsShow"
 
+                        :select-on="selectOn"
                         :row="row" 
-                        :id="completeRows.indexOf(row)+''" 
+                        :id="genID(index)" 
                         :key="row.index" 
-                        :sub-ready="subReady" 
                         :cwidth="cwidth" 
                         
                         :table-class="tableClass+' cascata'" 
@@ -357,10 +387,11 @@ Vue.component('custom-table-waterfall', {
         'url',
         'completeRows',
         'header',
-        'subReady',
         'pagesOn',
         'filterOn',
-        'add'
+        'add',
+        'selectOn',
+        'nEdits',
     ],
     data: function () {
         return {
@@ -371,11 +402,15 @@ Vue.component('custom-table-waterfall', {
             "activePage": 1,
             "pages": [0],
             "rowsPerPage": 10,
+            "filtered": false,
         };
     },
     watch: {
         filt: function () {
-            this.filter();
+            if(!this.filtered) {
+                this.filtered=true;
+            }
+            this.newFilter();
         },
         rows: function () {
             this.loadPages();
@@ -384,11 +419,17 @@ Vue.component('custom-table-waterfall', {
             this.loadPages();
         },
         activePage: function () {
+            this.loadPages();
             this.prepPage();
         },
+        nEdits: function() {
+            if(this.filtered){
+                this.newFilter();
+            }
+        }
     },
     methods: {
-        filter: function () { //filter rows according to what is written in the input box
+        /*filter: function () { //filter rows according to what is written in the input box
             regex = new RegExp(this.filt, "gi");
 
             this.rows = this.completeRows.filter(function (item) {
@@ -403,6 +444,60 @@ Vue.component('custom-table-waterfall', {
             if (this.rows.length == 0) {
                 this.rows = [{ content: ["Sem resultados correspondentes..."] }];
             }
+        },*/
+        newFilter: function () { //filter rows and sublevels 
+            var regex = new RegExp(this.filt, "gi");
+
+            var temp = JSON.parse(JSON.stringify(this.completeRows));
+            this.rows = this.subFilter(regex,temp);
+        },
+        subFilter: function (regex, list) {
+            //go through the list
+            for (var i = 0; i < list.length; i++) {
+                //if item has sublevel, filter it
+                if (list[i].sublevel && list[i].sublevel.length) {
+                    list[i].sublevel = this.subFilter(regex, list[i].sublevel);
+
+                    //if sublevel comes empty and item doesn't match regex, cut it
+                    if (list[i].sublevel.length == 0) {
+                        var check = false;
+                        
+                        for (var j = 0; j < list[i].content.length; j++) {
+                            if (regex.test(list[i].content[j])) {
+                                check = true;
+                                break;
+                            }
+                        }
+                        if (!check) {
+                            list.splice(i, 1);
+                        }
+                    }
+                }
+                //if item doesn't have sublevel, check if it matches regex, if not, cut it                
+                else {
+                    var check = false;
+                    
+                    for (var j = 0; j < list[i].content.length; j++) {
+                        if (regex.test(list[i].content[j])) {
+                            check = true;
+                            break;
+                        }
+                    }
+                    if (!check) {
+                        list.splice(i, 1);
+                    }
+                }            
+            }
+
+            return list;
+        },
+        genID: function(index){
+            for(var i=0;i<this.completeRows.length;i++){
+                if(this.rowsShow[index].codeID==this.completeRows[i].codeID){
+                    return i+"";
+                }
+            }
+            return "-1";
         },
         sort: function (index) { //sort rows by header[index]
             if (this.order == index) {
@@ -418,34 +513,34 @@ Vue.component('custom-table-waterfall', {
                 this.order = index;
             }
         },
-        loadPages: function(){ //process page numbers
-            var page=this.activePage;
+        loadPages: function () { //process page numbers
+            var page = this.activePage;
             var ret = [];
-            
-            var n = Math.ceil(this.rows.length/this.rowsPerPage);         
 
-            this.nPages=n;
+            var n = Math.ceil(this.rows.length / this.rowsPerPage);
 
-            if(n>7){
-                if(page<5){
-                    ret=[1,2,3,4,5,"...",n];
+            this.nPages = n;
+
+            if (n > 7) {
+                if (page < 5) {
+                    ret = [1, 2, 3, 4, 5, "...", n];
                 }
-                else if(page>n-4){
-                    ret=[1,"...",n-4,n-3,n-2,n-1,n];
+                else if (page > n - 4) {
+                    ret = [1, "...", n - 4, n - 3, n - 2, n - 1, n];
                 }
-                else{
-                    ret=[1,"...",page-1,page,page+1,"...",n];
+                else {
+                    ret = [1, "...", page - 1, page, page + 1, "...", n];
                 }
             }
             else {
-                for(var i=1; i<=n; i++) {
+                for (var i = 1; i <= n; i++) {
                     ret.push(i);
                 }
             }
 
-            this.pages=ret;
+            this.pages = ret;
 
-            if(page>n){
+            if (page > n) {
                 this.loadPage(n);
             } else {
                 this.prepPage();
@@ -483,19 +578,16 @@ Vue.component('custom-table-waterfall', {
         },
         eventPass: function (event) { //process event comming from child component
             if (event.type == "row") {
-                this.rowClick(event.params);
+                this.$emit('row-clicked', event.params);
             }
             else if (event.type == "drop") {
-                this.dropClick(event.params);
+                this.$emit('drop-clicked', event.params);
+            }
+            else if (event.type == "select") {
+                this.$emit('select-clicked', event.params);
             }
         },
-        rowClick: function (params) { //emit event when a row is clicked
-            this.$emit('row-clicked', params);
-        },
-        dropClick: function (params) { //emit event when a row is expanded
-            this.$emit('drop-clicked', params);
-        },
-        addClick: function(index) { //emit event when the '+' button is clicked
+        addClick: function (index) { //emit event when the '+' button is clicked
             this.$emit('add-clicked');
         },
     },
@@ -503,12 +595,12 @@ Vue.component('custom-table-waterfall', {
         this.firstLoad();
         this.rows = this.completeRows;
     },
-    created: function(){
-        if(!this.pagesOn){
-            this.rowsPerPage=this.completeRows.length;
+    created: function () {
+        if (!this.pagesOn) {
+            this.rowsPerPage = this.completeRows.length;
         }
     }
 })
 
 
-
+Vue.component('v-select', VueSelect.VueSelect);

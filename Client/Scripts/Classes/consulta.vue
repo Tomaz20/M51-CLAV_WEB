@@ -5,6 +5,7 @@ var classe = new Vue({
         delConfirm: false,
         id: "",
         orgList: [],
+        orgListTest: [],
         legList: [],
         classList: [],
         clas: {
@@ -92,7 +93,15 @@ var classe = new Vue({
                     orgsToParse = response.body;
                 })
                 .then(function () {
-                    this.orgList = JSON.parse(JSON.stringify(this.parse(orgsToParse, keys)));
+                    this.orgList = this.parse(orgsToParse, keys).map(function(item){
+                        return {
+                            label: item.Sigla+"",
+                            value: item,
+                        }
+                    }).sort(function (a, b) {
+                        return a.label.localeCompare(b.label);
+                    });;
+
                     this.orgsReady = true;
                 })
                 .catch(function (error) {
@@ -111,6 +120,7 @@ var classe = new Vue({
                     this.clas.Owners = JSON.parse(JSON.stringify(this.parse(orgsToParse, keys)));
                     this.newClass.Owners = JSON.parse(JSON.stringify(this.parse(orgsToParse, keys)));
 
+
                     this.ownersReady = true;
                 })
                 .catch(function (error) {
@@ -126,7 +136,15 @@ var classe = new Vue({
                     legsToParse = response.body;
                 })
                 .then(function () {
-                    this.legList = JSON.parse(JSON.stringify(this.parse(legsToParse, keys)));
+                    this.legList = this.parse(legsToParse, keys).map(function(item){
+                        return {
+                            label: item.Tipo+" - "+item.Número,
+                            value: item,
+                        }
+                    }).sort(function (a, b) {
+                        return a.label.localeCompare(b.label);
+                    });
+                    
                     this.legListReady = true;
                 })
                 .catch(function (error) {
@@ -214,7 +232,15 @@ var classe = new Vue({
                     classesToParse = response.body;
                 })
                 .then(function () {
-                    this.classList = JSON.parse(JSON.stringify(this.parse(classesToParse, keys)));
+                    this.classList = this.parse(classesToParse, keys).map(function(item){
+                        return {
+                            label: item.Code+" - "+item.Title,
+                            value: item,
+                        }
+                    }).sort(function (a, b) {
+                        return a.label.localeCompare(b.label);
+                    });
+                    
                     this.classesReady = true;
                 })
                 .catch(function (error) {
@@ -279,7 +305,7 @@ var classe = new Vue({
                     }
                 }
                 var type = content[i].Type.value.replace(/.*temParticipante(.*)/, '$1');
-
+                
                 dest[type].push(JSON.parse(JSON.stringify(temp)));
             }
 
@@ -353,9 +379,8 @@ var classe = new Vue({
         remOwner: function (index) {
             this.newClass.Owners.splice(index, 1);
         },
-        addLeg: function (index) {
-            this.newClass.Legs.push(this.legList[index]);
-            this.legList.splice(index, 1);
+        addLeg: function (leg) {
+            this.newClass.Legs.push(leg);
         },
         remLeg: function (index) {
             this.legList.push(this.newClass.Legs[index]);
@@ -441,14 +466,14 @@ var classe = new Vue({
                 this.newClass.DelNote = '';
             }
         },
-        addParticipant: function () {
-            this.newClass.Participants[this.newClass.ParticipantType].push(this.newClass.Participant);
+        addParticipant: function (type,participant) {
+            this.newClass.Participants[type].push(participant);
         },
         remParticipant: function (key, index) {
             this.newClass.Participants[key].splice(index, 1);
         },
-        addRelProc: function (index) {
-            this.newClass.RelProcs.push(this.classList[index]);
+        addRelProc: function (proc) {
+            this.newClass.RelProcs.push(proc);
         },
         remRelProc: function (index) {
             this.newClass.RelProcs.splice(index, 1);

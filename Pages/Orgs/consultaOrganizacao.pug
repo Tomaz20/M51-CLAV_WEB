@@ -49,31 +49,35 @@ block corpo
                         td(style="width:10%")
                             label Domínio:
                         //- edição
-                            td(v-if="edit.Owners" style="width:80%")
+                        td(v-if="editDomain" style="width:80%")
                             table
                                 tr
+                                    td(width="60%")
+                                        v-select.custom-select(
+                                            v-model="newClass"
+                                            :options="classList"
+                                        )
                                     td
-                                        select( v-model="newClass.Owner")
-                                            option(v-for="(o,index) in orgList" :value="o")
-                                                | {{ o.Sigla }}
                                         button(
-                                            @click="addOwner(orgList.indexOf(newClass.Owner))"
+                                            @click="newDomain.unshift(newClass.value)"
                                         ) +
-                                tr(v-if="clas.Owners")
-                                    td
+                                tr(v-if="newDomain.length")
+                                    td(colspan="2")
                                         ul(style="padding-left:20px")
-                                            li(v-for="(o,index) in newClass.Owners")
-                                                | {{ o.Sigla }}
+                                            li(v-for="(c,index) in newDomain")
+                                                | {{ c.Code }} - {{ c.Title }}
                                                 button(
-                                                    @click="remOwner(index)"
+                                                    @click="newDomain.splice(index,1)"
                                                 ) x
-                        td(style="width:80%")
-                            ul(v-if="domainReady" style="padding-left:20px")
+                        td(v-else style="width:80%")
+                            ul(v-if="domainReady" style="padding-left:20px" :class="{'is-collapsed' : domainCollapsed }")
                                 li(v-for="c in domain")
-                                    a(:href="'/classe?id='+c.id") {{ c.Codigo }}
-                                    |  - {{ c.Titulo }}
-                        
-                        td(style="width:10%")
+                                    a(:href="'/classe?id='+c.id") {{ c.Code }}
+                                    |  - {{ c.Title }}
+                            button(@click="domainCollapsed=!domainCollapsed" v-if="domain.length>4")
+                                | Mostrar mais...
+                        //-
+                         td(style="width:10%")
                             label(style="padding-right:5px") Editar
                             input(
                                 type="checkbox"
@@ -85,41 +89,46 @@ block corpo
                         td(style="width:10%")
                             label Participações:    
                         //- edição
-                            td(v-if="edit.Participants" style="width:80%")
+                        td(v-if="editParts" style="width:80%")
                             table
                                 tr
+                                    td(width="30%")
+                                        v-select.custom-select(
+                                            v-model="newPartType"
+                                            :options="Object.keys(participations)"
+                                        )
+                                    td(width="30%")
+                                        v-select.custom-select(
+                                            v-model="newPart"
+                                            :options="classList"
+                                        )
                                     td
-                                        select( v-model="newClass.ParticipantType")
-                                            option(v-for="key in Object.keys(clas.Participants)")
-                                                | {{ key }}
-                                        select( v-model="newClass.Participant")
-                                            option(v-for="(o,index) in orgList" :value="o")
-                                                | {{ o.Sigla }}
                                         button(
-                                            @click="addParticipant()"
+                                            @click="newParticipations[newPartType].unshift(newPart.value)"
                                         ) +
                                 tr
-                                    td
-                                        ul(v-if="relProcsReady" style="padding-left:20px")
-                                            li(v-for="key in Object.keys(newClass.Participants)" v-if="newClass.Participants[key].length>0")
-                                                b {{ key }}
-                                                    span(v-if="newClass.Participants[key].length>1") es
+                                    td(colspan="3")
+                                        ul(v-if="partsReady" style="padding-left:20px")
+                                            li(v-for="key in Object.keys(newParticipations)" v-if="newParticipations[key].length>0")
+                                                b Como {{ key }}
                                                 ul
-                                                    li(v-for="(p, index) in newClass.Participants[key]")
-                                                        | {{ p.Sigla }} - {{ p.Nome }}
+                                                    li(v-for="(p, index) in newParticipations[key]")
+                                                        | {{ p.Code }} - {{ p.Title }}
                                                         button(
-                                                            @click="remParticipant(key, index)"
+                                                            @click="newParticipations[key].splice(index,1)"
                                                         ) x
-                        td(style="width:80%")
+                        td(v-else style="width:80%")
                             ul(v-if="partsReady" style="padding-left:20px")
                                 li(v-for="key in Object.keys(participations)" v-if="participations[key].length>0")
                                     b Como {{ key }}:
-                                    ul
+                                    ul(:class="{'is-collapsed' : partsCollapsed[key] }")
                                         li(v-for="p in participations[key]")
-                                            a(:href="'/classe?id='+p.id") {{ p.Codigo }}
-                                            |  - {{ p.Titulo }}
-
-                        td(style="width:10%")
+                                            a(:href="'/classe?id='+p.id") {{ p.Code }}
+                                            |  - {{ p.Title }}
+                                    button(@click="partsCollapsed[key]=!partsCollapsed[key]" v-if="participations[key].length>4")
+                                        | Mostrar mais...
+                        //-
+                         td(style="width:10%")
                             label(style="padding-right:5px") Editar
                             input(
                                 type="checkbox"

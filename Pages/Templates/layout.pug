@@ -33,6 +33,8 @@ block body
 						a(href='/legislacoes') Catálogo Legislativo
 					li
 						a(href='/classes') Classes
+					li
+						a(href='/novaTabSel') Tabelas de Seleção
 			.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
 				block corpo
 
@@ -40,4 +42,5 @@ append scripts
 	script(src="./vue.min.js")
 	script(src="https://unpkg.com/axios@0.12.0/dist/axios.min.js")
 	script(src="https://unpkg.com/lodash@4.13.1/lodash.min.js")
-	script(src="./Scripts/components.vue")
+	script(src="https://unpkg.com/vue-select@latest")
+	script(src="/Scripts/components.vue")
