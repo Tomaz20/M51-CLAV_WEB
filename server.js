@@ -2,6 +2,8 @@
 var express = require('express'),
     app = express();
 
+app.enable('trust proxy');
+
 //body parser for post requests
 var bodyParser = require('body-parser')
 app.use(bodyParser.json());         // to support JSON-encoded bodies
