@@ -72,6 +72,19 @@
     padding-top: 10px;
 }
 
+.cria tr{
+    vertical-align: top;
+}
+
+
+.cria td{
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+.smaller div{
+    width: 500px !important;
+}
 
 .custom-select div{  
     border-color: rgb(122, 122, 122) !important;

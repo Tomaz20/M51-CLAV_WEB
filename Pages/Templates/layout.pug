@@ -9,6 +9,7 @@ append styles
 	link(href='/styles/dashboard.css', rel='stylesheet')
 	link(href='/styles/theme.css', rel='stylesheet')
 	link(rel="icon" href="https://cdn1.iconfinder.com/data/icons/dotted-charts/512/links_diagram-128.png")
+	
 
 block body
 	nav.navbar.navbar-inverse.navbar-fixed-top
@@ -34,13 +35,28 @@ block body
 					li
 						a(href='/classes') Classes
 					li
-						a(href='/novaTabSel') Tabelas de Seleção
+						a(href='/tabelasSelecao') Tabelas de Seleção
+					li#selTabs
+						div(v-if="ready")
+							v-select.custom-select(
+								v-model="link"
+								:options="selTabs"
+							)
+					
+
+				
+
 			.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
 				block corpo
 
 append scripts
-	script(src="./vue.min.js")
+	//-sricpt(src="/Base/vue.min.js")
+	script(src="/Base/vue.js")
+	script(src="/Base/vue-resource.js")
+	script(src="/Base/vue-select.js")
+	
 	script(src="https://unpkg.com/axios@0.12.0/dist/axios.min.js")
 	script(src="https://unpkg.com/lodash@4.13.1/lodash.min.js")
-	script(src="https://unpkg.com/vue-select@latest")
-	script(src="/Scripts/components.vue")
+	
+	script(src="/Scripts/Common/components.vue")
+	script(src="/Scripts/Common/layout.vue")

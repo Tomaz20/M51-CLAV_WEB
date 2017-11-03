@@ -14,6 +14,7 @@ require('./Server/routes')(app);
 require('./Server/apiOrgs')(app);
 require('./Server/apiLegs')(app);
 require('./Server/apiClasses')(app);
+require('./Server/apiSelTabs')(app);
 
 module.exports = app;
 

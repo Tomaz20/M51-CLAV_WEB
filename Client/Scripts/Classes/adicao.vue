@@ -59,8 +59,13 @@ var newClass = new Vue({
         classesReady: false,
 
         message: null,
+
+        parentvalue: "",
     },
     watch: {
+        parentvalue: function(){
+            this.parent=this.parentvalue.value;
+        },
         parent: function () {
             this.code = this.parent.slice(1, this.parent.length)+".";
         },
@@ -91,7 +96,15 @@ var newClass = new Vue({
                     classesToParse = response.body;
                 })
                 .then(function () {
-                    this.classList = JSON.parse(JSON.stringify(this.parse(classesToParse, keys)));
+                    this.classList = this.parse(classesToParse, keys)
+                    .map(function(item){
+                        return {
+                            label: item.Code+" - "+item.Title,
+                            value: item,
+                        }
+                    }).sort(function (a, b) {
+                        return a.label.localeCompare(b.label);
+                    });
                     this.classesReady = true;
                 })
                 .catch(function (error) {
@@ -107,7 +120,15 @@ var newClass = new Vue({
                     orgsToParse = response.body;
                 })
                 .then(function () {
-                    this.orgList = this.parse(orgsToParse, keys);
+                    this.orgList = this.parse(orgsToParse, keys)
+                    .map(function(item){
+                        return {
+                            label: item.Sigla+" - "+item.Nome,
+                            value: item,
+                        }
+                    }).sort(function (a, b) {
+                        return a.label.localeCompare(b.label);
+                    });
                     this.orgsReady = true;
                 })
                 .catch(function (error) {
@@ -116,14 +137,22 @@ var newClass = new Vue({
         },
         loadLegs: function () {
             var legsToParse = [];
-            var keys = ["id", "Número", "Titulo"];
+            var keys = ["id", "Número", "Titulo", "Tipo"];
 
             this.$http.get("/legs")
                 .then(function (response) {
                     legsToParse = response.body;
                 })
                 .then(function () {
-                    this.legList = this.parse(legsToParse, keys);
+                    this.legList = this.parse(legsToParse, keys)
+                    .map(function(item){
+                        return {
+                            label: item.Tipo+" - "+item.Número,
+                            value: item,
+                        }
+                    }).sort(function (a, b) {
+                        return a.label.localeCompare(b.label);
+                    });
                     this.legsReady = true;
                 })
                 .catch(function (error) {
@@ -132,14 +161,22 @@ var newClass = new Vue({
         },
         loadParents: function () {
             var classesToParse = [];
-            var keys = ["id", "Code"];
+            var keys = ["id", "Code", "Title"];
 
             this.$http.get("/classesn?level=" + (this.type - 1))
                 .then(function (response) {
                     classesToParse = response.body;
                 })
                 .then(function () {
-                    this.parents = this.parse(classesToParse, keys);
+                    this.parents = this.parse(classesToParse, keys)
+                    .map(function(item){
+                        return {
+                            label: item.Code+" - "+item.Title,
+                            value: item.id,
+                        }
+                    }).sort(function (a, b) {
+                        return a.label.localeCompare(b.label);
+                    });
                     this.parentsReady = true;
                 })
                 .catch(function (error) {
@@ -415,5 +452,6 @@ var newClass = new Vue({
     created: function () {
         this.loadOrgs();
         this.loadLegs();
+        this.loadClasses();
     }
 })

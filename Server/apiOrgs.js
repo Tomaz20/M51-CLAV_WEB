@@ -80,9 +80,9 @@ module.exports = function (app) {
         function fetchDomain(id) {
             var fetchQuery= `
                 SELECT * WHERE {
-                    ?id clav:temDono clav:`+id+` .
-                    ?id clav:codigo ?Code;
-                        clav:titulo ?Title;
+                    ?id clav:temDono clav:`+id+` ;
+                        clav:codigo ?Code ;
+                        clav:titulo ?Title .
                 }`
             ;
 

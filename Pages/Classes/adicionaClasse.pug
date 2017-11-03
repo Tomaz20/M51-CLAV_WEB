@@ -5,7 +5,7 @@ block corpo
             h1.page-header Nova Classe  
         .panel-body
             .form-group
-                table
+                table.cria
                     //-TIPO/ NIVEL
                     tr
                         td(style="width:10%")
@@ -21,10 +21,12 @@ block corpo
                     tr(v-if="type>1 && parentsReady")
                         td(style="width:10%")
                             label Pai: 
-                        td(style="width:80%")
-                            select( v-model="parent")
-                                option(v-for="(p,index) in parents" :value="p.id")
-                                    | {{ p.Code }}
+                        td.smaller
+                            v-select.custom-select(
+                                style="width=100px"
+                                v-model="parentvalue"
+                                :options="parents"
+                            )
             
                     //-CODIGO
                     tr
@@ -154,19 +156,25 @@ block corpo
                         td(style="padding-top:10px")
                             label Dono(s): 
                         td
-                            select( v-model="newOwner")
-                                option(v-for="(o,index) in orgList" :value="o")
-                                    | {{ o.Sigla }}
-                            button(
-                                @click="ownerList.push(newOwner)"
-                            ) +
-
-                            ul(v-if="ownerList")
-                                li(v-for="(o,index) in ownerList")
-                                    | {{ o.Sigla }} - {{ o.Nome }}
-                                    button(
-                                        @click="ownerList.splice(index,1)"
-                                    ) x
+                            table
+                                tr
+                                    td
+                                        v-select.custom-select(
+                                            v-model="newOwner"
+                                            :options="orgList"
+                                        )
+                                    td
+                                        button(
+                                            @click="ownerList.push(newOwner.value)"
+                                        ) +
+                                tr
+                                    td(colspan="2")
+                                        ul(v-if="ownerList")
+                                            li(v-for="(o,index) in ownerList")
+                                                | {{ o.Sigla }} - {{ o.Nome }}
+                                                button(
+                                                    @click="ownerList.splice(index,1)"
+                                                ) x
 
                     //-PARTICIPANTES
                     tr(v-if="type==3 && procTrans=='S'")
@@ -175,18 +183,22 @@ block corpo
                         td
                             table
                                 tr
+                                    td(width="30%")
+                                        v-select.custom-select(
+                                            v-model="newParticipantType"
+                                            :options="Object.keys(participants)"
+                                        )
+                                    td(width="30%")
+                                        v-select.custom-select(
+                                            v-model="newParticipant"
+                                            :options="orgList"
+                                        )
                                     td
-                                        select( v-model="newParticipantType")
-                                            option(v-for="key in Object.keys(participants)")
-                                                | {{ key }}
-                                        select( v-model="newParticipant")
-                                            option(v-for="(o,index) in orgList" :value="o")
-                                                | {{ o.Sigla }}
                                         button(
-                                            @click="participants[newParticipantType].push(newParticipant)"
+                                            @click="participants[newParticipantType].push(newParticipant.value)"
                                         ) +
                                 tr
-                                    td
+                                    td(colspan="3")
                                         ul
                                             li(v-for="key in Object.keys(participants)" v-if="participants[key] && participants[key].length>0")
                                                 b {{ key }}
@@ -203,38 +215,50 @@ block corpo
                         td(style="padding-top:10px")
                             label Processos Relacionados: 
                         td
-                            select( v-model="newRelProc")
-                                option(v-for="(c,index) in classList" :value="c")
-                                    | {{ c.Code }}
-                            button(
-                                @click="relProcs.push(newRelProc)"
-                            ) +
-
-                            ul(v-if="relProcs && relProcs.length")
-                                li(v-for="(c,index) in relProcs")
-                                    | {{ c.Code }} - {{ c.Title }}
-                                    button(
-                                        @click="relProcs.splice(index, 1)"
-                                    ) x
+                            table
+                                tr
+                                    td
+                                        v-select.custom-select( 
+                                            v-model="newRelProc"
+                                            :options="classList"
+                                        )
+                                    td
+                                        button(
+                                            @click="relProcs.push(newRelProc.value)"
+                                        ) +
+                                tr
+                                    td(colspan="2")
+                                        ul(v-if="relProcs && relProcs.length")
+                                            li(v-for="(c,index) in relProcs")
+                                                | {{ c.Code }} - {{ c.Title }}
+                                                button(
+                                                    @click="relProcs.splice(index, 1)"
+                                                ) x
 
                     //-LEGISLAÇÕES                            
                     tr(v-if="type==3 && legsReady")
                         td(style="padding-top:10px")
                             label Legislação(s): 
                         td
-                            select( v-model="newLegislation")
-                                option(v-for="(l,index) in legList" :value="l")
-                                    | {{ l.Número }}
-                            button(
-                                @click="newLegList.push(newLegislation)"
-                            ) +
-
-                            ul(v-if="newLegList")
-                                li(v-for="(l,index) in newLegList")
-                                    | {{ l.Número }} - {{ l.Titulo }}
-                                    button(
-                                        @click="newLegList.splice(index,1)"
-                                    ) x
+                            table
+                                tr
+                                    td
+                                        v-select.custom-select( 
+                                            v-model="newLegislation"
+                                            :options="legList"
+                                        )
+                                    td
+                                        button(
+                                            @click="newLegList.push(newLegislation.value)"
+                                        ) +
+                                tr
+                                    td(colspan="2")
+                                        ul(v-if="newLegList")
+                                            li(v-for="(l,index) in newLegList")
+                                                | {{ l.Número }} - {{ l.Titulo }}
+                                                button(
+                                                    @click="newLegList.splice(index,1)"
+                                                ) x
 
                     //-STATUS
                     tr
@@ -261,6 +285,6 @@ block corpo
     
 
 append scripts    
-    script(src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4")
+    //-script(src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.14.1/lodash.min.js")
     script(src="/Scripts/Classes/adicao.vue")

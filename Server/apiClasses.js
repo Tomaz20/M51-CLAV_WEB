@@ -14,7 +14,7 @@ module.exports = function (app) {
             }
             );
 
-        function fetchClasses(level) {
+        function fetchClasses(level,table) {
             if (!level) {
                 level = 1;
             }
@@ -25,10 +25,27 @@ module.exports = function (app) {
                     ?id rdf:type clav:Classe_N`+ level + ` ;
                         clav:codigo ?Code ;
                         clav:titulo ?Title .
-                    optional {?sub clav:temPai ?id}
-                }Group by ?id ?Code ?Title
+            `;
+            
+            if(table){
+                listQuery+=`?id clav:pertenceTS clav:`+table+` .`
+            }
+
+            listQuery+=`
+                    optional {
+                        ?sub clav:temPai ?id .
             `;
 
+            if(table){
+                listQuery+=`?sub clav:pertenceTS clav:`+table+` .`
+            }
+
+            listQuery+=`
+                    }
+                }Group by ?id ?Code ?Title
+            `;
+            
+            
             return client.query(listQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -39,8 +56,9 @@ module.exports = function (app) {
 
         var parts = url.parse(req.url, true);
         var level = parts.query.level;
+        var table = parts.query.table;
 
-        fetchClasses(level)
+        fetchClasses(level,table)
             .then(list => res.send(list))
             .catch(function (error) {
                 console.error(error);
@@ -48,7 +66,7 @@ module.exports = function (app) {
         );
     })
 
-    //get the list of child classes of a given class
+    //get the list of child classes of a given class (opt.: filter by TS)
     app.get('/childClasses', function (req, res) {
         const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
@@ -61,19 +79,33 @@ module.exports = function (app) {
                 noInferences: 'http://www.ontotext.com/explicit'
             });
 
-        function fetchChilds(parent) {
-            var fetchQuery = SPARQL`
+        function fetchChilds(parent,table) {
+            var fetchQuery = `
                 SELECT ?Child ?Code ?Title (count(?sub) as ?NChilds)
                 WHERE {
                     ?Child clav:temPai clav:`+ parent + ` ;
                            clav:codigo ?Code ;
-                           clav:titulo ?Title
-                    optional {?sub clav:temPai ?Child}
-                }Group by ?Child ?Code ?Title
+                           clav:titulo ?Title .
+            `;
+            if(table){
+                                fetchQuery+=`?Child clav:pertenceTS clav:`+table+` .`
+            }
+
+            fetchQuery+=`
+                optional {
+                    ?sub clav:temPai ?Child .
             `;
 
-            console.log("query: \n" + fetchQuery);
+            if(table){
+                fetchQuery+=`?sub clav:pertenceTS clav:`+table+` .`
+            }
 
+            fetchQuery+=`
+                }
+            }Group by ?Child ?Code ?Title
+            `;
+
+                        
             return client.query(fetchQuery)
                 .execute()
                 //getting the content we want
@@ -85,11 +117,11 @@ module.exports = function (app) {
 
         var parts = url.parse(req.url, true);
         var parent = parts.query.parent;
+        var table = parts.query.table;
 
-        console.log(parent);
-
+                
         //Answer the request
-        fetchChilds(parent).then(list => res.send(list))
+        fetchChilds(parent,table).then(list => res.send(list))
             .catch(function (error) {
                 console.error(error);
             });
@@ -127,7 +159,6 @@ module.exports = function (app) {
                 }`;
 
             
-
             return client.query(fetchQuery)
                 .execute()
                 //getting the content we want
@@ -167,7 +198,10 @@ module.exports = function (app) {
                 }`;
 
             
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -206,7 +240,10 @@ module.exports = function (app) {
                 }`;
 
             
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -242,7 +279,10 @@ module.exports = function (app) {
                 }`;
 
             
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -279,7 +319,10 @@ module.exports = function (app) {
                 }`;
 
             
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -316,7 +359,10 @@ module.exports = function (app) {
                 }`;
 
             
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -363,7 +409,10 @@ module.exports = function (app) {
             `;
 
             
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -406,7 +455,10 @@ module.exports = function (app) {
             `;
 
             
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -477,7 +529,7 @@ module.exports = function (app) {
             for (var k = 0; k < partKeys.length; k++) {
                 if (dataObj.Participants[partKeys[k]].Delete && dataObj.Participants[partKeys[k]].Delete.length) {
                     for (var i = 0; i < dataObj.Participants[partKeys[k]].Delete.length; i++) {
-                        deletePart += "\tclav:" + dataObj.id + " clav:temParticipante clav:" + dataObj.Participants[partKeys[k]].Delete[i].id + " .\n";
+                        deletePart += "\tclav:" + dataObj.id + " clav:temParticipante"+partKeys[k]+" clav:" + dataObj.Participants[partKeys[k]].Delete[i].id + " .\n";
                     }
                 }
             }
@@ -612,8 +664,7 @@ module.exports = function (app) {
 
             updateQuery = deletePart + inserTPart + wherePart;
 
-            console.log(updateQuery);
-
+            
             return client.query(updateQuery).execute()
                 .then(response => Promise.resolve(response))
                 .catch(error => console.error("Error in update:\n" + error));
@@ -726,14 +777,13 @@ module.exports = function (app) {
 
             if (data.Legislations && data.Legislations.length) {
                 for (var i = 0; i < data.Legislations.length; i++) {
-                    createQuery += 'clav:temLegislacao clav:' + data.Legislations[i].id + ' ;\n';
+                    createQuery += 'clav:' + id + ' clav:temLegislacao clav:' + data.Legislations[i].id + ' .\n';
                 }
             }
 
             createQuery += '}';
 
-            console.log(createQuery);
-            
+                        
             return client.query(createQuery).execute()
                 .then(response => Promise.resolve(response))
                 .catch(error => console.error("Error in create:\n" + error));
@@ -785,8 +835,7 @@ module.exports = function (app) {
                     }
                 }
             `;
-            console.log(delQuery);
-
+            
             return client.query(delQuery).execute()
                 //getting the content we want
                 .then(response => Promise.resolve(response))

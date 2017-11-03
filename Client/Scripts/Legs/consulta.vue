@@ -196,6 +196,7 @@ var leg = new Vue({
         })
         .then( function() {
             this.parse();
+            this.loadProcesses();
         })
         .catch( function(error) { 
             console.error(error); 

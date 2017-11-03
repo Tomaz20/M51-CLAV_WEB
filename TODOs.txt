@@ -1,4 +1,14 @@
 TODOS:
-    -implementar tabelas de seleção
+    -preparar uma navbar decente
 
-    -deploy no servidor
+    -mover "mostrar X entradas" para baixo da tabela?
+
+    -substituir função de gerar id para legislações
+
+    -página principal
+
+!!  -deploy no servidor
+
+    -ver Passport (autenticação)
+        -User/Pass
+        -cc

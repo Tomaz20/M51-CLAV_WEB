@@ -8,6 +8,8 @@ var selecao = new Vue({
         cwidth: ['15%', '81%'],
         subTemp: [],
         nEdits: 0,
+        id: null,
+        name: "",
     },
     methods: {
         swap: function (array, pos1, pos2) {
@@ -43,17 +45,17 @@ var selecao = new Vue({
         },
         selectSons: function (location, selected, params) {
             location.selected = selected;
-            var tempParams=null;
+            var tempParams = null;
 
             if (location.sublevel && location.sublevel.length) {
                 for (var i = 0; i < location.sublevel.length; i++) {
-                    tempParams=JSON.parse(JSON.stringify(params));
-                    tempParams.id+="."+i;
+                    tempParams = JSON.parse(JSON.stringify(params));
+                    tempParams.id += "." + i;
 
-                    this.selectSons(location.sublevel[i], selected,tempParams);
+                    this.selectSons(location.sublevel[i], selected, tempParams);
                 }
             }
-            else if(location.sublevel && !location.sublevel.length){
+            else if (location.sublevel && !location.sublevel.length) {
                 this.dropClicked(params);
             }
         },
@@ -78,12 +80,12 @@ var selecao = new Vue({
                         location[indexes[0]].sublevel = this.parseSub(location[indexes[0]].selected);
 
                         //if class is selected load every all descendants
-                        if(location[indexes[0]].selected){
-                            for(var i=0;i<location[indexes[0]].sublevel.length;i++){
-                                if(location[indexes[0]].sublevel[i].sublevel && !location[indexes[0]].sublevel[i].sublevel.length){
-                                    tempParams=JSON.parse(JSON.stringify(params));
-                                    tempParams.id+="."+i;
-                                    tempParams.rowData.codeID=location[indexes[0]].sublevel[i].codeID;
+                        if (location[indexes[0]].selected) {
+                            for (var i = 0; i < location[indexes[0]].sublevel.length; i++) {
+                                if (location[indexes[0]].sublevel[i].sublevel && !location[indexes[0]].sublevel[i].sublevel.length) {
+                                    tempParams = JSON.parse(JSON.stringify(params));
+                                    tempParams.id += "." + i;
+                                    tempParams.rowData.codeID = location[indexes[0]].sublevel[i].codeID;
 
                                     this.dropClicked(tempParams);
                                 }
@@ -108,15 +110,41 @@ var selecao = new Vue({
                 this.loadSub(tail, newLocation, params);
             }
         },
+        genID: function () {
+            var list = null;
+
+            this.$http.get("/selTabs")
+                .then(function (response) {
+                    list = response.body;
+                })
+                .then(function () {
+                    var newIDNum = 1;
+
+                    for (var i = 0; i < list.length; i++) {
+                        var idNum = parseInt(list[i].id.value.replace(/[^#]+#ts_(.*)/, '$1'));
+
+                        if (newIDNum == idNum) {
+                            newIDNum++;
+                        }
+                        else {
+                            break;
+                        }
+                    }
+                    this.id = "ts_" + newIDNum;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
         rowClicked: function (params) {
             window.location.href = '/classe?id=c' + params.rowData[0];
         },
         parse: function () {
             // parsing the JSON
             for (var i = 0; i < this.content.length; i++) {
-                var temp = { 
-                    content: "", 
-                    sublevel: false, 
+                var temp = {
+                    content: "",
+                    sublevel: false,
                     selected: false,
                     drop: false,
                     subReady: false,
@@ -141,11 +169,11 @@ var selecao = new Vue({
         },
         parseSub: function (selecValue) {
             var ret = []
-            var temp = { 
-                content: "", 
-                sublevel: false, 
-                selected: selecValue, 
-                drop:false, 
+            var temp = {
+                content: "",
+                sublevel: false,
+                selected: selecValue,
+                drop: false,
                 subReady: false
             };
 
@@ -160,7 +188,7 @@ var selecao = new Vue({
                 temp.codeID = id;
 
                 if (parseInt(this.subTemp[i].NChilds.value) > 0) {
-                    temp.sublevel = true;  
+                    temp.sublevel = true;
                 }
                 else {
                     temp.sublevel = false;
@@ -178,28 +206,51 @@ var selecao = new Vue({
 
             return ret;
         },
-        getSelected: function(location){
-            var list=[];
+        getSelected: function (location) {
+            var list = [];
 
-            for(var i=0;i<location.length;i++){
+            for (var i = 0; i < location.length; i++) {
                 //if a node is selected add its ID to the list and check its descendants
-                if(location[i].selected){
+                if (location[i].selected) {
                     list.push(location[i].codeID);
 
-                    if(location[i].sublevel && location[i].sublevel.length){
-                        list=list.concat(this.getSelected(location[i].sublevel));
+                    if (location[i].sublevel && location[i].sublevel.length) {
+                        list = list.concat(this.getSelected(location[i].sublevel));
                     }
                 }
             }
             return list;
         },
-        createSelTab: function(){
-            var list=this.getSelected(this.tableData);
-            console.log(list);
+        createSelTab: function () {
+            var dataObj = {
+                id: this.id,
+                name: this.name,
+                classes: this.getSelected(this.tableData),
+            }
+
+            this.$http.post('/createSelTab',dataObj,{
+                headers: {
+                    'content-type' : 'application/json'
+                }
+            })
+            .then( function(response) { 
+                this.message = response.body;
+                /*
+                if(response.body=="Inserido!"){
+                    window.location.href = '/organizacao?id=org_'+this.initials;
+                }*/
+            })
+            .catch( function(error) { 
+                console.error(error); 
+            });
+
+
         }
 
     },
     created: function () {
+        this.genID();
+
         this.tableHeader = [
             "CLASSE",
             "TÍTULO"

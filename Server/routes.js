@@ -44,7 +44,15 @@ module.exports = function(app) {
         res.render('Pages/Classes/consultaClasse');
     });
 
+    app.get('/tabelasSelecao', function(req, res) {
+        res.render('Pages/TabsSel/tabelas');
+    });
+
     app.get('/novaTabSel', function(req, res) {
         res.render('Pages/TabsSel/adicionarTabela');
+    });
+
+    app.get('/tabelaSelecao', function(req, res) {
+        res.render('Pages/TabsSel/consultarTabela');
     });
 }

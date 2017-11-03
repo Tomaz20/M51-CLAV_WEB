@@ -1,5 +1,5 @@
-var classes = new Vue({
-    el: '#tabela-classes',
+var tabSel = new Vue({
+    el: '#tabela-selecao',
     data: {
         subReady: {},
         tableHeader: [],
@@ -9,8 +9,19 @@ var classes = new Vue({
         cwidth: ['15%','81%'],
         subTemp: [],
         nEdits: 0,
+        name: "",
+        id: null,
     },
     methods: {
+        getParameterByName: function(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        },
         swap: function(array,pos1,pos2){
             var temp=array[pos1];
             array[pos1]=array[pos2];
@@ -30,7 +41,7 @@ var classes = new Vue({
         },
         loadSub: function(indexes,location,params){
             if(indexes.length==1){
-                this.$http.get("/childClasses?parent="+params.rowData.codeID)
+                this.$http.get("/childClasses?parent="+params.rowData.codeID+"&table="+this.id)
                 .then( function(response) { 
                     this.subTemp = response.body;
                 })
@@ -113,9 +124,6 @@ var classes = new Vue({
             
             return ret;
         },
-        addClass: function(row){
-            window.location.href = '/novaClasse';
-        },
     },
     created: function(){
         this.tableHeader=[
@@ -123,7 +131,17 @@ var classes = new Vue({
             "TÍTULO"
         ];
 
-        this.$http.get("/classesn")
+        this.id=this.getParameterByName('table');        
+
+        this.$http.get("/selTab?table="+this.id)
+        .then( function(response) {
+            this.name = response.body[0].Name.value;
+        })
+        .catch( function(error) { 
+            console.error(error); 
+        });
+
+        this.$http.get("/classesn?table="+this.id)
         .then( function(response) {
             this.content = response.body;
         })

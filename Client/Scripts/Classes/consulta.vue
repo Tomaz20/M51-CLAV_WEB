@@ -93,14 +93,15 @@ var classe = new Vue({
                     orgsToParse = response.body;
                 })
                 .then(function () {
-                    this.orgList = this.parse(orgsToParse, keys).map(function(item){
+                    this.orgList = this.parse(orgsToParse, keys)
+                    .map(function(item){
                         return {
-                            label: item.Sigla+"",
+                            label: item.Sigla+" - "+item.Nome,
                             value: item,
                         }
                     }).sort(function (a, b) {
                         return a.label.localeCompare(b.label);
-                    });;
+                    });
 
                     this.orgsReady = true;
                 })
@@ -136,7 +137,8 @@ var classe = new Vue({
                     legsToParse = response.body;
                 })
                 .then(function () {
-                    this.legList = this.parse(legsToParse, keys).map(function(item){
+                    this.legList = this.parse(legsToParse, keys)
+                    .map(function(item){
                         return {
                             label: item.Tipo+" - "+item.Número,
                             value: item,
@@ -232,7 +234,8 @@ var classe = new Vue({
                     classesToParse = response.body;
                 })
                 .then(function () {
-                    this.classList = this.parse(classesToParse, keys).map(function(item){
+                    this.classList = this.parse(classesToParse, keys)
+                    .map(function(item){
                         return {
                             label: item.Code+" - "+item.Title,
                             value: item,
@@ -372,9 +375,6 @@ var classe = new Vue({
             this.loadRelProcs();
 
             this.loadParticipants();
-        },
-        addOwner: function (index) {
-            this.newClass.Owners.push(this.orgList[index]);
         },
         remOwner: function (index) {
             this.newClass.Owners.splice(index, 1);
