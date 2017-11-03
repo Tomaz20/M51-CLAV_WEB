@@ -1,9 +1,8 @@
 TODOS:
     -preparar uma navbar decente
 
-    -mover "mostrar X entradas" para baixo da tabela?
-
     -substituir função de gerar id para legislações
+    -passar função de gerar id para tabelas de seleção para o servidor
 
     -página principal
 

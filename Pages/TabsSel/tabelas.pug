@@ -1,0 +1,27 @@
+extends ../Templates/layout
+block corpo
+    h1.page-header Tabelas de Seleção
+    .row
+        #tabelas-selecao.row.placeholders
+            custom-table-simple(
+                v-if="ready"
+
+                :header="tableHeader"
+                :complete-rows="tableData"
+                :ready="ready"
+                :cwidth="cwidth"
+                
+                class-table='table table-hover'
+                add="true"
+
+                @row-clicked="rowClicked($event)"
+                @add-clicked="addTab"
+            )
+            h4(
+                v-else
+            ) Loading...    
+    //-
+
+append scripts    
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.14.1/lodash.min.js")
+    script(src="/Scripts/TabsSel/listagem.vue")
