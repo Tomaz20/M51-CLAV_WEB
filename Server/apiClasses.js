@@ -198,10 +198,6 @@ module.exports = function (app) {
                 }`;
 
             
-<<<<<<< HEAD
-
-=======
->>>>>>> master
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -240,10 +236,6 @@ module.exports = function (app) {
                 }`;
 
             
-<<<<<<< HEAD
-
-=======
->>>>>>> master
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -279,10 +271,6 @@ module.exports = function (app) {
                 }`;
 
             
-<<<<<<< HEAD
-
-=======
->>>>>>> master
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -319,10 +307,6 @@ module.exports = function (app) {
                 }`;
 
             
-<<<<<<< HEAD
-
-=======
->>>>>>> master
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -359,10 +343,6 @@ module.exports = function (app) {
                 }`;
 
             
-<<<<<<< HEAD
-
-=======
->>>>>>> master
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -409,10 +389,6 @@ module.exports = function (app) {
             `;
 
             
-<<<<<<< HEAD
-
-=======
->>>>>>> master
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -455,10 +431,6 @@ module.exports = function (app) {
             `;
 
             
-<<<<<<< HEAD
-
-=======
->>>>>>> master
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
