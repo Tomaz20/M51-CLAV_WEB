@@ -12,3 +12,5 @@ TODOS:
     -redirecionar para pagina certa após create/update/delete
         -orgs
         -legs
+
+    -fix na barra de navegação em mobile
