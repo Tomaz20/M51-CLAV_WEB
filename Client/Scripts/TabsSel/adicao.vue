@@ -8,8 +8,8 @@ var selecao = new Vue({
         cwidth: ['15%', '81%'],
         subTemp: [],
         nEdits: 0,
-        id: null,
         name: "",
+        message: "",
     },
     methods: {
         swap: function (array, pos1, pos2) {
@@ -110,32 +110,6 @@ var selecao = new Vue({
                 this.loadSub(tail, newLocation, params);
             }
         },
-        genID: function () {
-            var list = null;
-
-            this.$http.get("/selTabs")
-                .then(function (response) {
-                    list = response.body;
-                })
-                .then(function () {
-                    var newIDNum = 1;
-
-                    for (var i = 0; i < list.length; i++) {
-                        var idNum = parseInt(list[i].id.value.replace(/[^#]+#ts_(.*)/, '$1'));
-
-                        if (newIDNum == idNum) {
-                            newIDNum++;
-                        }
-                        else {
-                            break;
-                        }
-                    }
-                    this.id = "ts_" + newIDNum;
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
-        },
         rowClicked: function (params) {
             window.location.href = '/classe?id=c' + params.rowData[0];
         },
@@ -223,7 +197,6 @@ var selecao = new Vue({
         },
         createSelTab: function () {
             var dataObj = {
-                id: this.id,
                 name: this.name,
                 classes: this.getSelected(this.tableData),
             }
@@ -234,11 +207,7 @@ var selecao = new Vue({
                 }
             })
             .then( function(response) { 
-                this.message = response.body;
-                /*
-                if(response.body=="Inserido!"){
-                    window.location.href = '/organizacao?id=org_'+this.initials;
-                }*/
+                window.location.href = '/tabelaSelecao?table='+response.body;
             })
             .catch( function(error) { 
                 console.error(error); 
@@ -249,8 +218,6 @@ var selecao = new Vue({
 
     },
     created: function () {
-        this.genID();
-
         this.tableHeader = [
             "CLASSE",
             "TÍTULO"

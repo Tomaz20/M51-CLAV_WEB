@@ -1,14 +1,21 @@
 module.exports = function (app) {
 
+//  Ontology endpoint
+    const { SparqlClient, SPARQL } = require('sparql-client-2');
+
+    const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
+        updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
+    }).register({
+        rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+        clav: 'http://jcr.di.uminho.pt/m51-clav#',
+        owl: 'http://www.w3.org/2002/07/owl#',
+        rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+        noInferences: 'http://www.ontotext.com/explicit'
+    });
+//
+
     app.get('/orgs', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-        });
-
+        
         function fetchOrgs() {
             return client.query(
                 `SELECT ?id ?Nome ?Sigla where {
@@ -33,19 +40,12 @@ module.exports = function (app) {
     })
 
     app.get('/singleOrg', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
 
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-            });
-
         function fetchOrg(id) {
-            return client.query(
-                SPARQL`SELECT ?Nome ?Sigla where {
-                    ${{ clav: id }} clav:orgNome ?Nome ;
+            return client.query(`
+                SELECT ?Nome ?Sigla where {
+                    clav:${id} clav:orgNome ?Nome ;
                         clav:orgSigla ?Sigla
                 }`
             )
@@ -68,19 +68,12 @@ module.exports = function (app) {
     })
 
     app.get('/domainOrg', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-            });
 
         function fetchDomain(id) {
             var fetchQuery= `
                 SELECT * WHERE {
-                    ?id clav:temDono clav:`+id+` ;
+                    ?id clav:temDono clav:${id} ;
                         clav:codigo ?Code ;
                         clav:titulo ?Title .
                 }`
@@ -105,20 +98,13 @@ module.exports = function (app) {
     })
 
     app.get('/partsOrg', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-            });
 
         function fetchParts(id) {
             var fetchQuery= `
                 select * where { 
-                    ?id clav:temParticipante clav:`+id+` ;
-                        ?Type clav:`+id+` ;
+                    ?id clav:temParticipante clav:${id} ;
+                        ?Type clav:${id} ;
                     
                         clav:titulo ?Title ;
                         clav:codigo ?Code .
@@ -146,17 +132,6 @@ module.exports = function (app) {
     })
 
     app.post('/createOrg', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
-                updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
-            })
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-                owl: 'http://www.w3.org/2002/07/owl#',
-        });
-
         //Check if organization Name or Initials already exist
         function checkOrg(name, initials) {
             var checkQuery = `
@@ -178,12 +153,12 @@ module.exports = function (app) {
 
         //Create new organization
         function createOrg(id, name, initials) {
-            var createQuery = SPARQL`
+            var createQuery = `
                 INSERT DATA {
-                    ${{ clav: id }} rdf:type owl:NamedIndividual ,
+                    clav:${id} rdf:type owl:NamedIndividual ,
                             clav:Organizacao ;
-                        clav:orgNome ${name} ;
-                        clav:orgSigla ${initials}
+                        clav:orgNome '${name}' ;
+                        clav:orgSigla '${initials}'
                 }
             `;
 
@@ -216,19 +191,9 @@ module.exports = function (app) {
     })
 
     app.put('/updateOrg', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
-                updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
-            })
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-        });
-
         //Check if organization Name or Initials already exist
         function checkOrg(name, initials) {
-            var checkQuery = `
+            var checkQuery = ` 
                 SELECT (count(*) as ?Count) where { 
                     ?o rdf:type clav:Organizacao ;
                         clav:orgSigla ?s ;
@@ -248,39 +213,39 @@ module.exports = function (app) {
         //Update organization
         function updateOrg(id, name, initials) {
             if (name && !initials) {
-                var updateQuery = SPARQL`
-                    DELETE {${{ clav: id }} clav:orgNome ?o }
-                    INSERT {${{ clav: id }} clav:orgNome ${name} }
-                    WHERE  {${{ clav: id }} ?p ?o }
+                var updateQuery = `
+                    DELETE {clav:${id} clav:orgNome ?o }
+                    INSERT {clav:${id} clav:orgNome '${name}' }
+                    WHERE  {clav:${id} ?p ?o }
                 `;
             }
             else if (!name && initials) {
                 var newID = "org_" + initials;
 
-                var updateQuery = SPARQL`
-                    DELETE {${{ clav: id }} ?p ?o }
+                var updateQuery = `
+                    DELETE {clav:${id} ?p ?o }
                     INSERT {
-                        ${{ clav: newID }} rdf:type clav:Organizacao ;
+                        clav:${newID} rdf:type clav:Organizacao ;
                             clav:orgNome ?nome ;
-                            clav:orgSigla ${initials}
+                            clav:orgSigla '${initials}'
                     }
-                    WHERE  {${{ clav: id }} clav:orgNome ?nome };
-                    DELETE {${{ clav: id }} ?p ?o }
+                    WHERE  {clav:${id} clav:orgNome ?nome };
+                    DELETE {clav:${id} ?p ?o }
                     WHERE {?s ?p ?o}
                 `;
             }
             else {
                 var newID = "org_" + initials;
 
-                var updateQuery = SPARQL`
-                    DELETE {${{ clav: id }} ?p ?o }
+                var updateQuery = `
+                    DELETE {clav:${id} ?p ?o }
                     INSERT {
-                        ${{ clav: newID }} rdf:type clav:Organizacao ;
-                            clav:orgNome ${name} ;
-                            clav:orgSigla ${initials}
+                        clav:${newID} rdf:type clav:Organizacao ;
+                            clav:orgNome '${name}' ;
+                            clav:orgSigla '${initials}'
                     }
-                    WHERE  {${{ clav: id }} ?p ?o };
-                    DELETE {${{ clav: id }} ?p ?o }
+                    WHERE  {clav:${id} ?p ?o };
+                    DELETE {clav:${id} ?p ?o }
                     WHERE {?s ?p ?o}
                 `;
             }
@@ -316,20 +281,11 @@ module.exports = function (app) {
     })
 
     app.post('/deleteOrg', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
-                updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
-            })
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-        });
-
+        
         function deleteOrg(id) {
-            var deleteQuery = SPARQL`
+            var deleteQuery = `
                 DELETE {
-                    ${{ clav: id }} ?o ?p
+                    clav:${id} ?o ?p
                 }
                 WHERE { ?s ?o ?p }
             `;

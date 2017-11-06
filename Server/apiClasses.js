@@ -1,18 +1,22 @@
 module.exports = function (app) {
 
+//  Ontology endpoint
+    const { SparqlClient, SPARQL } = require('sparql-client-2');
+
+    const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
+        updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
+    }).register({
+        rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+        clav: 'http://jcr.di.uminho.pt/m51-clav#',
+        owl: 'http://www.w3.org/2002/07/owl#',
+        rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+        noInferences: 'http://www.ontotext.com/explicit'
+    });
+//
+
     //get a list of classes from a given level N (default N=1)
     app.get('/classesn', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-                rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
-                noInferences: 'http://www.ontotext.com/explicit'
-            }
-            );
 
         function fetchClasses(level,table) {
             if (!level) {
@@ -68,16 +72,7 @@ module.exports = function (app) {
 
     //get the list of child classes of a given class (opt.: filter by TS)
     app.get('/childClasses', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-                rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
-                noInferences: 'http://www.ontotext.com/explicit'
-            });
 
         function fetchChilds(parent,table) {
             var fetchQuery = `
@@ -129,14 +124,7 @@ module.exports = function (app) {
 
     //get data on a single class
     app.get('/singleClass', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-            });
 
         function fetchClass(id) {
             var fetchQuery = `
@@ -180,14 +168,7 @@ module.exports = function (app) {
 
     //get list of class Owners
     app.get('/ownersClass', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-            });
 
         function fetchOwners(id) {
             var fetchQuery = `
@@ -217,14 +198,7 @@ module.exports = function (app) {
 
     //get list of legislations associated with a class
     app.get('/legsClass', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-            });
 
         function fetchLegs(id) {
             var fetchQuery = `
@@ -255,14 +229,7 @@ module.exports = function (app) {
 
     //get list of a class' example(s) of application notes
     app.get('/exAppNotesClass', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-            });
 
         function fetchExamples(id) {
             var fetchQuery = `
@@ -290,14 +257,7 @@ module.exports = function (app) {
 
     //get list of a class' application notes
     app.get('/appNotesClass', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-            });
 
         function fetchAppNotes(id) {
             var fetchQuery = `
@@ -326,14 +286,7 @@ module.exports = function (app) {
 
     //get list of a class' deletion notes
     app.get('/delNotesClass', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-            });
 
         function fetchDelNotes(id) {
             var fetchQuery = `
@@ -362,14 +315,7 @@ module.exports = function (app) {
 
     //get list of a classes related to a given class
     app.get('/relProcsClass', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-            });
 
         function fetchRelProc(id) {
             var fetchQuery = `
@@ -408,14 +354,7 @@ module.exports = function (app) {
 
     //get list of participants in a class
     app.get('/participantsClass', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-            });
 
         function fetchParticipant(id) {
             var fetchQuery = `
@@ -450,16 +389,7 @@ module.exports = function (app) {
 
     //updates a class's info
     app.put('/updateClass', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
-            updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
-        })
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-            });
-
+        
         function prepDelete(dataObj) {
             var deletePart = "\n";
 
@@ -656,19 +586,7 @@ module.exports = function (app) {
 
     //inserts a new class into the DB
     app.post('/createClass', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
-            updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
-        })
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-                owl: 'http://www.w3.org/2002/07/owl#',
-            });
-
-
-        //Create new organization
+        //Create new class
         function createClass(data) {
             var id = "c" + data.Code;
             var level = "Classe_N" + data.Level;
@@ -774,16 +692,7 @@ module.exports = function (app) {
 
     //Deletes a class 
     app.post('/deleteClass', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
-                updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
-            })
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-        });
-
+        
         function deleteClass(id) {
             var delQuery = `
                 DELETE {

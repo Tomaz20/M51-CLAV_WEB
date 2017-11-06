@@ -226,33 +226,6 @@ var newClass = new Vue({
                 this.newDelNote = '';
             }
         },
-        createAppNotes: function (code, list) {
-            var dataObj = [];
-
-            for (var i = 0; i < list.length; i++) {
-                var temp = {
-                    id: "",
-                    text: "",
-                };
-
-                temp.id = "na_c" + code + "_" + (i + 1);
-                temp.text = list[i];
-
-                dataObj[i] = JSON.parse(JSON.stringify(temp));
-            }
-
-            this.$http.post('/createAppNotes', { "list": dataObj },{
-                headers: {
-                    'content-type' : 'application/json'
-                }
-            })
-            .then(function (response) {
-                this.message = response.body;
-            })
-            .catch(function (error) {
-                console.error(error);
-            });
-        },
         checkready: function (dataObj){
             if(!this.code.match(/^([0-9]+\.)*[0-9]+$/)){
                 this.message="Formato do código errado!";
@@ -372,30 +345,6 @@ var newClass = new Vue({
                     return false;
                 }
             }
-        },
-        createDelNotes: function (code, list) {
-            var dataObj = [];
-            
-            for (var i = 0; i < list.length; i++) {
-                var temp = { id: "", text: "" };
-
-                temp.id = "ne_c" + code + "_" + (i + 1);
-                temp.text = list[i];
-
-                dataObj[i] = JSON.parse(JSON.stringify(temp));
-            }
-
-            this.$http.post('/createDelNotes', { "list": dataObj },{
-                headers: {
-                    'content-type' : 'application/json'
-                }
-            })
-            .then(function (response) {
-                this.message = response.body;
-            })
-            .catch(function (error) {
-                console.error(error);
-            });
         },
         add: function () {
 
