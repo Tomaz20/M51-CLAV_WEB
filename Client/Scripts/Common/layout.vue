@@ -1,4 +1,4 @@
-var nav = new Vue({
+new Vue({
     el: '#selTabs',
     data: {
         selTabs: null,

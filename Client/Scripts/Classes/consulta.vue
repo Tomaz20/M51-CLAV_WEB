@@ -1,4 +1,4 @@
-var classe = new Vue({
+new Vue({
     el: '#classe-form',
     data: {
         message: "",

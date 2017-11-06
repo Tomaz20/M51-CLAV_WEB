@@ -1,4 +1,4 @@
-var tabs = new Vue({
+new Vue({
     el: '#tabelas-selecao',
     data: {
         tableHeader: [],

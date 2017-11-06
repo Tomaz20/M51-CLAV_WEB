@@ -1,4 +1,4 @@
-var newLeg = new Vue({
+new Vue({
     el: '#nova-legislacao-form',
     data: {
         legData : {

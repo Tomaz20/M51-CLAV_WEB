@@ -1,4 +1,4 @@
-var org = new Vue({
+new Vue({
     el: '#organizacao-form',
     data: {
         id: "",

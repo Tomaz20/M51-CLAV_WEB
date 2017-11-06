@@ -1,4 +1,4 @@
-var newOrg = new Vue({
+new Vue({
     el: '#nova-organizacao-form',
     data: {
         name: "",

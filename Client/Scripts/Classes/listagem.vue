@@ -1,4 +1,4 @@
-var classes = new Vue({
+new Vue({
     el: '#tabela-classes',
     data: {
         subReady: {},

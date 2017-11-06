@@ -1,4 +1,4 @@
-var legs = new Vue({
+new Vue({
     el: '#tabela-legislacoes',
     data: {
         tableHeader: [],

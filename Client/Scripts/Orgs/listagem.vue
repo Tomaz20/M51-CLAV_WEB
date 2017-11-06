@@ -1,4 +1,4 @@
-var orgs = new Vue({
+new Vue({
     el: '#tabela-organizacoes',
     data: {
         tableHeader: [],

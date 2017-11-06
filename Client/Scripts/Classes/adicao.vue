@@ -1,4 +1,4 @@
-var newClass = new Vue({
+new Vue({
     el: '#nova-classe-form',
     http: {
         emulateJSON: true,

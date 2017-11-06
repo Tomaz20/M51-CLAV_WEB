@@ -1,4 +1,4 @@
-var tabSel = new Vue({
+new Vue({
     el: '#tabela-selecao',
     data: {
         subReady: {},

@@ -1,4 +1,4 @@
-var selecao = new Vue({
+new Vue({
     el: '#selecao',
     data: {
         tableHeader: [],
