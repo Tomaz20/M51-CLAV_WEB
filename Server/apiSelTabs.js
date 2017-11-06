@@ -3,8 +3,8 @@ module.exports = function (app) {
 //  Ontology endpoint
     const { SparqlClient, SPARQL } = require('sparql-client-2');
 
-    const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
-        updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
+    const client = new SparqlClient('http://epl.di.uminho.pt:40003/repositories/M51-CLAV', {
+        updateEndpoint: 'http://epl.di.uminho.pt:40003/repositories/M51-CLAV/statements'
     }).register({
         rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
         clav: 'http://jcr.di.uminho.pt/m51-clav#',
