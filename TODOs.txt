@@ -6,7 +6,3 @@ TODOS:
     -ver Passport (autenticação)
         -User/Pass
         -cc
-
-    -redirecionar para pagina certa após create/update/delete
-        -orgs
-        -legs

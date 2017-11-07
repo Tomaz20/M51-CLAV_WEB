@@ -163,6 +163,9 @@ new Vue({
             })
             .then( function(response) { 
                 this.message = response.body;
+                if(this.message=="Actualizado!"){
+                    window.location.href = '/legislacao?id='+this.id;
+                }
             })
             .catch( function(error) { 
                 console.error(error); 

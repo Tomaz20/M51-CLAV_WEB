@@ -52,8 +52,14 @@ new Vue({
                 }
             })
             .then( function(response) { 
-                this.message = response.body;
-                window.location.href = '/legislacoes';
+                regex = new RegExp(/leg_[0-9]+/, "gi");
+
+                if(regex.test(response.body)){
+                    window.location.href = '/legislacao?id='+response.body;
+                }
+                else {
+                    this.message = response.body;
+                }
             })
             .catch( function(error) { 
                 console.error(error); 

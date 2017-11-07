@@ -211,7 +211,7 @@ module.exports = function (app) {
 
                             createLeg(newID, year, date, number, type, title, link)
                                 .then(function () {
-                                    res.send("Inserido!");
+                                    res.send(newID);
                                 })
                                 .catch(error => console.error(error));
 

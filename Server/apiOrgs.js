@@ -271,7 +271,12 @@ module.exports = function (app) {
                 else {
                     updateOrg(id, name, initials)
                         .then(function () {
-                            res.send("Actualizado!");
+                            if(initials){
+                                res.send("org_"+initials);
+                            }
+                            else{
+                                res.send(id);
+                            }
                         })
                         .catch(error => console.error(error));
                 }
