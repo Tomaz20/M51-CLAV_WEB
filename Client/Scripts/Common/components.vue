@@ -198,7 +198,7 @@ Vue.component('row-waterfall', {
                                 <span>
                                     <label
                                         :for="'toggle'+id"
-                                        :class="[row.drop ? 'glyphicon glyphicon-chevron-down' : 'glyphicon glyphicon-chevron-right']"
+                                        :class="[row.drop ? 'glyphicon glyphicon-minus' : 'glyphicon glyphicon-plus']"
                                     />
                                     <input
                                         :id="'toggle'+id" 

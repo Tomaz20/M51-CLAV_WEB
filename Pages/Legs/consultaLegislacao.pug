@@ -2,10 +2,10 @@ extends ../Templates/layout
 block corpo
     #legislacao-form.panel.panel-default
         .panel-heading
-            h1.page-header {{ legData.number.original }}  
+            h1.page-header {{ legData.type.original }} {{ legData.number.original }}  
         .panel-body
             .form-group
-                table(v-if="ready")
+                table(v-if="ready").consulta
                     tr(v-for="item in legData")
                         td(style="width:12%")
                             label {{ item.label }}: 
@@ -16,7 +16,8 @@ block corpo
                                 :placeholder="item.original"
                             )
                         td(v-else style="width:80%")
-                            | {{ item.original }}  
+                            span(v-if="item.label!='Link'") {{ item.original }}  
+                            a(v-else :href="item.original") Ficheiro
                         td
                             label(style="padding-right:5px") Editar
                             input(

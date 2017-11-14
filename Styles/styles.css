@@ -110,3 +110,7 @@
     display: none;
 }
 
+
+.table-hover tbody:hover > tr:hover {
+    background-color: rgba(201, 201, 201, 0.514) !important;
+}
