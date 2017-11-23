@@ -67,7 +67,6 @@ app.use(expressValidator({
   }
 }));
 
-
 //Starts and listens
 var port = process.env.PORT || 40004;
 app.listen(port, function() {
