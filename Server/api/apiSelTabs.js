@@ -80,7 +80,6 @@ module.exports = function (app) {
                 });
         }
 
-
         //generate a new ID
         function genID(ids) {
             var newIDNum = 1;
@@ -103,9 +102,8 @@ module.exports = function (app) {
             return "ts_" + newIDNum;
         }
 
-
-        //Create new organization
-        function createLeg(id, name, classes) {
+        //Create new table
+        function createSelTab(id, name, classes) {
             var createQuery = SPARQL`
                 INSERT DATA {
                     clav:`+ id + ` rdf:type owl:NamedIndividual ,
@@ -139,8 +137,9 @@ module.exports = function (app) {
             .then(function (list) {
                 var id = genID(list);
 
-                createLeg(id, name, classes)
+                createSelTab(id, name, classes)
                     .then(function () {
+                        req.flash('success_msg', 'Tabela de Seleção criada');
                         res.send(id);
                     })
                     .catch(error => console.error(error)

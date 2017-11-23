@@ -1,8 +1,16 @@
 TODOS:
     -preparar uma navbar decente
 
-    -página principal
-
     -ver Passport (autenticação)
-        -User/Pass
         -cc
+
+    -ts a partir de org
+
+    -logs
+        -quem
+        -quando
+        -oque
+
+    -listagem de classes em harmonização
+
+    938312013

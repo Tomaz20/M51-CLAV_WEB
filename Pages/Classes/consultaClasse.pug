@@ -7,6 +7,34 @@ block corpo
             .form-group
                 table.consulta(v-if="pageReady")
                     
+                    //- STATUS
+                    tr
+                        td(style="width:10%")
+                            label Status: 
+                        td(v-if="edit.Status" style="width:80%")
+                            select(
+                                v-model="newClass.Status"
+                            )
+                                option(
+                                    value="H"
+                                    selected
+                                )   Harmonização
+                                option(
+                                    value="A"
+                                )   Activa
+                                option(
+                                    value="I"
+                                ) Inactiva
+                                
+                        td(v-else style="width:80%")
+                            | {{ clas.Status }}  
+                        td(style="width:10%")
+                            label(style="padding-right:5px") Editar
+                            input(
+                                type="checkbox"
+                                v-model="edit.Status"
+                            )
+
                     //- CLASSE PAI
                     tr(v-if="clas.Level>1")
                         td(style="width:10%")
@@ -305,31 +333,43 @@ block corpo
                     tr(v-if="clas.Level==3")
                         td(style="width:10%")
                             label Processo(s) Relacionado(s):
+                            
                         td(v-if="edit.RelProcs" style="width:80%")
                             table
                                 tr
-                                    td
-                                        v-select.custom-select( 
+                                    td(width="30%")
+                                        v-select.custom-select(
+                                            v-model="newClass.RelType"
+                                            :options="Object.keys(clas.RelProcs)"
+                                        )
+                                    td(width="30%")
+                                        v-select.custom-select(
                                             v-model="newClass.RelProc"
                                             :options="classList"
                                         )
                                     td
                                         button(
-                                            @click="addRelProc(newClass.RelProc.value)"
+                                            @click="addRelation(newClass.RelType,newClass.RelProc.value)"
                                         ) +
                                 tr
-                                    td(colspan="2")
-                                        ul(style="padding-left:20px")
-                                            li(v-for="(c,index) in newClass.RelProcs")
-                                                | {{ c.Code }} - {{ c.Title }}
-                                                button(
-                                                    @click="remRelProc(index)"
-                                                ) x
+                                    td(colspan=3)
+                                        ul(v-if="relProcsReady" style="padding-left:20px")
+                                            li(v-for="key in Object.keys(newClass.RelProcs)" v-if="newClass.RelProcs[key].length>0")
+                                                b É {{ key }}:
+                                                ul
+                                                    li(v-for="(c, index) in newClass.RelProcs[key]")
+                                                        | {{ c.Code }} - {{ c.Title }}
+                                                        button(
+                                                            @click="remRelation(key, index)"
+                                                        ) x
                         td(v-else style="width:80%")
                             ul(v-if="relProcsReady" style="padding-left:20px")
-                                li(v-for="c in clas.RelProcs")
-                                    a(:href="'/classe?id='+c.id") {{ c.Code }}
-                                    |  - {{ c.Title }}
+                                li(v-for="key in Object.keys(clas.RelProcs)" v-if="clas.RelProcs[key].length>0")
+                                    b É {{ key }}
+                                    ul
+                                        li(v-for="c in clas.RelProcs[key]")
+                                            a(:href="'/classe?id='+c.id") {{ c.Code }}
+                                            |  - {{ c.Title }}
 
                         td(style="width:10%")
                             label(style="padding-right:5px") Editar
@@ -338,24 +378,6 @@ block corpo
                                 v-model="edit.RelProcs"
                             )
 
-                    //- STATUS
-                    tr
-                        td(style="width:10%")
-                            label Status: 
-                        td(v-if="edit.Status" style="width:80%")
-                            input(
-                                size="50"
-                                v-model="newClass.Status"
-                                :placeholder="clas.Status"
-                            )
-                        td(v-else style="width:80%")
-                            | {{ clas.Status }}  
-                        td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="edit.Status"
-                            )
 
                     //- LEGISLAÇÕES
                     tr(v-if="clas.Level==3")

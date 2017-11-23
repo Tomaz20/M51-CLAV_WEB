@@ -44,6 +44,7 @@ new Vue({
             DelNote: "",
             DelNotes: [],
             RelProc: "",
+            RelType: "",
             RelProcs: [],
             Participant: "",
             ParticipantType: "",
@@ -259,14 +260,44 @@ new Vue({
                     relProcsToParse = response.body;
                 })
                 .then(function () {
-                    this.clas.RelProcs = JSON.parse(JSON.stringify(this.parse(relProcsToParse, keys)));
-                    this.newClass.RelProcs = JSON.parse(JSON.stringify(this.parse(relProcsToParse, keys)));
+                    this.clas.RelProcs = JSON.parse(JSON.stringify(this.parseRelations(relProcsToParse, keys)));
+                    this.newClass.RelProcs = JSON.parse(JSON.stringify(this.parseRelations(relProcsToParse, keys)));
 
                     this.relProcsReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
+        },       
+        parseRelations: function (content, keys) {
+            var dest = {
+                'Antecessor De': [],
+                'Complementar De': [],
+                'Cruzado Com': [],
+                'Sintese De': [],
+                'Sintetizado Por': [],
+                'Sucessor De': [],
+                'Suplemento De': [],
+                'Suplemento Para': []
+            };
+            var temp = {};
+
+            // parsing the JSON
+            for (var i = 0; i < content.length; i++) {
+                for (var j = 0; j < keys.length; j++) {
+
+                    temp[keys[j]] = content[i][keys[j]].value;
+
+                    if (keys[j] == "id") {
+                        temp.id = temp.id.replace(/[^#]+#(.*)/, '$1');
+                    }
+                }
+                var type = content[i].Type.value.replace(/.*#e(.*)/, '$1').replace(/([a-z])([A-Z])/, '$1 $2');
+                
+                dest[type].push(JSON.parse(JSON.stringify(temp)));
+            }
+
+            return dest;
         },
         loadParticipants: function () {
             var participantsToParse = [];
@@ -472,6 +503,12 @@ new Vue({
         remParticipant: function (key, index) {
             this.newClass.Participants[key].splice(index, 1);
         },
+        addRelation: function (type,relation) {
+            this.newClass.RelProcs[type].push(relation);
+        },
+        remRelation: function (key, index) {
+            this.newClass.RelProcs[key].splice(index, 1);
+        },
         addRelProc: function (proc) {
             this.newClass.RelProcs.push(proc);
         },
@@ -551,8 +588,38 @@ new Vue({
                     Delete: null,
                 },
                 RelProcs: {
-                    Add: null,
-                    Delete: null,
+                    'Antecessor De': {
+                        Add: null,
+                        Delete: null,
+                    },
+                    'Complementar De': {
+                        Add: null,
+                        Delete: null,
+                    },
+                    'Cruzado Com': {
+                        Add: null,
+                        Delete: null,
+                    },
+                    'Sintese De': {
+                        Add: null,
+                        Delete: null,
+                    },
+                    'Sintetizado Por': {
+                        Add: null,
+                        Delete: null,
+                    },
+                    'Sucessor De': {
+                        Add: null,
+                        Delete: null,
+                    },
+                    'Suplemento De': {
+                        Add: null,
+                        Delete: null,
+                    },
+                    'Suplemento Para': {
+                        Add: null,
+                        Delete: null,
+                    },
                 },
                 Participants: {
                     Apreciador: {
@@ -590,7 +657,7 @@ new Vue({
                 }
             }
 
-            var arraysKeys = ["Owners", "Legs", "AppNotes", "DelNotes", "RelProcs"];
+            var arraysKeys = ["Owners", "Legs", "AppNotes", "DelNotes"];
 
             for (var i = 0; i < arraysKeys.length; i++) {
                 if (this.edit[arraysKeys[i]]) {
@@ -621,6 +688,23 @@ new Vue({
                     temp.Delete = this.subtractArray(this.clas.Participants[participantKeys[i]], this.newClass.Participants[participantKeys[i]]);
 
                     dataObj.Participants[participantKeys[i]] = JSON.parse(JSON.stringify(temp));
+                }
+            }
+
+            var relationKeys = Object.keys(this.clas.RelProcs);
+            
+            if (this.edit.RelProcs) {
+                for (var i = 0; i < relationKeys.length; i++) {
+
+                    var temp = {
+                        Add: null,
+                        Delete: null,
+                    };
+
+                    temp.Add = this.subtractArray(this.newClass.RelProcs[relationKeys[i]], this.clas.RelProcs[relationKeys[i]]);
+                    temp.Delete = this.subtractArray(this.clas.RelProcs[relationKeys[i]], this.newClass.RelProcs[relationKeys[i]]);
+
+                    dataObj.RelProcs[relationKeys[i]] = JSON.parse(JSON.stringify(temp));
                 }
             }
             console.log(dataObj);

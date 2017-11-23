@@ -17,6 +17,25 @@ block corpo
                                 option(value=3) Classe_N3
                                 option(value=4) Classe_N4
 
+                    //-STATUS
+                    tr(v-if="type==3")
+                        td(style="padding-top:10px")
+                            label Status: 
+                        td
+                            select(
+                                v-model="status"
+                            )
+                                option(
+                                    value="H"
+                                    selected
+                                )   Harmonização
+                                option(
+                                    value="A"
+                                )   Activa
+                                option(
+                                    value="I"
+                                ) Inactiva
+
                     //-PAI
                     tr(v-if="type>1 && parentsReady")
                         td(style="width:10%")
@@ -217,24 +236,31 @@ block corpo
                         td
                             table
                                 tr
-                                    td
-                                        v-select.custom-select( 
+                                    td(width="30%")
+                                        v-select.custom-select(
+                                            v-model="newRelType"
+                                            :options="Object.keys(relProcs)"
+                                        )
+                                    td(width="30%")
+                                        v-select.custom-select(
                                             v-model="newRelProc"
                                             :options="classList"
                                         )
                                     td
                                         button(
-                                            @click="relProcs.push(newRelProc.value)"
+                                            @click="relProcs[newRelType].push(newRelProc.value)"
                                         ) +
                                 tr
-                                    td(colspan="2")
-                                        ul(v-if="relProcs && relProcs.length")
-                                            li(v-for="(c,index) in relProcs")
-                                                | {{ c.Code }} - {{ c.Title }}
-                                                button(
-                                                    @click="relProcs.splice(index, 1)"
-                                                ) x
-
+                                    td(colspan=3)
+                                        ul
+                                            li(v-for="key in Object.keys(relProcs)" v-if="relProcs[key].length>0")
+                                                b É {{ key }}:
+                                                ul
+                                                    li(v-for="(c, index) in relProcs[key]")
+                                                        | {{ c.Code }} - {{ c.Title }}
+                                                        button(
+                                                            @click="relProcs[key].splice(index, 1)"
+                                                        ) x
                     //-LEGISLAÇÕES                            
                     tr(v-if="type==3 && legsReady")
                         td(style="padding-top:10px")
@@ -260,16 +286,6 @@ block corpo
                                                     @click="newLegList.splice(index,1)"
                                                 ) x
 
-                    //-STATUS
-                    tr
-                        td(style="padding-top:10px")
-                            label Status: 
-                        td
-                            input(
-                                size="70"
-                                v-model="status"
-                            )
-                                    
             input.btn.btn-xs.btn-default.col-sm-2(
                 type="button" 
                 @click="add" 

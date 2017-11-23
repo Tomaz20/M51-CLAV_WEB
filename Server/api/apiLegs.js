@@ -87,8 +87,6 @@ module.exports = function (app) {
                         clav:titulo ?Title;
                 }`;
 
-            console.log(fetchQuery);
-
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -165,7 +163,7 @@ module.exports = function (app) {
                 });
         }
 
-        //Create new organization
+        //Create new legislation
         function createLeg(newID, year, date, number, type, title, link) {
             var createQuery = SPARQL`
                 INSERT DATA {
@@ -179,8 +177,6 @@ module.exports = function (app) {
                         clav:diplomaLink ${link} .
                 }
             `;
-
-            console.log(createQuery);
 
             return client.query(createQuery).execute()
                 .then(response => Promise.resolve(response))
@@ -211,6 +207,7 @@ module.exports = function (app) {
 
                             createLeg(newID, year, date, number, type, title, link)
                                 .then(function () {
+                                    req.flash('success_msg', 'Documento inserido');
                                     res.send(newID);
                                 })
                                 .catch(error => console.error(error));
@@ -225,11 +222,11 @@ module.exports = function (app) {
     app.put('/updateleg', function (req, res) {
         var url = require('url');
 
-        //Check if legislation Initials already exists
+        //Check if legislation number already exists
         function checkNumber(number) {
             var checkQuery = `
                 SELECT (count(*) AS ?Count) WHERE {
-                    ?org rdf:type clav:Legislacao ;
+                    ?leg rdf:type clav:Legislacao ;
                         clav:diplomaNumero '${number}'
                 }
             `;
@@ -278,8 +275,6 @@ module.exports = function (app) {
 
             var updateQuery = del + ins + wer;
 
-            console.log(updateQuery);
-
             return client.query(updateQuery).execute()
                 .then(response => Promise.resolve(response))
                 .catch(error => console.error("Error in update:\n" + error));
@@ -305,6 +300,7 @@ module.exports = function (app) {
                     else {
                         updateLeg(id, year, date, number, type, title, link)
                             .then(function () {
+                                req.flash('success_msg', 'Info. de Documento actualizada');
                                 res.send("Actualizado!");
                             })
                             .catch(error => console.error(error));
@@ -342,6 +338,7 @@ module.exports = function (app) {
         //Answer the request
         deleteLeg(id)
             .then(function () {
+                req.flash('success_msg', 'Entrada apagada');
                 res.send("Entrada apagada!");
             })
             .catch(function (error) {

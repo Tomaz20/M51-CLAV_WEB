@@ -182,6 +182,7 @@ module.exports = function (app) {
                 else {
                     createOrg(id, name, initials)
                         .then(function () {
+                            req.flash('success_msg', 'Organização adicionada');
                             res.send("Inserido!");
                         })
                         .catch(error => console.error(error));
@@ -272,6 +273,7 @@ module.exports = function (app) {
                     updateOrg(id, name, initials)
                         .then(function () {
                             if(initials){
+                                req.flash('success_msg', 'Info. de Organização actualizada');
                                 res.send("org_"+initials);
                             }
                             else{
@@ -309,6 +311,7 @@ module.exports = function (app) {
         //Answer the request
         deleteOrg(id)
             .then(function() {
+                req.flash('success_msg', 'Entrada apagada');
                 res.send("Entrada apagada!");
             })
             .catch(function (error) {

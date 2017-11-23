@@ -18,7 +18,7 @@ module.exports = function (app) {
     app.get('/classesn', function (req, res) {
         var url = require('url');
 
-        function fetchClasses(level,table) {
+        function fetchClasses(level, table) {
             if (!level) {
                 level = 1;
             }
@@ -30,51 +30,51 @@ module.exports = function (app) {
                         clav:codigo ?Code ;
                         clav:titulo ?Title .
             `;
-            
-            if(table){
-                listQuery+=`?id clav:pertenceTS clav:`+table+` .`
+
+            if (table) {
+                listQuery += `?id clav:pertenceTS clav:` + table + ` .`
             }
 
-            listQuery+=`
+            listQuery += `
                     optional {
                         ?sub clav:temPai ?id .
             `;
 
-            if(table){
-                listQuery+=`?sub clav:pertenceTS clav:`+table+` .`
+            if (table) {
+                listQuery += `?sub clav:pertenceTS clav:` + table + ` .`
             }
 
-            listQuery+=`
+            listQuery += `
                     }
                 }Group by ?id ?Code ?Title
             `;
-            
-            
+
+
             return client.query(listQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
                     console.error(error);
                 }
-            );
+                );
         }
 
         var parts = url.parse(req.url, true);
         var level = parts.query.level;
         var table = parts.query.table;
 
-        fetchClasses(level,table)
+        fetchClasses(level, table)
             .then(list => res.send(list))
             .catch(function (error) {
                 console.error(error);
             }
-        );
+            );
     })
 
     //get the list of child classes of a given class (opt.: filter by TS)
     app.get('/childClasses', function (req, res) {
         var url = require('url');
 
-        function fetchChilds(parent,table) {
+        function fetchChilds(parent, table) {
             var fetchQuery = `
                 SELECT ?Child ?Code ?Title (count(?sub) as ?NChilds)
                 WHERE {
@@ -82,25 +82,25 @@ module.exports = function (app) {
                            clav:codigo ?Code ;
                            clav:titulo ?Title .
             `;
-            if(table){
-                                fetchQuery+=`?Child clav:pertenceTS clav:`+table+` .`
+            if (table) {
+                fetchQuery += `?Child clav:pertenceTS clav:` + table + ` .`
             }
 
-            fetchQuery+=`
+            fetchQuery += `
                 optional {
                     ?sub clav:temPai ?Child .
             `;
 
-            if(table){
-                fetchQuery+=`?sub clav:pertenceTS clav:`+table+` .`
+            if (table) {
+                fetchQuery += `?sub clav:pertenceTS clav:` + table + ` .`
             }
 
-            fetchQuery+=`
+            fetchQuery += `
                 }
             }Group by ?Child ?Code ?Title
             `;
 
-                        
+
             return client.query(fetchQuery)
                 .execute()
                 //getting the content we want
@@ -114,9 +114,9 @@ module.exports = function (app) {
         var parent = parts.query.parent;
         var table = parts.query.table;
 
-                
+
         //Answer the request
-        fetchChilds(parent,table).then(list => res.send(list))
+        fetchChilds(parent, table).then(list => res.send(list))
             .catch(function (error) {
                 console.error(error);
             });
@@ -146,7 +146,7 @@ module.exports = function (app) {
                     }
                 }`;
 
-            
+
             return client.query(fetchQuery)
                 .execute()
                 //getting the content we want
@@ -178,7 +178,7 @@ module.exports = function (app) {
                         clav:orgSigla ?Sigla;
                 }`;
 
-            
+
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -209,7 +209,7 @@ module.exports = function (app) {
                         clav:diplomaTipo ?Tipo;
                 }`;
 
-            
+
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -237,7 +237,7 @@ module.exports = function (app) {
                     clav:`+ id + ` clav:exemploNA ?Exemplo.
                 }`;
 
-            
+
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -266,7 +266,7 @@ module.exports = function (app) {
                     ?id clav:conteudo ?Nota .
                 }`;
 
-            
+
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -295,7 +295,7 @@ module.exports = function (app) {
                     ?id clav:conteudo ?Nota .
                 }`;
 
-            
+
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -319,22 +319,17 @@ module.exports = function (app) {
 
         function fetchRelProc(id) {
             var fetchQuery = `
-                select DISTINCT ?id ?Code ?Title {
-                    {
-                        select * where{
-                            clav:`+ id + ` clav:temRelProc ?id.
-                        }
-                    } union {
-                        select * where{
-                            ?id clav:temRelProc clav:`+ id + `.
-                        } 
-                    }
-                    ?id clav:codigo ?Code;
-                            clav:titulo ?Title
-                }
+                select DISTINCT ?id ?Type ?Code ?Title {
+                    clav:`+ id + ` clav:temRelProc ?id;
+                        ?Type ?id.
+                    
+                        ?id clav:codigo ?Code;
+                        clav:titulo ?Title
+                    
+                        filter (?Type!=clav:temRelProc)
+                } Order by ?Type
             `;
 
-            
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -369,7 +364,7 @@ module.exports = function (app) {
                 }
             `;
 
-            
+
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -389,7 +384,7 @@ module.exports = function (app) {
 
     //updates a class's info
     app.put('/updateClass', function (req, res) {
-        
+
         function prepDelete(dataObj) {
             var deletePart = "\n";
 
@@ -397,11 +392,6 @@ module.exports = function (app) {
             if (dataObj.Owners.Delete && dataObj.Owners.Delete.length) {
                 for (var i = 0; i < dataObj.Owners.Delete.length; i++) {
                     deletePart += "\tclav:" + dataObj.id + " clav:temDono clav:" + dataObj.Owners.Delete[i].id + " .\n";
-                }
-            }
-            if (dataObj.Legs.Delete && dataObj.Legs.Delete.length) {
-                for (var i = 0; i < dataObj.Legs.Delete.length; i++) {
-                    deletePart += "\tclav:" + dataObj.id + " clav:temLegislacao clav:" + dataObj.Legs.Delete[i].id + " .\n";
                 }
             }
             if (dataObj.Legs.Delete && dataObj.Legs.Delete.length) {
@@ -419,10 +409,14 @@ module.exports = function (app) {
                     deletePart += "\tclav:" + dataObj.id + " clav:temNotaExclusao clav:" + dataObj.DelNotes.Delete[i].id + " .\n";
                 }
             }
-            if (dataObj.RelProcs.Delete && dataObj.RelProcs.Delete.length) {
-                for (var i = 0; i < dataObj.RelProcs.Delete.length; i++) {
-                    deletePart += "\tclav:" + dataObj.id + " clav:temRelProc clav:" + dataObj.RelProcs.Delete[i].id + " .\n";
-                    deletePart += "\tclav:" + dataObj.RelProcs.Delete[i].id + " clav:temRelProc clav:" + dataObj.id + " .\n";
+            
+            var relKeys = Object.keys(dataObj.RelProcs);
+            
+            for (var k = 0; k < relKeys.length; k++) {
+                if (dataObj.RelProcs[relKeys[k]].Delete && dataObj.RelProcs[relKeys[k]].Delete.length) {
+                    for (var i = 0; i < dataObj.RelProcs[relKeys[k]].Delete.length; i++) {
+                        deletePart += "\tclav:" + dataObj.id + " clav:e" + relKeys[k].replace(/ /,'') + " clav:" + dataObj.RelProcs[relKeys[k]].Delete[i].id + " .\n";
+                    }
                 }
             }
 
@@ -431,7 +425,7 @@ module.exports = function (app) {
             for (var k = 0; k < partKeys.length; k++) {
                 if (dataObj.Participants[partKeys[k]].Delete && dataObj.Participants[partKeys[k]].Delete.length) {
                     for (var i = 0; i < dataObj.Participants[partKeys[k]].Delete.length; i++) {
-                        deletePart += "\tclav:" + dataObj.id + " clav:temParticipante"+partKeys[k]+" clav:" + dataObj.Participants[partKeys[k]].Delete[i].id + " .\n";
+                        deletePart += "\tclav:" + dataObj.id + " clav:temParticipante" + partKeys[k] + " clav:" + dataObj.Participants[partKeys[k]].Delete[i].id + " .\n";
                     }
                 }
             }
@@ -465,12 +459,12 @@ module.exports = function (app) {
             //relations
             if (dataObj.AppNotes.Delete && dataObj.AppNotes.Delete.length) {
                 for (var i = 0; i < dataObj.AppNotes.Delete.length; i++) {
-                    wherePart += "\tclav:" + dataObj.AppNotes.Delete[i].id + " ?NAp"+i+" ?NAo"+i+" .\n";
+                    wherePart += "\tclav:" + dataObj.AppNotes.Delete[i].id + " ?NAp" + i + " ?NAo" + i + " .\n";
                 }
             }
             if (dataObj.DelNotes.Delete && dataObj.DelNotes.Delete.length) {
                 for (var i = 0; i < dataObj.DelNotes.Delete.length; i++) {
-                    wherePart += "\tclav:" + dataObj.DelNotes.Delete[i].id + " ?NEp"+i+" ?NEo"+i+" .\n";
+                    wherePart += "\tclav:" + dataObj.DelNotes.Delete[i].id + " ?NEp" + i + " ?NEo" + i + " .\n";
                 }
             }
 
@@ -538,10 +532,13 @@ module.exports = function (app) {
                 }
             }
             //Relações com Processos 
-            if (dataObj.RelProcs.Add && dataObj.RelProcs.Add.length) {
-                for (var i = 0; i < dataObj.RelProcs.Add.length; i++) {
-                    insertPart += "\tclav:" + dataObj.id + " clav:temRelProc clav:" + dataObj.RelProcs.Add[i].id + " .\n";
-                    insertPart += "\tclav:" + dataObj.RelProcs.Add[i].id + " clav:temRelProc clav:" + dataObj.id + " .\n";
+            var relKeys = Object.keys(dataObj.RelProcs);
+            
+            for (var k = 0; k < relKeys.length; k++) {
+                if (dataObj.RelProcs[relKeys[k]].Add && dataObj.RelProcs[relKeys[k]].Add.length) {
+                    for (var i = 0; i < dataObj.RelProcs[relKeys[k]].Add.length; i++) {
+                        insertPart += "\tclav:" + dataObj.id + " clav:e" + relKeys[k].replace(/ /,'') + " clav:" + dataObj.RelProcs[relKeys[k]].Add[i].id + " .\n";
+                    }
                 }
             }
             //Participantes
@@ -566,7 +563,8 @@ module.exports = function (app) {
 
             updateQuery = deletePart + inserTPart + wherePart;
 
-            
+            console.log(updateQuery);
+
             return client.query(updateQuery).execute()
                 .then(response => Promise.resolve(response))
                 .catch(error => console.error("Error in update:\n" + error));
@@ -579,6 +577,7 @@ module.exports = function (app) {
         //Executing queries
         updateClass(dataObj)
             .then(function () {
+                req.flash('success_msg', 'Info. de Classe actualizada');
                 res.send("Actualizado!");
             })
             .catch(error => console.error(error));
@@ -586,6 +585,24 @@ module.exports = function (app) {
 
     //inserts a new class into the DB
     app.post('/createClass', function (req, res) {
+
+        //Check if class' code already exists
+        function checkCode(code) {
+            var checkQuery = `
+                SELECT (count(*) AS ?Count) WHERE {
+                    ?c rdf:type clav:Classe_N1 ;
+                        clav:codigo '${code}'
+                }
+            `;
+
+            return client.query(checkQuery).execute()
+                //Getting the content we want
+                .then(response => Promise.resolve(response.results.bindings[0].Count.value))
+                .catch(function (error) {
+                    console.error("Error in check:\n" + error);
+                });
+        }
+
         //Create new class
         function createClass(data) {
             var id = "c" + data.Code;
@@ -658,10 +675,13 @@ module.exports = function (app) {
                 }
             }
 
-            if (data.Level == 3 && data.RelProcs && data.RelProcs.length) {
-                for (var i = 0; i < data.RelProcs.length; i++) {
-                    createQuery += 'clav:' + id + ' clav:temRelProc clav:' + data.RelProcs[i].id + ' .\n';
-                    createQuery += 'clav:' + data.RelProcs[i].id + ' clav:temRelProc clav:' + id + ' .\n';
+            if (data.Level == 3 && data.RelProcs) {
+                var keys = Object.keys(data.RelProcs);
+
+                for (var k = 0; k < keys.length; k++) {
+                    for (var i = 0; i < data.RelProcs[keys[k]].length; i++) {
+                        createQuery += 'clav:' + id + ' clav:e' + keys[k].replace(/ /, '') + ' clav:' + data.RelProcs[keys[k]][i].id + ' .\n';
+                    }
                 }
             }
 
@@ -673,50 +693,61 @@ module.exports = function (app) {
 
             createQuery += '}';
 
-                        
+
             return client.query(createQuery).execute()
                 .then(response => Promise.resolve(response))
                 .catch(error => console.error("Error in create:\n" + error));
-            
+
         }
 
         //Getting data
         var data = req.body;
-        
-        createClass(data)
-        .then(function () {
-            res.send("Classe Inserida!");
-        })
-        .catch(error => console.error(error));    
+
+        checkCode(data.Code)
+            .then(function (count) {
+                if (count > 0) {
+                    res.send("Código já existente!");
+                }
+                else {
+                    createClass(data)
+                        .then(function () {
+                            req.flash('success_msg', 'Classe inserida');
+                            res.send("Classe Inserida!");
+                        })
+                        .catch(error => console.error(error));
+                }
+            })
+            .catch(error => console.error("Erro a checkar o codigo: " + error))
+
     })
 
     //Deletes a class 
     app.post('/deleteClass', function (req, res) {
-        
+
         function deleteClass(id) {
             var delQuery = `
                 DELETE {
-                    clav:`+id+` ?p ?o .
-                    ?relS ?relP clav:`+id+` .
+                    clav:`+ id + ` ?p ?o .
+                    ?relS ?relP clav:`+ id + ` .
                     ?na ?naP ?naO .
                     ?ne ?neP ?neO .
                 }
                 WHERE {
-                    clav:`+id+` ?p ?o .
+                    clav:`+ id + ` ?p ?o .
                     OPTIONAL {
-                        ?relS ?relP clav:`+id+` .
+                        ?relS ?relP clav:`+ id + ` .
                     }
                     OPTIONAL {
-                        clav:`+id+` clav:temNotaAplicacao ?na .
+                        clav:`+ id + ` clav:temNotaAplicacao ?na .
                         ?na ?naP ?naO .
                     }
                     OPTIONAL{
-                        clav:`+id+` clav:temNotaExclusao ?ne .
+                        clav:`+ id + ` clav:temNotaExclusao ?ne .
                         ?ne ?neP ?neO .
                     }
                 }
             `;
-            
+
             return client.query(delQuery).execute()
                 //getting the content we want
                 .then(response => Promise.resolve(response))
@@ -729,11 +760,12 @@ module.exports = function (app) {
 
         //Answer the request
         deleteClass(id)
-            .then(function() {
+            .then(function () {
+                req.flash('success_msg', 'Entrada apagada');
                 res.send("Entrada apagada!");
             })
             .catch(function (error) {
                 console.error(error);
-        });
+            });
     })
 }

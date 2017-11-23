@@ -1,58 +1,68 @@
+var Auth = require('./auth.js');
+
 module.exports = function(app) {
 
     app.get('/', function(req, res) {
-        res.render('Pages/pugdex');
+        res.render('pugdex');
     });
 
     app.get('/organizacoes', function(req, res) {
-        res.render('Pages/Orgs/organizacoes');
+        res.render('Orgs/organizacoes');
     });
 
     app.get('/organizacao', function(req, res) {
-        res.render('Pages/Orgs/consultaOrganizacao');
+        res.render('Orgs/consultaOrganizacao');
     });
 
-    app.get('/novaorganizacao', function(req, res) {
-        res.render('Pages/Orgs/adicionaOrganizacao');
+    app.get('/novaorganizacao', Auth.isLoggedIn, function(req, res) {
+        res.render('Orgs/adicionaOrganizacao');
     });
 
     app.get('/legislacoes', function(req, res) {
-        res.render('Pages/Legs/legislacoes');
+        res.render('Legs/legislacoes');
     });
     
     app.get('/legislacao', function(req, res) {
-        res.render('Pages/Legs/consultaLegislacao');
+        res.render('Legs/consultaLegislacao');
     });
         
-    app.get('/novalegislacao', function(req, res) {
-        res.render('Pages/Legs/adicionaLegislacao');
+    app.get('/novalegislacao', Auth.isLoggedIn, function(req, res) {
+        res.render('Legs/adicionaLegislacao');
     });
 
     app.get('/classes', function(req, res) {
-        res.render('Pages/Classes/classes');
+        res.render('Classes/classes');
     });
 
     app.get('/classe', function(req, res) {
-        res.render('Pages/Classes/consultaClasse');
+        res.render('Classes/consultaClasse');
     });
         
-    app.get('/novaClasse', function(req, res) {
-        res.render('Pages/Classes/adicionaClasse');
+    app.get('/novaClasse', Auth.isLoggedIn, function(req, res) {
+        res.render('Classes/adicionaClasse');
     });
     
     app.get('/consultaClasse', function(req, res) {
-        res.render('Pages/Classes/consultaClasse');
+        res.render('Classes/consultaClasse');
     });
 
     app.get('/tabelasSelecao', function(req, res) {
-        res.render('Pages/TabsSel/tabelas');
+        res.render('TabsSel/tabelas');
     });
 
     app.get('/novaTabSel', function(req, res) {
-        res.render('Pages/TabsSel/adicionarTabela');
+        res.render('TabsSel/adicionarTabela');
     });
 
     app.get('/tabelaSelecao', function(req, res) {
-        res.render('Pages/TabsSel/consultarTabela');
+        res.render('TabsSel/consultarTabela');
+    });
+
+    app.get('/registar', function(req, res) {
+        res.render('Users/registar');
+    });
+
+    app.get('/iniciarSessao', function(req, res) {
+        res.render('Users/login');
     });
 }

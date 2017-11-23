@@ -62,3 +62,13 @@ new Vue({
             });
     }
 })
+
+var users = new Vue({
+    el: '#users',
+    data: {
+        location: null,
+    },
+    created() {
+        this.location= window.location.pathname;
+    }
+})

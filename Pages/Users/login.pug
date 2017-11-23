@@ -1,0 +1,23 @@
+extends ../Templates/layout
+block corpo
+    .container
+        form.form-signin(role='menu' action="/login" method="post" style="width:60%")
+            h2.form-signin-heading Iniciar Sessão
+           
+            label.sr-only(for="email") Email
+            input#email.form-control(name='username' type='text', placeholder='Email', required='')
+            
+            label.sr-only(for="email") Password
+            input#password.form-control(name='password' type='password', placeholder='Password', required='')
+            
+            input(type="hidden" :value="location" name="location")
+
+            button.btn.btn-block(type='submit') Login
+
+            a.btn.btn-md.btn-primary(href="/loginFB" style="width:50%")
+                span.fa.fa-facebook
+                |  Facebook
+            
+            a.btn.btn-md.btn-danger(href="/loginG"  style="width:50%")
+                span.fa.fa-google
+                |  Google

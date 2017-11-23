@@ -36,7 +36,7 @@ new Vue({
         newDelNote: null,
         delNotes: [],
         
-        status: null,
+        status: "H",
         
         procType: null,
 
@@ -53,8 +53,18 @@ new Vue({
             Iniciador: [],
         },
 
+        newRelType: null,
         newRelProc: null,
-        relProcs: [],
+        relProcs: {
+            'Antecessor De': [],
+            'Complementar De': [],
+            'Cruzado Com': [],
+            'Sintese De': [],
+            'Sintetizado Por': [],
+            'Sucessor De': [],
+            'Suplemento De': [],
+            'Suplemento Para': [],
+        },
         classList: null,
         classesReady: false,
 
