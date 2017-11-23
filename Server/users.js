@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 
 mongoose.Promise = require('bluebird');
-mongoose.connect('mongodb://epl.di.uminho.pt:27017/m51-clav', {
+mongoose.connect('mongodb://localhost/m51-clav', {
 	useMongoClient: true,
 });
 
