@@ -1,8 +1,7 @@
 extends ../Templates/layout
 block corpo
-    h1.page-header Catálogo Organizacional
+    h1.page-header Organizações
     .row
-        h3.sub-header Organizações
         #tabela-organizacoes.row.placeholders
             custom-table-simple(
                 v-if="ready"

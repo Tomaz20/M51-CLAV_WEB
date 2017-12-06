@@ -1,3 +1,6 @@
+var Logging = require('../logging');
+var Auth = require('../auth');
+
 module.exports = function (app) {
 
 //  Ontology endpoint
@@ -131,7 +134,7 @@ module.exports = function (app) {
             });
     })
 
-    app.post('/createOrg', function (req, res) {
+    app.post('/createOrg', Auth.isLoggedInAPI, function (req, res) {
         //Check if organization Name or Initials already exist
         function checkOrg(name, initials) {
             var checkQuery = `
@@ -182,6 +185,9 @@ module.exports = function (app) {
                 else {
                     createOrg(id, name, initials)
                         .then(function () {
+                            Logging.logger.info('Criada organização \''+id+'\' por utilizador \''+req.user._id+'\'');
+                            
+
                             req.flash('success_msg', 'Organização adicionada');
                             res.send("Inserido!");
                         })
@@ -191,7 +197,7 @@ module.exports = function (app) {
             .catch(error => console.error("General error:\n" + error));
     })
 
-    app.put('/updateOrg', function (req, res) {
+    app.put('/updateOrg', Auth.isLoggedInAPI, function (req, res) {
         //Check if organization Name or Initials already exist
         function checkOrg(name, initials) {
             var checkQuery = ` 
@@ -273,10 +279,15 @@ module.exports = function (app) {
                     updateOrg(id, name, initials)
                         .then(function () {
                             if(initials){
+                                Logging.logger.info('Update a organização \''+id+'\' (novo id org_'+initials+') por utilizador \''+req.user._id+'\'');
+                                
                                 req.flash('success_msg', 'Info. de Organização actualizada');
                                 res.send("org_"+initials);
                             }
                             else{
+                                Logging.logger.info('Update a organização \''+id+'\' por utilizador \''+req.user._id+'\'');
+                                
+                                req.flash('success_msg', 'Info. de Organização actualizada');
                                 res.send(id);
                             }
                         })
@@ -287,7 +298,7 @@ module.exports = function (app) {
         
     })
 
-    app.post('/deleteOrg', function (req, res) {
+    app.post('/deleteOrg', Auth.isLoggedInAPI, function (req, res) {
         
         function deleteOrg(id) {
             var deleteQuery = `
@@ -311,6 +322,8 @@ module.exports = function (app) {
         //Answer the request
         deleteOrg(id)
             .then(function() {
+                Logging.logger.info('Apagada organização \''+id+'\' por utilizador \''+req.user._id+'\'');
+                
                 req.flash('success_msg', 'Entrada apagada');
                 res.send("Entrada apagada!");
             })

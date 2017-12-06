@@ -40,6 +40,8 @@
     "passport-local": "^1.0.0",
     "pug": "^2.0.0-rc.4",
     "sparql-client-2": "^0.6.2",
-    "vue": "^2.4.4"
+    "vue": "^2.4.4",
+    "winston": "^2.4.0",
+    "winston-daily-rotate-file": "^2.0.0-beta"
   }
 }

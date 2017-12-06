@@ -18,12 +18,13 @@ block corpo
                             )
                         td(v-else style="width:80%")
                             | {{ orgName }}  
-                        td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="editName"
-                            )
+                        if user
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="editName"
+                                )
                     
                     //- SIGLA
                     tr
@@ -36,13 +37,14 @@ block corpo
                                 :placeholder="orgInitials"
                             )
                         td(v-else)
-                            | {{ orgInitials }}  
-                        td
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="editInitials"
-                            )
+                            | {{ orgInitials }} 
+                        if user 
+                            td
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="editInitials"
+                                )
             
                     //- DOMINIO
                     tr
@@ -75,7 +77,8 @@ block corpo
                                     a(:href="'/classe?id='+c.id") {{ c.Code }}
                                     |  - {{ c.Title }}
                             button(@click="domainCollapsed=!domainCollapsed" v-if="domain.length>4")
-                                | Mostrar mais...
+                                span(v-if="domainCollapsed") Mostrar mais...
+                                span(v-else) Mostrar menos...
                         //-
                          td(style="width:10%")
                             label(style="padding-right:5px") Editar
@@ -126,7 +129,8 @@ block corpo
                                             a(:href="'/classe?id='+p.id") {{ p.Code }}
                                             |  - {{ p.Title }}
                                     button(@click="partsCollapsed[key]=!partsCollapsed[key]" v-if="participations[key].length>4")
-                                        | Mostrar mais...
+                                        span(v-if="partsCollapsed[key]") Mostrar mais...
+                                        span(v-else) Mostrar menos...
                         //-
                          td(style="width:10%")
                             label(style="padding-right:5px") Editar
@@ -135,36 +139,35 @@ block corpo
                                 v-model="editParts"
                             )
 
+            if user
+                input.btn.btn-xs.btn-default.col-sm-1(
+                    type="button" 
+                    @click="update" 
+                    value="Confirmar" 
+                    :disabled="!((editName && newName) || (editInitials && newInitials))"
+                )
+                input.btn.btn-xs.btn-warning.col-sm-1(
+                    type="button" 
+                    @click="delReady" 
+                    value="Apagar" 
+                    :disabled="(editName || editInitials)"
+                )
+                p.col-sm-5 {{ message }}
 
-            input.btn.btn-xs.btn-default.col-sm-1(
-                type="button" 
-                @click="update" 
-                value="Confirmar" 
-                :disabled="!((editName && newName) || (editInitials && newInitials))"
-            )
-            input.btn.btn-xs.btn-warning.col-sm-1(
-                type="button" 
-                @click="delReady" 
-                value="Apagar" 
-                :disabled="(editName || editInitials)"
-            )
-            p.col-sm-5 {{ message }}
-
-            input.btn.btn-xs.btn-danger(
-                v-if="delConfirm"
-                type="button" 
-                @click="deleteOrg" 
-                value="OK" 
-            )
-            input.btn.btn-xs.btn-info(
-                v-if="delConfirm"
-                type="button" 
-                @click="delNotReady" 
-                value="<-" 
-            )
+                input.btn.btn-xs.btn-danger(
+                    v-if="delConfirm"
+                    type="button" 
+                    @click="deleteOrg" 
+                    value="OK" 
+                )
+                input.btn.btn-xs.btn-info(
+                    v-if="delConfirm"
+                    type="button" 
+                    @click="delNotReady" 
+                    value="<-" 
+                )
     //-
 
 append scripts    
-    //-script(src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.14.1/lodash.min.js")
     script(src="/Scripts/Orgs/consulta.vue")

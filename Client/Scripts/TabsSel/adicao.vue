@@ -198,21 +198,24 @@ new Vue({
                 classes: this.getSelected(this.tableData),
             }
 
-            this.$http.post('/createSelTab',dataObj,{
-                headers: {
-                    'content-type' : 'application/json'
-                }
-            })
-            .then( function(response) { 
-                window.location.href = '/tabelaSelecao?table='+response.body;
-            })
-            .catch( function(error) { 
-                console.error(error); 
-            });
-
-
+            if (dataObj.classes.length==0){
+                this.message="É necessário selecionar uma ou mais classes!";
+            } else if(dataObj.name.length==0){
+                this.message="O campo 'Designação' não pode estar vazio!"
+            } else {
+                this.$http.post('/createSelTab',dataObj,{
+                    headers: {
+                        'content-type' : 'application/json'
+                    }
+                })
+                .then( function(response) { 
+                    window.location.href = '/tabelaSelecao?table='+response.body;
+                })
+                .catch( function(error) { 
+                    console.error(error); 
+                });
+            }
         }
-
     },
     created: function () {
         this.tableHeader = [

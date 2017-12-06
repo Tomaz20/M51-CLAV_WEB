@@ -35,3 +35,10 @@ module.exports.isLevel = function (clearance, req, res, next) {
         res.redirect('/iniciarSessao');
     }
 }
+
+module.exports.isLoggedInAPI = function (req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.send('Login necessário para esta operação');
+}

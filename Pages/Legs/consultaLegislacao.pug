@@ -18,12 +18,14 @@ block corpo
                         td(v-else style="width:80%")
                             span(v-if="item.label!='Link'") {{ item.original }}  
                             a(v-else :href="item.original") Ficheiro
-                        td
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="item.edit"
-                            )
+                        
+                        if user
+                            td
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="item.edit"
+                                )
 
                     //- PROCESSOS
                     tr
@@ -56,7 +58,8 @@ block corpo
                                     a(:href="'/classe?id='+c.id") {{ c.Code }}
                                     |  - {{ c.Title }}
                             button(@click="processesCollapsed=!processesCollapsed" v-if="processes.length>4")
-                                | Mostrar mais...
+                                span(v-if="processesCollapsed") Mostrar mais...
+                                span(v-else) Mostrar menos...
                         //-
                          td(style="width:10%")
                             label(style="padding-right:5px") Editar
@@ -64,55 +67,53 @@ block corpo
                                 type="checkbox"
                                 v-model="editProcesses"
                             )
-
-
                 h3(v-else) Loading...
 
-            input.btn.btn-xs.btn-default.col-sm-1(
-                type="button" 
-                @click="update" 
-                value="Confirmar" 
-                :disabled="!(\
-                    legData.year.edit && legData.year.new ||\
-                    legData.date.edit && legData.date.new ||\
-                    legData.number.edit && legData.number.new ||\
-                    legData.type.edit && legData.type.new ||\
-                    legData.title.edit && legData.title.new ||\
-                    legData.link.edit && legData.link.new \
-                )"
-            )
-            input.btn.btn-xs.btn-warning.col-sm-1(
-                type="button" 
-                @click="delReady" 
-                value="Apagar" 
-                :disabled="(\
-                    legData.year.edit && legData.year.new ||\
-                    legData.date.edit && legData.date.new ||\
-                    legData.number.edit && legData.number.new ||\
-                    legData.type.edit && legData.type.new ||\
-                    legData.title.edit && legData.title.new ||\
-                    legData.link.edit && legData.link.new \
-                )"
-            )
-            p.col-sm-5 {{ message }}
+            if user
+                input.btn.btn-xs.btn-default.col-sm-1(
+                    type="button" 
+                    @click="update" 
+                    value="Confirmar" 
+                    :disabled="!(\
+                        legData.year.edit && legData.year.new ||\
+                        legData.date.edit && legData.date.new ||\
+                        legData.number.edit && legData.number.new ||\
+                        legData.type.edit && legData.type.new ||\
+                        legData.title.edit && legData.title.new ||\
+                        legData.link.edit && legData.link.new \
+                    )"
+                )
+                input.btn.btn-xs.btn-warning.col-sm-1(
+                    type="button" 
+                    @click="delReady" 
+                    value="Apagar" 
+                    :disabled="(\
+                        legData.year.edit && legData.year.new ||\
+                        legData.date.edit && legData.date.new ||\
+                        legData.number.edit && legData.number.new ||\
+                        legData.type.edit && legData.type.new ||\
+                        legData.title.edit && legData.title.new ||\
+                        legData.link.edit && legData.link.new \
+                    )"
+                )
+                p.col-sm-5 {{ message }}
 
-            input.btn.btn-xs.btn-danger(
-                v-if="delConfirm"
-                type="button" 
-                @click="deleteLeg" 
-                value="OK" 
-            )
-            input.btn.btn-xs.btn-info(
-                v-if="delConfirm"
-                type="button" 
-                @click="delNotReady" 
-                value="<-" 
-            )
+                input.btn.btn-xs.btn-danger(
+                    v-if="delConfirm"
+                    type="button" 
+                    @click="deleteLeg" 
+                    value="OK" 
+                )
+                input.btn.btn-xs.btn-info(
+                    v-if="delConfirm"
+                    type="button" 
+                    @click="delNotReady" 
+                    value="<-" 
+                )
     //-
 
     
 
-append scripts    
-    //-script(src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4")
+append scripts 
     script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.14.1/lodash.min.js")
     script(src="/Scripts/Legs/consulta.vue")

@@ -27,13 +27,15 @@ block corpo
                                 ) Inactiva
                                 
                         td(v-else style="width:80%")
-                            | {{ clas.Status }}  
-                        td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="edit.Status"
-                            )
+                            | {{ clas.Status }} 
+
+                        if user 
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="edit.Status"
+                                )
 
                     //- CLASSE PAI
                     tr(v-if="clas.Level>1")
@@ -61,13 +63,15 @@ block corpo
                                 :placeholder="clas.Title"
                             )
                         td(v-else style="width:80%")
-                            | {{ clas.Title }}  
-                        td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="edit.Title"
-                            )
+                            | {{ clas.Title }} 
+
+                        if user 
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="edit.Title"
+                                )
 
                     //- DESCRIÇÃO
                     tr
@@ -80,13 +84,15 @@ block corpo
                                 v-model="newClass.Desc"
                             )
                         td(v-else style="width:80%")
-                            | {{ clas.Desc }}  
-                        td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="edit.Desc"
-                            )
+                            | {{ clas.Desc }} 
+
+                        if user 
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="edit.Desc"
+                                )
 
                     //- NOTAS DE APLICAçÃO                        
                     tr
@@ -112,12 +118,14 @@ block corpo
                             ul(style="padding-left:20px" v-if="appNotesReady")
                                 li(v-for="note in clas.AppNotes")
                                     | {{note.Nota}}
-                        td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="edit.AppNotes"
-                            )
+                        
+                        if user
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="edit.AppNotes"
+                                )
 
                     //- EXEMPLOS NOTAS DE APLICAçÃO                        
                     tr
@@ -143,12 +151,14 @@ block corpo
                             ul(style="padding-left:20px" v-if="exAppNotesReady")
                                 li(v-for="note in clas.ExAppNotes")
                                     | {{note.Exemplo}}
-                        td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="edit.ExAppNotes"
-                            )
+
+                        if user
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="edit.ExAppNotes"
+                                )
 
                     //- NOTAS DE EXCLUSÃO                        
                     tr
@@ -174,12 +184,14 @@ block corpo
                             ul(style="padding-left:20px" v-if="delNotesReady")
                                 li(v-for="note in clas.DelNotes")
                                     | {{note.Nota}}
-                        td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="edit.DelNotes"
-                            )
+
+                        if user
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="edit.DelNotes"
+                                )
 
                     //- TIPO DE PROCESSO
                     tr(v-if="clas.Level==3")
@@ -204,12 +216,14 @@ block corpo
 
                         td(v-else style="width:80%")
                             | {{ clas.ProcType }}  
-                        td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="edit.ProcType"
-                            )
+
+                        if user
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="edit.ProcType"
+                                )
 
                     //- PROCESSO TRANVERSAL
                     tr(v-if="clas.Level==3")
@@ -233,12 +247,14 @@ block corpo
                                 |  Não
                         td(v-else style="width:80%")
                             | {{ clas.ProcTrans }}  
-                        td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="edit.ProcTrans"
-                            )
+
+                        if user
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="edit.ProcTrans"
+                                )
 
                     //- DONOS
                     tr(v-if="clas.Level==3")
@@ -270,13 +286,13 @@ block corpo
                                 li(v-for="o in clas.Owners")
                                     a(:href="'/organizacao?id='+o.id") {{ o.Sigla }}
                                     |  - {{ o.Nome }}
-
-                        td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="edit.Owners"
-                            )
+                        if user
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="edit.Owners"
+                                )
 
                     //- PARTICIPANTES
                     tr(v-if="clas.Level==3 && (clas.ProcTrans=='S' || (edit.ProcTrans && newClass.ProcTrans=='S'))")
@@ -321,13 +337,13 @@ block corpo
                                         li(v-for="p in clas.Participants[key]")
                                             a(:href="'/organizacao?id='+p.id") {{ p.Sigla }}
                                             |  - {{ p.Nome }}
-
-                        td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="edit.Participants"
-                            )
+                        if user
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="edit.Participants"
+                                )
 
                     //- PROCESSOS RELACIONADOS
                     tr(v-if="clas.Level==3")
@@ -370,13 +386,13 @@ block corpo
                                         li(v-for="c in clas.RelProcs[key]")
                                             a(:href="'/classe?id='+c.id") {{ c.Code }}
                                             |  - {{ c.Title }}
-
-                        td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="edit.RelProcs"
-                            )
+                        if user
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="edit.RelProcs"
+                                )
 
 
                     //- LEGISLAÇÕES
@@ -409,40 +425,42 @@ block corpo
                                     | {{ l.Tipo }} - 
                                     a(:href="'/legislacao?id='+l.id") {{ l.Número }} 
                                     | - {{ l.Titulo }}
-                        td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="edit.Legs"
-                            )
+                        if user
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="edit.Legs"
+                                )
 
+            //- Buttons
+            if user
+                input.btn.btn-xs.btn-default.col-sm-1(
+                    type="button" 
+                    @click="updateClass" 
+                    value="Confirmar" 
+                    :disabled="!readyToUpdate()"
+                )
+                input.btn.btn-xs.btn-warning.col-sm-1(
+                    type="button" 
+                    @click="delReady" 
+                    value="Apagar" 
+                    :disabled="readyToUpdate()"
+                )
+                p.col-sm-5 {{ message }}
 
-            input.btn.btn-xs.btn-default.col-sm-1(
-                type="button" 
-                @click="updateClass" 
-                value="Confirmar" 
-                :disabled="!readyToUpdate()"
-            )
-            input.btn.btn-xs.btn-warning.col-sm-1(
-                type="button" 
-                @click="delReady" 
-                value="Apagar" 
-                :disabled="readyToUpdate()"
-            )
-            p.col-sm-5 {{ message }}
-
-            input.btn.btn-xs.btn-danger(
-                v-if="delConfirm"
-                type="button" 
-                @click="deleteClass" 
-                value="OK" 
-            )
-            input.btn.btn-xs.btn-info(
-                v-if="delConfirm"
-                type="button" 
-                @click="delNotReady" 
-                value="<-" 
-            )
+                input.btn.btn-xs.btn-danger(
+                    v-if="delConfirm"
+                    type="button" 
+                    @click="deleteClass" 
+                    value="OK" 
+                )
+                input.btn.btn-xs.btn-info(
+                    v-if="delConfirm"
+                    type="button" 
+                    @click="delNotReady" 
+                    value="<-" 
+                )
     //-
 
 append scripts    

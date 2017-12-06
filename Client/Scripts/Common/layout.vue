@@ -69,6 +69,6 @@ var users = new Vue({
         location: null,
     },
     created() {
-        this.location= window.location.pathname;
+        this.location= window.location.pathname+window.location.search;
     }
 })

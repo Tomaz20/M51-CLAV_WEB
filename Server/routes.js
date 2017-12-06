@@ -65,4 +65,8 @@ module.exports = function(app) {
     app.get('/iniciarSessao', function(req, res) {
         res.render('Users/login');
     });
+
+    app.get('/perfil', Auth.isLoggedIn, function(req, res) {
+        res.render('Users/perfil');
+    });
 }

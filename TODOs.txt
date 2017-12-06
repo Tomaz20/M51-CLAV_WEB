@@ -1,16 +1,28 @@
 TODOS:
-    -preparar uma navbar decente
-
-    -ver Passport (autenticação)
-        -cc
+    -autenticação por CC
 
     -ts a partir de org
 
-    -logs
-        -quem
-        -quando
-        -oque
+    -controlo de níveis de acesso
 
     -listagem de classes em harmonização
 
-    938312013
+    -editar utilizador
+
+    -editar TS
+
+    -fluxo de submissões
+
+
+    Tabelas de Seleção
+        -alterar formato TS
+        -editar TS
+
+
+    Legislação
+        -lista de legislação (tipo e numero no inicio , titulo)
+        -pesquisa nas tabelas
+        -concatenar data
+
+
+    CRUD nos erros

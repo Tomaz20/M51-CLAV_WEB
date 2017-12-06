@@ -4,7 +4,9 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var User = require('../users');
-var ConfigAuth = require('../config/credentials')
+var ConfigAuth = require('../config/credentials');
+
+var Logging = require('../logging');
 
 module.exports = function (app) {
 
@@ -61,7 +63,7 @@ module.exports = function (app) {
 
     // Local authentication
     app.post('/login',
-        passport.authenticate('local', { failureFlash: true }),
+    passport.authenticate('local', {failureRedirect:'/iniciarSessao',failureFlash: true}),
         function (req, res) {
             res.redirect(req.body.location);
         }

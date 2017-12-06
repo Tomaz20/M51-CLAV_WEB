@@ -709,7 +709,7 @@ new Vue({
             }
             console.log(dataObj);
 
-            this.$http.put('/updateClass', { dataObj: dataObj },{
+            this.$http.put('/updateClass?id='+this.id, { dataObj: dataObj },{
                 headers: {
                     'content-type' : 'application/json'
                 }

@@ -1,3 +1,6 @@
+var Logging = require('../logging');
+var Auth = require('../auth');
+
 module.exports = function (app) {
 
 //  Ontology endpoint
@@ -104,7 +107,7 @@ module.exports = function (app) {
             });
     })
 
-    app.post('/createLeg', function (req, res) {
+    app.post('/createLeg', Auth.isLoggedInAPI, function (req, res) {
         //generate a new ID
         function genID(ids) {
             var newIDNum = 1;
@@ -207,6 +210,8 @@ module.exports = function (app) {
 
                             createLeg(newID, year, date, number, type, title, link)
                                 .then(function () {
+                                    Logging.logger.info('Criada legislação \''+newID+'\' por utilizador \''+req.user._id+'\'');                   
+
                                     req.flash('success_msg', 'Documento inserido');
                                     res.send(newID);
                                 })
@@ -219,7 +224,7 @@ module.exports = function (app) {
             .catch(error => console.error("General error:\n" + error));
     })
 
-    app.put('/updateleg', function (req, res) {
+    app.put('/updateleg', Auth.isLoggedInAPI, function (req, res) {
         var url = require('url');
 
         //Check if legislation number already exists
@@ -300,6 +305,8 @@ module.exports = function (app) {
                     else {
                         updateLeg(id, year, date, number, type, title, link)
                             .then(function () {
+                                Logging.logger.info('Update a Legislação \''+id+'\' por utilizador \''+req.user._id+'\'');                
+
                                 req.flash('success_msg', 'Info. de Documento actualizada');
                                 res.send("Actualizado!");
                             })
@@ -311,13 +318,16 @@ module.exports = function (app) {
         else {
             updateLeg(id, year, date, number, type, title, link)
                 .then(function () {
+                    Logging.logger.info('Update a Legislação \''+id+'\' por utilizador \''+req.user._id+'\'');                
+                    
+                    req.flash('success_msg', 'Info. de Documento actualizada');
                     res.send("Actualizado!");
                 })
                 .catch(error => console.error(error));
         }
     })
 
-    app.post('/deleteLeg', function (req, res) {
+    app.post('/deleteLeg', Auth.isLoggedInAPI, function (req, res) {
         
         function deleteLeg(id) {
             return client.query(SPARQL`
@@ -338,6 +348,8 @@ module.exports = function (app) {
         //Answer the request
         deleteLeg(id)
             .then(function () {
+                Logging.logger.info('Apagada Legislação \''+id+'\' por utilizador \''+req.user._id+'\'');
+                
                 req.flash('success_msg', 'Entrada apagada');
                 res.send("Entrada apagada!");
             })

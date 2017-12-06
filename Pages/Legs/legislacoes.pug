@@ -1,8 +1,7 @@
 extends ../Templates/layout
 block corpo
-    h1.page-header Legislações
+    h1.page-header Legislação
     .row
-        h3.sub-header Lista
         #tabela-legislacoes.row.placeholders
             custom-table-simple(
                 v-if="ready"

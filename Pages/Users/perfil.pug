@@ -1,0 +1,78 @@
+extends ../Templates/layout
+block corpo
+    #profile.panel.panel-default
+        .panel-heading
+            h1.page-header #{user.name}  
+        .panel-body
+            .form-group
+                table.consulta
+                    //-NOME
+                    tr
+                        td(style="width:10%")
+                            label Nome: 
+                        td(v-if="edit.Name" style="width:80%")
+                            input(
+                                size="50"
+                                v-model="newName"
+                                placeholder="João Neves"
+                            )
+                        td(v-else style="width:80%")
+                            | #{user.name}
+                        td(style="width:10%")
+                            label(style="padding-right:5px") Editar
+                            input(
+                                type="checkbox"
+                                v-model="edit.Name"
+                            )
+
+                    //-EMAIL
+                    tr
+                        td(style="width:10%")
+                            label Email: 
+                        td(v-if="edit.Email" style="width:80%")
+                            input(
+                                size="50"
+                                v-model="newEmail"
+                                placeholder="joao_neves@gmail.com"
+                            )
+                        td(v-else style="width:80%")
+                            | #{user.email}
+                        td(style="width:10%")
+                            label(style="padding-right:5px") Editar
+                            input(
+                                type="checkbox"
+                                v-model="edit.Email"
+                            )
+
+                    //-PASSWORD
+                    tr
+                        td(style="width:10%")
+                            label Password: 
+                        td(v-if="edit.Password" style="width:80%")
+                            input(
+                                size="50"
+                                v-model="newPassword"
+                            )
+                            br
+                            input(
+                                size="50"
+                                v-model="newPassword2"
+                            ) 
+                            | {{ passMessage }}
+                            br
+                            button(
+                                @click="edit.Password=!edit.Password"
+                            ) Cancelar
+                        td(v-else style="width:80%")
+                            button(
+                                @click="edit.Password=!edit.Password"
+                            ) Alterar Password
+
+                input.btn.btn-xs.btn-default.col-sm-1(
+                    type="button" 
+                    value="Confirmar" 
+                    :disabled="!checkready()"
+                )
+
+append scripts    
+    script(src="/Scripts/Users/perfil.vue")
