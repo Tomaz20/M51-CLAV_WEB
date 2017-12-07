@@ -50,7 +50,7 @@ module.exports = function(app) {
         res.render('TabsSel/tabelas');
     });
 
-    app.get('/novaTabSel', function(req, res) {
+    app.get('/novaTabSel', Auth.isLoggedIn, function(req, res) {
         res.render('TabsSel/adicionarTabela');
     });
 
