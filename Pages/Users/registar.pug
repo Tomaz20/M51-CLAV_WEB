@@ -16,7 +16,15 @@ block corpo
             label.sr-only(for='password2') Repetir Password
             input#password2.form-control(name='password2' type='password', placeholder='Repetir Password', required='')
             
-            button.btn.btn-lg.btn-primary.btn-block(type='submit') Registar
+            button.btn.btn-lg.btn-block(type='submit') Registar
+
+            a.btn.btn-md.btn-primary(href="/loginFB" style="width:50%")
+                span.fa.fa-facebook
+                |  Facebook
+            
+            a.btn.btn-md.btn-danger(href="/loginG"  style="width:50%")
+                span.fa.fa-google
+                |  Google
 
         if errors
             each error in errors
