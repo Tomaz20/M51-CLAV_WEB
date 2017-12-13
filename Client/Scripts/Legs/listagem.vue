@@ -5,7 +5,7 @@ new Vue({
         tableData: [[]],
         ready: false,
         content: [],
-        cwidth: ['5%','50%','5%','11%','19%','10%'],
+        cwidth: ['5%','19%','11%','50%','15%'],
     },
     methods: {
         rowClicked: function(row){
@@ -19,9 +19,9 @@ new Vue({
         },
         parse: function(){    
             // key names for table header and parsing
-            var keys= ["Titulo", "Ano", "Data","Tipo", "Número"]
+            var keys= ["Tipo", "Número", "Titulo", "Data", "Ano"]
             // setting the table header
-            this.tableHeader=["#"].concat(keys);
+            this.tableHeader=["#", "Tipo", "Número", "Titulo", "Data"];
 
             var temp=[];
 
@@ -32,7 +32,8 @@ new Vue({
                 for (var j=0; j<keys.length; j++){
                     temp[j+1] = this.content[i][keys[j]].value;
                 }
-                
+                temp[4]= temp[4]+" de "+temp[5];
+                temp.splice(5,1);
                 this.tableData[i]=temp.slice();
 
             }

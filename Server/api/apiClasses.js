@@ -388,183 +388,183 @@ module.exports = function (app) {
     //updates a class's info
     app.put('/updateClass', function (req, res) {
 
-        function prepDelete(dataObj) {
-            var deletePart = "\n";
-
-            //relations
-            if (dataObj.Owners.Delete && dataObj.Owners.Delete.length) {
-                for (var i = 0; i < dataObj.Owners.Delete.length; i++) {
-                    deletePart += "\tclav:" + dataObj.id + " clav:temDono clav:" + dataObj.Owners.Delete[i].id + " .\n";
-                }
-            }
-            if (dataObj.Legs.Delete && dataObj.Legs.Delete.length) {
-                for (var i = 0; i < dataObj.Legs.Delete.length; i++) {
-                    deletePart += "\tclav:" + dataObj.id + " clav:temLegislacao clav:" + dataObj.Legs.Delete[i].id + " .\n";
-                }
-            }
-            if (dataObj.AppNotes.Delete && dataObj.AppNotes.Delete.length) {
-                for (var i = 0; i < dataObj.AppNotes.Delete.length; i++) {
-                    deletePart += "\tclav:" + dataObj.id + " clav:temNotaAplicacao clav:" + dataObj.AppNotes.Delete[i].id + " .\n";
-                }
-            }
-            if (dataObj.DelNotes.Delete && dataObj.DelNotes.Delete.length) {
-                for (var i = 0; i < dataObj.DelNotes.Delete.length; i++) {
-                    deletePart += "\tclav:" + dataObj.id + " clav:temNotaExclusao clav:" + dataObj.DelNotes.Delete[i].id + " .\n";
-                }
-            }
-            
-            var relKeys = Object.keys(dataObj.RelProcs);
-            
-            for (var k = 0; k < relKeys.length; k++) {
-                if (dataObj.RelProcs[relKeys[k]].Delete && dataObj.RelProcs[relKeys[k]].Delete.length) {
-                    for (var i = 0; i < dataObj.RelProcs[relKeys[k]].Delete.length; i++) {
-                        deletePart += "\tclav:" + dataObj.id + " clav:e" + relKeys[k].replace(/ /,'') + " clav:" + dataObj.RelProcs[relKeys[k]].Delete[i].id + " .\n";
-                    }
-                }
-            }
-
-            var partKeys = Object.keys(dataObj.Participants);
-
-            for (var k = 0; k < partKeys.length; k++) {
-                if (dataObj.Participants[partKeys[k]].Delete && dataObj.Participants[partKeys[k]].Delete.length) {
-                    for (var i = 0; i < dataObj.Participants[partKeys[k]].Delete.length; i++) {
-                        deletePart += "\tclav:" + dataObj.id + " clav:temParticipante" + partKeys[k] + " clav:" + dataObj.Participants[partKeys[k]].Delete[i].id + " .\n";
-                    }
-                }
-            }
-
-            return deletePart;
-        }
-
-        function prepWhere(dataObj) {
-            var wherePart = "\n";
-
-            //atributes
-            if (dataObj.Title) {
-                wherePart += "\tclav:" + dataObj.id + " clav:titulo ?tit .\n";
-            }
-            if (dataObj.Status) {
-                wherePart += "\tclav:" + dataObj.id + " clav:classeStatus ?status .\n";
-            }
-            if (dataObj.Desc) {
-                wherePart += "\tclav:" + dataObj.id + " clav:descricao ?desc .\n";
-            }
-            if (dataObj.ProcType) {
-                wherePart += "\tclav:" + dataObj.id + " clav:processoTipo ?ptipo .\n";
-            }
-            if (dataObj.ProcTrans) {
-                wherePart += "\tclav:" + dataObj.id + " clav:processoTransversal ?ptrans .\n";
-            }
-            if (dataObj.ExAppNotes && dataObj.ExAppNotes.length) {
-                wherePart += "\tclav:" + dataObj.id + " clav:exemploNA ?exNA .\n";
-            }
-
-            //relations
-            if (dataObj.AppNotes.Delete && dataObj.AppNotes.Delete.length) {
-                for (var i = 0; i < dataObj.AppNotes.Delete.length; i++) {
-                    wherePart += "\tclav:" + dataObj.AppNotes.Delete[i].id + " ?NAp" + i + " ?NAo" + i + " .\n";
-                }
-            }
-            if (dataObj.DelNotes.Delete && dataObj.DelNotes.Delete.length) {
-                for (var i = 0; i < dataObj.DelNotes.Delete.length; i++) {
-                    wherePart += "\tclav:" + dataObj.DelNotes.Delete[i].id + " ?NEp" + i + " ?NEo" + i + " .\n";
-                }
-            }
-
-            return wherePart;
-        }
-
-        function prepInsert(dataObj) {
-            var insertPart = "\n";
-
-            //attributes
-            if (dataObj.Title) {
-                insertPart += "\tclav:" + dataObj.id + " clav:titulo '" + dataObj.Title + "' .\n";
-            }
-            if (dataObj.Status) {
-                insertPart += "\tclav:" + dataObj.id + " clav:classeStatus '" + dataObj.Status + "' .\n";
-            }
-            if (dataObj.Desc) {
-                insertPart += "\tclav:" + dataObj.id + " clav:descricao '" + dataObj.Desc.replace(/\n/g, '\\n') + "' .\n";
-            }
-            if (dataObj.ProcType) {
-                insertPart += "\tclav:" + dataObj.id + " clav:processoTipo '" + dataObj.ProcType + "' .\n";
-            }
-            if (dataObj.ProcTrans) {
-                insertPart += "\tclav:" + dataObj.id + " clav:processoTransversal '" + dataObj.ProcTrans + "' .\n";
-            }
-            if (dataObj.ExAppNotes && dataObj.ExAppNotes.length) {
-                for (var i = 0; i < dataObj.ExAppNotes.length; i++) {
-                    insertPart += "\tclav:" + dataObj.id + " clav:exemploNA '" + dataObj.ExAppNotes[i].Exemplo.replace(/\n/g, '\\n') + "' .\n";
-                }
-            }
-
-            //relations
-            //Notas de aplicação
-            if (dataObj.AppNotes.Add && dataObj.AppNotes.Add.length) {
-                for (var i = 0; i < dataObj.AppNotes.Add.length; i++) {
-                    insertPart += `
-                        clav:`+ dataObj.AppNotes.Add[i].id + ` rdf:type owl:NamedIndividual ,
-                                clav:NotaAplicacao ;
-                            clav:conteudo "`+ dataObj.AppNotes.Add[i].Nota.replace(/\n/g, '\\n') + `" .
-                    `;
-                    insertPart += "\tclav:" + dataObj.id + " clav:temNotaAplicacao clav:" + dataObj.AppNotes.Add[i].id + " .\n";
-                }
-            }
-            //Notas de exclusão
-            if (dataObj.DelNotes.Add && dataObj.DelNotes.Add.length) {
-                for (var i = 0; i < dataObj.DelNotes.Add.length; i++) {
-                    insertPart += `
-                        clav:`+ dataObj.DelNotes.Add[i].id + ` rdf:type owl:NamedIndividual ,
-                                clav:NotaExclusao ;
-                            clav:conteudo "`+ dataObj.DelNotes.Add[i].Nota.replace(/\n/g, '\\n') + `" .
-                    `;
-                    insertPart += "\tclav:" + dataObj.id + " clav:temNotaExclusao clav:" + dataObj.DelNotes.Add[i].id + " .\n";
-                }
-            }
-            //Donos
-            if (dataObj.Owners.Add && dataObj.Owners.Add.length) {
-                for (var i = 0; i < dataObj.Owners.Add.length; i++) {
-                    insertPart += "\tclav:" + dataObj.id + " clav:temDono clav:" + dataObj.Owners.Add[i].id + " .\n";
-                }
-            }
-            //Legislações
-            if (dataObj.Legs.Add && dataObj.Legs.Add.length) {
-                for (var i = 0; i < dataObj.Legs.Add.length; i++) {
-                    insertPart += "\tclav:" + dataObj.id + " clav:temLegislacao clav:" + dataObj.Legs.Add[i].id + " .\n";
-                }
-            }
-            //Relações com Processos 
-            var relKeys = Object.keys(dataObj.RelProcs);
-            
-            for (var k = 0; k < relKeys.length; k++) {
-                if (dataObj.RelProcs[relKeys[k]].Add && dataObj.RelProcs[relKeys[k]].Add.length) {
-                    for (var i = 0; i < dataObj.RelProcs[relKeys[k]].Add.length; i++) {
-                        insertPart += "\tclav:" + dataObj.id + " clav:e" + relKeys[k].replace(/ /,'') + " clav:" + dataObj.RelProcs[relKeys[k]].Add[i].id + " .\n";
-                    }
-                }
-            }
-            //Participantes
-            var partKeys = Object.keys(dataObj.Participants);
-
-            for (var k = 0; k < partKeys.length; k++) {
-                if (dataObj.Participants[partKeys[k]].Add && dataObj.Participants[partKeys[k]].Add.length) {
-                    for (var i = 0; i < dataObj.Participants[partKeys[k]].Add.length; i++) {
-                        insertPart += "\tclav:" + dataObj.id + " clav:temParticipante" + partKeys[k] + " clav:" + dataObj.Participants[partKeys[k]].Add[i].id + " .\n";
-                    }
-                }
-            }
-
-            return insertPart;
-        }
-
         //Update organization
         function updateClass(dataObj) {
+            function prepDelete(dataObj) {
+                var deletePart = "\n";
+    
+                //relations
+                if (dataObj.Owners.Delete && dataObj.Owners.Delete.length) {
+                    for (var i = 0; i < dataObj.Owners.Delete.length; i++) {
+                        deletePart += "\tclav:" + dataObj.id + " clav:temDono clav:" + dataObj.Owners.Delete[i].id + " .\n";
+                    }
+                }
+                if (dataObj.Legs.Delete && dataObj.Legs.Delete.length) {
+                    for (var i = 0; i < dataObj.Legs.Delete.length; i++) {
+                        deletePart += "\tclav:" + dataObj.id + " clav:temLegislacao clav:" + dataObj.Legs.Delete[i].id + " .\n";
+                    }
+                }
+                if (dataObj.AppNotes.Delete && dataObj.AppNotes.Delete.length) {
+                    for (var i = 0; i < dataObj.AppNotes.Delete.length; i++) {
+                        deletePart += "\tclav:" + dataObj.id + " clav:temNotaAplicacao clav:" + dataObj.AppNotes.Delete[i].id + " .\n";
+                    }
+                }
+                if (dataObj.DelNotes.Delete && dataObj.DelNotes.Delete.length) {
+                    for (var i = 0; i < dataObj.DelNotes.Delete.length; i++) {
+                        deletePart += "\tclav:" + dataObj.id + " clav:temNotaExclusao clav:" + dataObj.DelNotes.Delete[i].id + " .\n";
+                    }
+                }
+                
+                var relKeys = Object.keys(dataObj.RelProcs);
+                
+                for (var k = 0; k < relKeys.length; k++) {
+                    if (dataObj.RelProcs[relKeys[k]].Delete && dataObj.RelProcs[relKeys[k]].Delete.length) {
+                        for (var i = 0; i < dataObj.RelProcs[relKeys[k]].Delete.length; i++) {
+                            deletePart += "\tclav:" + dataObj.id + " clav:e" + relKeys[k].replace(/ /,'') + " clav:" + dataObj.RelProcs[relKeys[k]].Delete[i].id + " .\n";
+                        }
+                    }
+                }
+    
+                var partKeys = Object.keys(dataObj.Participants);
+    
+                for (var k = 0; k < partKeys.length; k++) {
+                    if (dataObj.Participants[partKeys[k]].Delete && dataObj.Participants[partKeys[k]].Delete.length) {
+                        for (var i = 0; i < dataObj.Participants[partKeys[k]].Delete.length; i++) {
+                            deletePart += "\tclav:" + dataObj.id + " clav:temParticipante" + partKeys[k] + " clav:" + dataObj.Participants[partKeys[k]].Delete[i].id + " .\n";
+                        }
+                    }
+                }
+    
+                return deletePart;
+            }
+
+            function prepWhere(dataObj) {
+                var wherePart = "\n";
+    
+                //atributes
+                if (dataObj.Title) {
+                    wherePart += "\tclav:" + dataObj.id + " clav:titulo ?tit .\n";
+                }
+                if (dataObj.Status) {
+                    wherePart += "\tclav:" + dataObj.id + " clav:classeStatus ?status .\n";
+                }
+                if (dataObj.Desc) {
+                    wherePart += "\tclav:" + dataObj.id + " clav:descricao ?desc .\n";
+                }
+                if (dataObj.ProcType) {
+                    wherePart += "\tclav:" + dataObj.id + " clav:processoTipo ?ptipo .\n";
+                }
+                if (dataObj.ProcTrans) {
+                    wherePart += "\tclav:" + dataObj.id + " clav:processoTransversal ?ptrans .\n";
+                }
+                if (dataObj.ExAppNotes && dataObj.ExAppNotes.length) {
+                    wherePart += "\tclav:" + dataObj.id + " clav:exemploNA ?exNA .\n";
+                }
+    
+                //relations
+                if (dataObj.AppNotes.Delete && dataObj.AppNotes.Delete.length) {
+                    for (var i = 0; i < dataObj.AppNotes.Delete.length; i++) {
+                        wherePart += "\tclav:" + dataObj.AppNotes.Delete[i].id + " ?NAp" + i + " ?NAo" + i + " .\n";
+                    }
+                }
+                if (dataObj.DelNotes.Delete && dataObj.DelNotes.Delete.length) {
+                    for (var i = 0; i < dataObj.DelNotes.Delete.length; i++) {
+                        wherePart += "\tclav:" + dataObj.DelNotes.Delete[i].id + " ?NEp" + i + " ?NEo" + i + " .\n";
+                    }
+                }
+    
+                return wherePart;
+            }
+
+            function prepInsert(dataObj) {
+                var insertPart = "\n";
+    
+                //attributes
+                if (dataObj.Title) {
+                    insertPart += "\tclav:" + dataObj.id + " clav:titulo '" + dataObj.Title + "' .\n";
+                }
+                if (dataObj.Status) {
+                    insertPart += "\tclav:" + dataObj.id + " clav:classeStatus '" + dataObj.Status + "' .\n";
+                }
+                if (dataObj.Desc) {
+                    insertPart += "\tclav:" + dataObj.id + " clav:descricao '" + dataObj.Desc.replace(/\n/g, '\\n') + "' .\n";
+                }
+                if (dataObj.ProcType) {
+                    insertPart += "\tclav:" + dataObj.id + " clav:processoTipo '" + dataObj.ProcType + "' .\n";
+                }
+                if (dataObj.ProcTrans) {
+                    insertPart += "\tclav:" + dataObj.id + " clav:processoTransversal '" + dataObj.ProcTrans + "' .\n";
+                }
+                if (dataObj.ExAppNotes && dataObj.ExAppNotes.length) {
+                    for (var i = 0; i < dataObj.ExAppNotes.length; i++) {
+                        insertPart += "\tclav:" + dataObj.id + " clav:exemploNA '" + dataObj.ExAppNotes[i].Exemplo.replace(/\n/g, '\\n') + "' .\n";
+                    }
+                }
+    
+                //relations
+                //Notas de aplicação
+                if (dataObj.AppNotes.Add && dataObj.AppNotes.Add.length) {
+                    for (var i = 0; i < dataObj.AppNotes.Add.length; i++) {
+                        insertPart += `
+                            clav:`+ dataObj.AppNotes.Add[i].id + ` rdf:type owl:NamedIndividual ,
+                                    clav:NotaAplicacao ;
+                                clav:conteudo "`+ dataObj.AppNotes.Add[i].Nota.replace(/\n/g, '\\n') + `" .
+                        `;
+                        insertPart += "\tclav:" + dataObj.id + " clav:temNotaAplicacao clav:" + dataObj.AppNotes.Add[i].id + " .\n";
+                    }
+                }
+                //Notas de exclusão
+                if (dataObj.DelNotes.Add && dataObj.DelNotes.Add.length) {
+                    for (var i = 0; i < dataObj.DelNotes.Add.length; i++) {
+                        insertPart += `
+                            clav:`+ dataObj.DelNotes.Add[i].id + ` rdf:type owl:NamedIndividual ,
+                                    clav:NotaExclusao ;
+                                clav:conteudo "`+ dataObj.DelNotes.Add[i].Nota.replace(/\n/g, '\\n') + `" .
+                        `;
+                        insertPart += "\tclav:" + dataObj.id + " clav:temNotaExclusao clav:" + dataObj.DelNotes.Add[i].id + " .\n";
+                    }
+                }
+                //Donos
+                if (dataObj.Owners.Add && dataObj.Owners.Add.length) {
+                    for (var i = 0; i < dataObj.Owners.Add.length; i++) {
+                        insertPart += "\tclav:" + dataObj.id + " clav:temDono clav:" + dataObj.Owners.Add[i].id + " .\n";
+                    }
+                }
+                //Legislações
+                if (dataObj.Legs.Add && dataObj.Legs.Add.length) {
+                    for (var i = 0; i < dataObj.Legs.Add.length; i++) {
+                        insertPart += "\tclav:" + dataObj.id + " clav:temLegislacao clav:" + dataObj.Legs.Add[i].id + " .\n";
+                    }
+                }
+                //Relações com Processos 
+                var relKeys = Object.keys(dataObj.RelProcs);
+                
+                for (var k = 0; k < relKeys.length; k++) {
+                    if (dataObj.RelProcs[relKeys[k]].Add && dataObj.RelProcs[relKeys[k]].Add.length) {
+                        for (var i = 0; i < dataObj.RelProcs[relKeys[k]].Add.length; i++) {
+                            insertPart += "\tclav:" + dataObj.id + " clav:e" + relKeys[k].replace(/ /,'') + " clav:" + dataObj.RelProcs[relKeys[k]].Add[i].id + " .\n";
+                        }
+                    }
+                }
+                //Participantes
+                var partKeys = Object.keys(dataObj.Participants);
+    
+                for (var k = 0; k < partKeys.length; k++) {
+                    if (dataObj.Participants[partKeys[k]].Add && dataObj.Participants[partKeys[k]].Add.length) {
+                        for (var i = 0; i < dataObj.Participants[partKeys[k]].Add.length; i++) {
+                            insertPart += "\tclav:" + dataObj.id + " clav:temParticipante" + partKeys[k] + " clav:" + dataObj.Participants[partKeys[k]].Add[i].id + " .\n";
+                        }
+                    }
+                }
+    
+                return insertPart;
+            }
+
             var deletePart = "DELETE {" + prepWhere(dataObj) + prepDelete(dataObj) + "}\n";
             var inserTPart = "INSERT {" + prepInsert(dataObj) + "}\n";
             var wherePart = "WHERE {" + prepWhere(dataObj) + "}\n";
 
-            updateQuery = deletePart + inserTPart + wherePart;
+            var updateQuery = deletePart + inserTPart + wherePart;
 
             console.log(updateQuery);
 

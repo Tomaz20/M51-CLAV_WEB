@@ -22,6 +22,25 @@ block corpo
                                 size="70"
                                 v-model="initials"
                             )
+
+                    //-TIPO
+                    tr
+                        td(style="padding-top:10px")
+                            label Tipo: 
+                        td
+                            select(
+                                v-model="type"
+                            )
+                                option(
+                                    value="Organizacao"
+                                    selected
+                                )   Organização
+                                option(
+                                    value="ConjuntoOrganizacoes"
+                                )   Conjunto
+                                option(
+                                    value="TipologiaOrganizacao"
+                                ) Tipologia
             input.btn.btn-xs.btn-default.col-sm-2(
                 type="button" 
                 @click="add" 

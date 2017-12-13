@@ -23,14 +23,14 @@ Vue.component('custom-table-simple', {
             <table :class="classTable">
                 <thead v-if="header">
                     <tr>
-                        <th v-for="(item,index) in header" @click="sort(index)" class="sorter" :style="{width: cwidth[index]}">
+                        <th v-if="index>0" v-for="(item,index) in header" @click="sort(index)" class="sorter" :style="{width: cwidth[index]}">
                             {{ item }} <span class="caret"></span>
                         </th>
                     </tr>
                 </thead>
                 <tbody name="table">
                     <tr v-for="(row,index) in rowsShow" :key="row[0]" @click="rowClick(index)">
-                        <td v-for="item in row" style="max-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ item }}</td>
+                        <td v-if="index>0" v-for="(item,index) in row" style="max-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ item }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -64,7 +64,7 @@ Vue.component('custom-table-simple', {
     },
     watch: {
         filt: function () {
-            this.filter();
+            this.completeFilter(this.filt);
         },
         rows: function () {
             this.loadPages();
@@ -78,11 +78,24 @@ Vue.component('custom-table-simple', {
         },
     },
     methods: {
-        filter: function () { //filter rows according to what is written in the input box
-            regex = new RegExp(this.filt, "gi");
+        completeFilter: function (filt){ //filter rows according to what is written in the input box
+            tempRows= this.completeRows;
+            
+            filters= filt.split(" ");
 
-            this.rows = this.completeRows.filter(function (item) {
+            for(i=0; i<filters.length; i++){
+                tempRows=this.filter(tempRows, filters[i]);
+            }
 
+            this.rows=tempRows;
+        },
+        filter: function (list, filt) { 
+            var retList;
+            
+            regex = new RegExp(filt, "gi");
+
+            retList = list.filter(function (item) {
+                    
                 for (var i = 0; i < item.length; i++) {
                     if (regex.test(item[i])) {
                         return true;
@@ -90,9 +103,11 @@ Vue.component('custom-table-simple', {
                 }
                 return false;
             })
-            if (this.rows.length == 0) {
-                this.rows = [["Sem resultados correspondentes..."]];
+            if (retList.length == 0) {
+                retList = [[]];
             }
+
+            return retList;
         },
         sort: function (index) { //sort rows by header[index]
             if (this.order == index) {

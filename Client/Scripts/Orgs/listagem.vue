@@ -5,7 +5,7 @@ new Vue({
         tableData: [[]],
         ready: false,
         content: [],
-        cwidth: ['4%','88%','8%'],
+        cwidth: ['4%','75%','8%','13%'],
     },
     methods: {
         getParameterByName: function(name, url) {
@@ -21,14 +21,14 @@ new Vue({
             var id = this.content[row[0]-1].id.value;
             id = id.replace(/[^#]+#(.*)/,'$1');
             
-            window.location.href = '/organizacao?id='+id;
+            window.location.href = '/organizacao?id='+id+'&type='+row[3];
         },
         addOrg: function(row){
             window.location.href = '/novaorganizacao';
         },
         parse: function(){    
             // key names for table header and parsing
-            var keys=["Nome","Sigla"];
+            var keys=["Nome","Sigla","Tipo"];
             // setting the table header
             this.tableHeader=["#"].concat(keys);
 
@@ -45,6 +45,23 @@ new Vue({
                 this.tableData[i]=temp.slice();
 
             }
+            
+            conj = new RegExp("#Conjunto", "g");
+            tipol = new RegExp("#Tipologia", "g");
+
+            this.tableData.map( function(row){
+                if (conj.test(row[3])){
+                    row[3]="Conjunto";
+                }
+                else if (tipol.test(row[3])){
+                    row[3]="Tipologia";
+                }
+                else {
+                    row[3]="Organização";
+                }
+                return row;
+            })
+            
         }
     },
     created: function(){

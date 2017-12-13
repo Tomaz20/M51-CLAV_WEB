@@ -1,28 +1,30 @@
-TODOS:
-    -autenticação por CC
-
-    -ts a partir de org
-
-    -controlo de níveis de acesso
-
-    -listagem de classes em harmonização
-
-    -editar utilizador
-
-    -editar TS
-
-    -fluxo de submissões
+TODOs:
+    Utilizadores
+        -controlo de níveis de acesso
+        -fluxo de submissões
+        -editar utilizador
+        -autenticação por CC
 
 
-    Tabelas de Seleção
-        -alterar formato TS
-        -editar TS
+    Tabelas de Seleção (em standby)
+        -acabar CRUD
+        -ts a partir de org
+        -listagem de classes em harmonização
 
 
-    Legislação
-        -lista de legislação (tipo e numero no inicio , titulo)
-        -pesquisa nas tabelas
-        -concatenar data
+    Organizações
+        -CRUD conjuntos de orgs
+            -API
+                -create
+                -update
+                -delete
+        -CRUD tipologias de orgs
+            -API    
+                -create
+                -update
+                -delete
+        -Site
+            -tipologias a que organização pertence
 
 
-    CRUD nos erros
+    CRUD erros
