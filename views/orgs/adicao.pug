@@ -1,0 +1,56 @@
+extends ../layout
+block corpo
+    #nova-organizacao-form.panel.panel-default
+        .panel-heading
+            h1.page-header Nova Organização  
+        .panel-body
+            .form-group 
+                table
+                    tr
+                        td(style="width:10%")
+                            label Nome: 
+                        td(style="width:80%")
+                            input(
+                                size="70"
+                                v-model="name"
+                            )
+                    tr
+                        td(style="padding-top:10px")
+                            label Sigla: 
+                        td
+                            input(
+                                size="70"
+                                v-model="initials"
+                            )
+
+                    //-TIPO
+                    tr
+                        td(style="padding-top:10px")
+                            label Tipo: 
+                        td
+                            select(
+                                v-model="type"
+                            )
+                                option(
+                                    value="Organizacao"
+                                    selected
+                                )   Organização
+                                option(
+                                    value="ConjuntoOrganizacoes"
+                                )   Conjunto
+                                option(
+                                    value="TipologiaOrganizacao"
+                                ) Tipologia
+            input.btn.btn-xs.btn-default.col-sm-2(
+                type="button" 
+                @click="add" 
+                value="Adicionar" 
+                :disabled="!(name && initials)"
+            )
+            p.col-sm-7 {{ message }}
+    //-
+
+    
+
+append scripts    
+    script(src="/javascripts/orgs/adicao.vue")

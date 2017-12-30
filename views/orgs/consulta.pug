@@ -1,0 +1,277 @@
+extends ../layout
+block corpo
+    #organizacao-form.panel.panel-default
+        .panel-heading
+            h1.page-header {{ orgName }}  
+        .panel-body
+            .form-group
+                table.consulta
+                    //- NOME
+                    tr
+                        td(style="width:10%")
+                            label Nome: 
+                        td(v-if="editName" style="width:80%")
+                            input(
+                                size="50"
+                                v-model="newName"
+                                :placeholder="orgName"
+                            )
+                        td(v-else style="width:80%")
+                            | {{ orgName }}  
+                        if user
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="editName"
+                                )
+                    
+                    //- SIGLA
+                    tr
+                        td
+                            label Sigla: 
+                        td
+                            | {{ orgInitials }} 
+            
+                    //- TIPO
+                    tr
+                        td(style="width:10%")
+                            label Tipo: 
+                        td
+                            p {{ type }}
+
+                    //- DOMINIO
+                    tr
+                        td(style="width:10%")
+                            label Dono de:
+                        //- edição
+                        td(v-if="editDomain" style="width:80%")
+                            table
+                                tr
+                                    td(width="60%")
+                                        v-select.custom-select(
+                                            v-model="newClass"
+                                            :options="classList"
+                                        )
+                                    td
+                                        button(
+                                            @click="newDomain.unshift(newClass.value)"
+                                        ) +
+                                tr(v-if="newDomain.length")
+                                    td(colspan="2")
+                                        ul(style="padding-left:20px")
+                                            li(v-for="(c,index) in newDomain")
+                                                | {{ c.Code }} - {{ c.Title }}
+                                                button(
+                                                    @click="newDomain.splice(index,1)"
+                                                ) x
+                        td(v-else style="width:80%")
+                            ul(v-if="domainReady" style="padding-left:20px" :class="{'is-collapsed' : domainCollapsed }")
+                                li(v-for="c in domain")
+                                    a(:href="'/classes/consulta'+c.id") {{ c.Code }}
+                                    |  - {{ c.Title }}
+                            button(@click="domainCollapsed=!domainCollapsed" v-if="domain.length>4")
+                                span(v-if="domainCollapsed") Mostrar mais...
+                                span(v-else) Mostrar menos...
+                        if user
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="editDomain"
+                                )
+
+                    //- PARTICIPAÇÕES
+                    tr
+                        td(style="width:10%")
+                            label Participações:    
+                        //- edição
+                        td(v-if="editParts" style="width:80%")
+                            table
+                                tr
+                                    td(width="30%")
+                                        v-select.custom-select(
+                                            v-model="newPartType"
+                                            :options="Object.keys(participations)"
+                                        )
+                                    td(width="30%")
+                                        v-select.custom-select(
+                                            v-model="newPart"
+                                            :options="classList"
+                                        )
+                                    td
+                                        button(
+                                            @click="newParticipations[newPartType].unshift(newPart.value)"
+                                        ) +
+                                tr
+                                    td(colspan="3")
+                                        ul(v-if="partsReady" style="padding-left:20px")
+                                            li(v-for="key in Object.keys(newParticipations)" v-if="newParticipations[key].length>0")
+                                                b Como {{ key }}
+                                                ul
+                                                    li(v-for="(p, index) in newParticipations[key]")
+                                                        | {{ p.Code }} - {{ p.Title }}
+                                                        button(
+                                                            @click="newParticipations[key].splice(index,1)"
+                                                        ) x
+                        td(v-else style="width:80%")
+                            ul(v-if="partsReady" style="padding-left:20px")
+                                li(v-for="key in Object.keys(participations)" v-if="participations[key].length>0")
+                                    b Como {{ key }}:
+                                    ul(:class="{'is-collapsed' : partsCollapsed[key] }")
+                                        li(v-for="p in participations[key]")
+                                            a(:href="'/classes/consulta/'+p.id") {{ p.Code }}
+                                            |  - {{ p.Title }}
+                                    button(@click="partsCollapsed[key]=!partsCollapsed[key]" v-if="participations[key].length>4")
+                                        span(v-if="partsCollapsed[key]") Mostrar mais...
+                                        span(v-else) Mostrar menos...
+                        if user
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="editParts"
+                                )
+
+                    //- CONJUNTOS A QUE PERTENCE
+                    tr(v-if="type!='Tipologia'")
+                        td(style="width:10%")
+                            label Conjuntos:
+                        td(v-if="editConj" style="width:80%")
+                            table
+                                tr
+                                    td
+                                        v-select.custom-select( 
+                                            v-model="newConj"
+                                            :options="conjList"
+                                        )
+                                    td
+                                        button(
+                                            @click="myNewConjList.unshift(newConj.value)"
+                                        ) +
+                                tr(v-if="myNewConjList.length")
+                                    td(colspan="2")
+                                        ul(style="padding-left:20px")
+                                            li(v-for="(o,index) in myNewConjList")
+                                                | {{ o.Sigla }} - {{ o.Nome }}
+                                                button(
+                                                    @click="myNewConjList.splice(index,1)"
+                                                ) x
+                        td(v-else style="width:80%")
+                            ul(style="padding-left:20px")
+                                li(v-for="o in myConjList")
+                                    a(:href="'/organizacoes/consulta/'+o.id") {{ o.Sigla }} 
+                                    | - {{ o.Nome }}
+                        if user
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="editConj"
+                                )
+
+                    //- TIPOLOGIAS A QUE PERTENCE
+                    tr(v-if="type!='Tipologia'")
+                        td(style="width:10%")
+                            label Tipologias:
+                        td(v-if="editTipol" style="width:80%")
+                            table
+                                tr
+                                    td
+                                        v-select.custom-select( 
+                                            v-model="newTipol"
+                                            :options="tipolList"
+                                        )
+                                    td
+                                        button(
+                                            @click="myNewTipolList.unshift(newTipol.value)"
+                                        ) +
+                                tr(v-if="myNewTipolList.length")
+                                    td(colspan="2")
+                                        ul(style="padding-left:20px")
+                                            li(v-for="(o,index) in myNewTipolList")
+                                                | {{ o.Sigla }} - {{ o.Nome }}
+                                                button(
+                                                    @click="myNewTipolList.splice(index,1)"
+                                                ) x
+                        td(v-else style="width:80%")
+                            ul(style="padding-left:20px")
+                                li(v-for="o in myTipolList")
+                                    a(:href="'/organizacoes/consulta/'+o.id") {{ o.Sigla }} 
+                                    | - {{ o.Nome }}
+                        if user
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="editTipol"
+                                )
+
+                    //- ELEMENTOS
+                    tr(v-if="type!='Organização'")
+                        td(style="width:10%")
+                            label Elementos:
+                        td(v-if="editElems" style="width:80%")
+                            table
+                                tr
+                                    td
+                                        v-select.custom-select( 
+                                            v-model="newElem"
+                                            :options="orgList"
+                                        )
+                                    td
+                                        button(
+                                            @click="newElemList.unshift(newElem.value)"
+                                        ) +
+                                tr(v-if="newElemList.length")
+                                    td(colspan="2")
+                                        ul(style="padding-left:20px")
+                                            li(v-for="(o,index) in newElemList")
+                                                | {{ o.Sigla }} - {{ o.Nome }}
+                                                button(
+                                                    @click="newElemList.splice(index,1)"
+                                                ) x
+                        td(v-else style="width:80%")
+                            ul(style="padding-left:20px")
+                                li(v-for="o in elemList")
+                                    a(:href="'/organizacoes/consulta/'+o.id") {{ o.Sigla }} 
+                                    | - {{ o.Nome }}
+                        if user
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="editElems"
+                                )
+
+            if user
+                input.btn.btn-xs.btn-default.col-sm-1(
+                    type="button" 
+                    @click="update" 
+                    value="Confirmar" 
+                    :disabled="!((editName && newName) || editDomain || editParts || editConj || editTipol || editElems)"
+                )
+                input.btn.btn-xs.btn-warning.col-sm-1(
+                    type="button" 
+                    @click="delReady" 
+                    value="Apagar" 
+                    :disabled="(editName || editDomain || editParts || editConj || editTipol || editElems)"
+                )
+                p.col-sm-5 {{ message }}
+
+                input.btn.btn-xs.btn-danger(
+                    v-if="delConfirm"
+                    type="button" 
+                    @click="deleteOrg" 
+                    value="OK" 
+                )
+                input.btn.btn-xs.btn-info(
+                    v-if="delConfirm"
+                    type="button" 
+                    @click="delNotReady" 
+                    value="<-" 
+                )
+    //-
+
+append scripts    
+    script(src="/javascripts/orgs/consulta.vue")

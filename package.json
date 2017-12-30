@@ -1,28 +1,27 @@
 {
-  "name": "misc",
+  "name": "M51-CLAV",
   "version": "1.0.0",
-  "description": "\"Workshop\" to test a few stuff before implementing",
-  "main": "server.js",
+  "description": "Arquivo Digital: Plataforma Modular para a Classificação e a Avaliação da Informação Pública",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node ./bin/www"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Tomaz20/M51-CLAV_WEB.git"
+    "url": "git+https://github.com/tomasmferreira/M51-CLAV_WEB.git"
   },
   "keywords": [
     "vue.js",
     "node.js",
-    "pug.js",
+    "pug",
     "sparql"
   ],
   "author": "Tomás Ferreira",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Tomaz20/Misc/issues"
+    "url": "https://github.com/tomasmferreira/M51-CLAV_WEB/issues"
   },
-  "homepage": "https://github.com/Tomaz20/Misc#readme",
+  "homepage": "https://github.com/tomasmferreira/M51-CLAV_WEB#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",

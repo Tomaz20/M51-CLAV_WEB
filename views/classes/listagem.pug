@@ -1,0 +1,31 @@
+extends ../layout
+block corpo
+    h1.page-header Classes
+    .row
+        #tabela-classes.row.placeholders
+            custom-table-waterfall(
+                v-if="ready"
+
+                filter-on="true"
+                pages-on="true"
+                add="true"
+
+                :header="tableHeader"
+                :complete-rows="tableData"
+                :sub-ready="subReady"
+                :cwidth="cwidth"
+                :n-edits="nEdits"
+                
+                table-class='table table-hover'
+                
+                @row-clicked="rowClicked($event)"
+                @drop-clicked="dropClicked($event)"
+                @add-clicked="addClass"
+            )
+            h4(
+                v-else
+            ) Loading...
+        
+    //-
+append scripts    
+    script(src="/javascripts/classes/listagem.vue")

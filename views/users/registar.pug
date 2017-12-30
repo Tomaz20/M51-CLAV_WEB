@@ -1,0 +1,33 @@
+extends ../layout
+block corpo
+    .container
+        form.form-signin(action="/auth/registar" method="post" style="width:60%")
+            h2.form-signin-heading Registar
+            
+            label.sr-only(for='name') Nome
+            input#name.form-control(name='name' type='text', placeholder='Nome Apelido', required='', autofocus='')
+            
+            label.sr-only(for='email') Email
+            input#email.form-control(name='email' type='email', placeholder='Email', required='')
+            
+            label.sr-only(for='password') Password
+            input#password.form-control(name='password' type='password', placeholder='Password', required='')
+            
+            label.sr-only(for='password2') Repetir Password
+            input#password2.form-control(name='password2' type='password', placeholder='Repetir Password', required='')
+            
+            button.btn.btn-lg.btn-block(type='submit') Registar
+
+            a.btn.btn-md.btn-primary(href="/loginFB" style="width:50%")
+                span.fa.fa-facebook
+                |  Facebook
+            
+            a.btn.btn-md.btn-danger(href="/loginG"  style="width:50%")
+                span.fa.fa-google
+                |  Google
+
+        if errors
+            each error in errors
+                h2(style="margin: 2px")
+                    span.label.label-danger(style="background-color: #c71c2294")
+                        | #{error.msg}

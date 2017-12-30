@@ -1,0 +1,125 @@
+extends ./_bootstrap
+append head
+	title M51-CLAV
+
+append styles
+	meta(name="author",content="Tomás Ferreira")
+	link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css")
+	link(href="/stylesheets/styles.css" rel="stylesheet" type="text/css")
+	link(href='/stylesheets/dashboard.css', rel='stylesheet')
+	link(href='/stylesheets/theme.css', rel='stylesheet')
+	link(href='/stylesheets/signin.css', rel='stylesheet')
+	link(href='/stylesheets/font-awesome.min.css', rel='stylesheet')
+	link(rel="icon" href="https://cdn1.iconfinder.com/data/icons/dotted-charts/512/links_diagram-128.png")
+	
+
+block body
+	nav.navbar.navbar-inverse.navbar-fixed-top
+		.container-fluid
+			.navbar-header
+				button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#navbar', aria-expanded='false', aria-controls='navbar')
+					span.sr-only Toggle navigation
+					span.icon-bar
+					span.icon-bar
+					span.icon-bar
+				button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#users', aria-expanded='false', aria-controls='users')
+					span.sr-only Toggle authentication
+					span.glyphicon.glyphicon-user(style="color: white")
+				.navbar-brand M51-CLAV
+			
+			//collapsable on mobile, fixed in desktop
+			#users.navbar-collapse.collapse
+				ul.nav.navbar-nav.navbar-right
+					if user
+						li 
+							a(href='/users/perfil')
+								b(style="color: white") #{user.name} 
+								span.glyphicon.glyphicon-user(style="color: white")
+						li
+							a(:href="'/auth/logout?l='+location") Logout
+					else
+						li.dropdown
+							a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-expanded='false')
+								| Login 
+								span.caret
+							form.dropdown-menu(role='menu' action="/auth/login" method="post")
+								input#email.form-control(name='username' type='text', placeholder='Email', required='')
+								
+								input#password.form-control(name='password' type='password', placeholder='Password', required='')
+								
+								input(type="hidden" :value="location" name="location")
+
+								button.btn.btn-block(type='submit') Login
+
+								a.btn.btn-primary.btn-block(href="/auth/loginFB")
+									span.fa.fa-facebook
+									|  Facebook
+								
+								a.btn.btn-danger.btn-block(href="/auth/loginG")
+									span.fa.fa-google
+									|  Google
+						li
+							a(href='/users/registar') Registar
+
+			//collapsable, only appears on mobile		
+			#navbar.collapse
+				ul.nav.navbar-nav
+					li
+						a(href='/') Inicio
+					li
+						a(href='/organizacoes') Organizações
+					li
+						a(href='/legislacao') Legislação
+					li
+						a(href='/classes') Classes
+					li
+						a(href='/tabelasSelecao') Tabelas de Seleção
+	.container-fluid
+		.row
+			//does not appear on mobile
+			.col-sm-3.col-md-2.sidebar
+				ul.nav.nav-sidebar
+					li
+						a(href='/') Inicio
+					li
+						a(href='/organizacoes') Organizações
+					li
+						a(href='/legislacao') Legislação
+					li
+						a(href='/classes') Classes
+					li
+						a(href='/tabelasSelecao') Tabelas de Seleção
+					li#selTabs
+						div(v-if="ready")
+							v-select.custom-select(
+								v-model="link"
+								:options="selTabs"
+							)
+
+			.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+				h3
+					if success_msg!=""
+						.alert.alert-success #{success_msg}
+
+					if warn_msg!=""
+						.alert.alert-warning #{warn_msg}
+					
+					if error_msg!=""
+						.alert.alert-danger #{error_msg}
+
+					if error!=""
+						.alert.alert-danger #{error}
+					
+				block corpo
+
+append scripts
+	//-sricpt(src="/javascripts/base/vue.min.js")
+	script(src="/javascripts/base/vue.js")
+	script(src="/javascripts/base/vue-resource.js")
+	script(src="/javascripts/base/vue-select.js")
+	
+	script(src="/javascripts/base/axios.min.js")
+	script(src="/javascripts/base/lodash.min.js")
+	
+	script(src="/javascripts/components.vue")
+	script(src="/javascripts/layout.vue")

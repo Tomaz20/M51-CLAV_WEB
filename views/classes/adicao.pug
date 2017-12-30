@@ -1,0 +1,304 @@
+extends ../layout
+block corpo
+    #nova-classe-form.panel.panel-default
+        .panel-heading
+            h1.page-header Nova Classe  
+        .panel-body
+            .form-group
+                table.cria
+                    //-TIPO/ NIVEL
+                    tr
+                        td(style="width:10%")
+                            label Tipo: 
+                        td(style="width:80%")
+                            select( v-model="type")
+                                option(value=1) Classe_N1
+                                option(value=2) Classe_N2
+                                option(value=3) Classe_N3
+                                option(value=4) Classe_N4
+
+                    //-STATUS
+                    tr(v-if="type==3")
+                        td(style="padding-top:10px")
+                            label Status: 
+                        td
+                            select(
+                                v-model="status"
+                            )
+                                option(
+                                    value="H"
+                                    selected
+                                )   Harmonização
+                                option(
+                                    value="A"
+                                )   Activa
+                                option(
+                                    value="I"
+                                ) Inactiva
+
+                    //-PAI
+                    tr(v-if="type>1 && parentsReady")
+                        td(style="width:10%")
+                            label Pai: 
+                        td.smaller
+                            v-select.custom-select(
+                                style="width=100px"
+                                v-model="parentvalue"
+                                :options="parents"
+                            )
+            
+                    //-CODIGO
+                    tr
+                        td(style="padding-top:10px")
+                            label Código: 
+                        td
+                            input(
+                                size="70"
+                                v-model="code"
+                            )
+
+                    //-TITULO   
+                    tr
+                        td(style="padding-top:10px")
+                            label Título: 
+                        td
+                            input(
+                                size="70"
+                                v-model="title"
+                            )
+
+                    //-DESCRIÇÃO
+                    tr
+                        td(style="padding-top:10px")
+                            label Descrição: 
+                        td
+                            textarea(
+                                cols="72"
+                                lines="5"
+                                v-model="description"
+                            )
+
+                    //-NOTAS DE APLICAÇÃO
+                    tr
+                        td(style="padding-top:10px")
+                            label Nota(s) de Aplicação: 
+                        td
+                            textarea(
+                                cols="72"
+                                lines="5"
+                                v-model="newAppNote"
+                                @keyup.ctrl.enter="addNewAppNote" 
+                            )
+                            button(@click="addNewAppNote") Ok
+                                   
+                            ul(v-if="appNotes && appNotes.length")
+                                li(v-for="(note,index) in appNotes")
+                                    button(@click="appNotes.splice(index,1)") x
+                                    | {{note.Note}}
+                    
+                    //-EXEMPLOS DE NA
+                    tr
+                        td(style="padding-top:10px")
+                            label Exemplo(s) de Nota(s) de Aplicação: 
+                        td
+                            textarea(
+                                cols="72"
+                                lines="5"
+                                v-model="newExAppNote"
+                                @keyup.ctrl.enter="addNewExAppNote" 
+                            )
+                            button(@click="addNewExAppNote") Ok
+                       
+                            ul(v-if="exAppNotes && exAppNotes.length")
+                                li(v-for="(ex,index) in exAppNotes")
+                                    button(@click="exAppNotes.splice(index,1)") x
+                                    | {{ex}}
+
+                    //-NOTAS DE EXCLUSÃO
+                    tr
+                        td(style="padding-top:10px")
+                            label Nota(s) de Exclusão: 
+                        td
+                            textarea(
+                                cols="72"
+                                lines="5"
+                                v-model="newDelNote"
+                                @keyup.ctrl.enter="addNewDelNote" 
+                            )
+                            button(@click="addNewDelNote") Ok
+                                   
+                            ul(v-if="delNotes && delNotes.length")
+                                li(v-for="(note,index) in delNotes")
+                                    button(@click="delNotes.splice(index,1)") x
+                                    | {{note.Note}}
+
+                    //-TIPO DE PROCESSO
+                    tr(v-if="type==3")
+                        td(style="padding-top:10px")
+                            label Tipo de Processo: 
+                        td
+                            input(
+                                type="radio"
+                                value="PC"
+                                v-model="procType"
+                            ) 
+                            |  Processo Comum
+                            br
+                            input(
+                                type="radio"
+                                value="PE"
+                                v-model="procType"
+                            )
+                            |  Processo Específico
+
+                    //-PROCESSO TRANSVERSAL
+                    tr(v-if="type==3")
+                        td(style="padding-top:10px")
+                            label Processo Transversal: 
+                        td
+                            input(
+                                type="radio"
+                                value="S"
+                                v-model="procTrans"
+                            ) 
+                            |  Sim
+                            br
+                            input(
+                                type="radio"
+                                value="N"
+                                v-model="procTrans"
+                            )
+                            |  Não
+
+                    //-DONOS
+                    tr(v-if="type==3 && orgsReady")
+                        td(style="padding-top:10px")
+                            label Dono(s): 
+                        td
+                            table
+                                tr
+                                    td
+                                        v-select.custom-select(
+                                            v-model="newOwner"
+                                            :options="orgList"
+                                        )
+                                    td
+                                        button(
+                                            @click="ownerList.push(newOwner.value)"
+                                        ) +
+                                tr
+                                    td(colspan="2")
+                                        ul(v-if="ownerList")
+                                            li(v-for="(o,index) in ownerList")
+                                                | {{ o.Sigla }} - {{ o.Nome }}
+                                                button(
+                                                    @click="ownerList.splice(index,1)"
+                                                ) x
+
+                    //-PARTICIPANTES
+                    tr(v-if="type==3 && procTrans=='S'")
+                        td(style="padding-top:10px")
+                            label Participantes: 
+                        td
+                            table
+                                tr
+                                    td(width="30%")
+                                        v-select.custom-select(
+                                            v-model="newParticipantType"
+                                            :options="Object.keys(participants)"
+                                        )
+                                    td(width="30%")
+                                        v-select.custom-select(
+                                            v-model="newParticipant"
+                                            :options="orgList"
+                                        )
+                                    td
+                                        button(
+                                            @click="participants[newParticipantType].push(newParticipant.value)"
+                                        ) +
+                                tr
+                                    td(colspan="3")
+                                        ul
+                                            li(v-for="key in Object.keys(participants)" v-if="participants[key] && participants[key].length>0")
+                                                b {{ key }}
+                                                    span(v-if="participants[key] && participants[key].length>1") es
+                                                ul
+                                                    li(v-for="(p, index) in participants[key]")
+                                                        | {{ p.Sigla }} - {{ p.Nome }}
+                                                        button(
+                                                            @click="participants[key].splice(index, 1)"
+                                                        ) x
+                    
+                    //-PROCESSOS RELACIONADOS
+                    tr(v-if="type==3 && classesReady")
+                        td(style="padding-top:10px")
+                            label Processos Relacionados: 
+                        td
+                            table
+                                tr
+                                    td(width="30%")
+                                        v-select.custom-select(
+                                            v-model="newRelType"
+                                            :options="Object.keys(relProcs)"
+                                        )
+                                    td(width="30%")
+                                        v-select.custom-select(
+                                            v-model="newRelProc"
+                                            :options="classList"
+                                        )
+                                    td
+                                        button(
+                                            @click="relProcs[newRelType].push(newRelProc.value)"
+                                        ) +
+                                tr
+                                    td(colspan=3)
+                                        ul
+                                            li(v-for="key in Object.keys(relProcs)" v-if="relProcs[key].length>0")
+                                                b É {{ key }}:
+                                                ul
+                                                    li(v-for="(c, index) in relProcs[key]")
+                                                        | {{ c.Code }} - {{ c.Title }}
+                                                        button(
+                                                            @click="relProcs[key].splice(index, 1)"
+                                                        ) x
+                    //-LEGISLAÇÕES                            
+                    tr(v-if="type==3 && legsReady")
+                        td(style="padding-top:10px")
+                            label Legislação(s): 
+                        td
+                            table
+                                tr
+                                    td
+                                        v-select.custom-select( 
+                                            v-model="newLegislation"
+                                            :options="legList"
+                                        )
+                                    td
+                                        button(
+                                            @click="newLegList.push(newLegislation.value)"
+                                        ) +
+                                tr
+                                    td(colspan="2")
+                                        ul(v-if="newLegList")
+                                            li(v-for="(l,index) in newLegList")
+                                                | {{ l.Número }} - {{ l.Titulo }}
+                                                button(
+                                                    @click="newLegList.splice(index,1)"
+                                                ) x
+
+            input.btn.btn-xs.btn-default.col-sm-2(
+                type="button" 
+                @click="add" 
+                value="Adicionar" 
+                :disabled=`!(
+                    ((type>1 && parent) || type==1) && 
+                    code
+                )`
+            )
+            p.col-sm-7 {{ message }}
+    //-
+
+    
+
+append scripts    
+    script(src="/javascripts/classes/adicao.vue")
