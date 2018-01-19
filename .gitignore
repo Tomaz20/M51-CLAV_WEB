@@ -1,3 +1,4 @@
 initUserDB.bat
 node_modules/
 logs/
+misc/
