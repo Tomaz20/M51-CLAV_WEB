@@ -12,10 +12,10 @@ new Vue({
             var id = this.content[row[0]-1].id.value;
             id = id.replace(/[^#]+#(.*)/,'$1');
             
-            window.location.href = '/legislacao/consulta/'+id;
+            window.location.href = '/legislacao/consultar/'+id;
         },
         addLeg: function(row){
-            window.location.href = '/legislacai/criacao';
+            window.location.href = '/legislacao/adicionar';
         },
         parse: function(){    
             // key names for table header and parsing
@@ -40,7 +40,7 @@ new Vue({
         }
     },
     created: function(){
-        this.$http.get("/api/leg")
+        this.$http.get("/api/legislacao")
         .then( function(response) { 
             this.content = response.body;
         })

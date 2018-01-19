@@ -14,8 +14,8 @@ router.get('/', function (req, res) {
         });
 })
 
-router.get('/level=:level', function (req, res) {
-    Classes.list(req.params.level)
+router.get('/nivel=:n', function (req, res) {
+    Classes.list(req.params.n)
         .then(list => res.send(list))
         .catch(function (error) {
             console.error(error);
@@ -30,7 +30,7 @@ router.get('/:id', function (req, res) {
         });
 })
 
-router.get('/:id/children', function (req, res) {
+router.get('/:id/descendencia', function (req, res) {
     Classes.children(req.params.id)
         .then(list => res.send(list))
         .catch(function (error) {
@@ -38,7 +38,7 @@ router.get('/:id/children', function (req, res) {
         });
 })
 
-router.get('/:id/owners', function (req, res) {
+router.get('/:id/donos', function (req, res) {
     Classes.owners(req.params.id)
         .then(owners => res.send(owners))
         .catch(function (error) {
@@ -46,7 +46,7 @@ router.get('/:id/owners', function (req, res) {
         });
 })
 
-router.get('/:id/legislation', function (req, res) {
+router.get('/:id/legislacao', function (req, res) {
     Classes.legislation(req.params.id)
         .then(legs => res.send(legs))
         .catch(function (error) {
@@ -54,7 +54,7 @@ router.get('/:id/legislation', function (req, res) {
         });
 })
 
-router.get('/:id/exAppNotes', function (req, res) {
+router.get('/:id/exemplosNotasAp', function (req, res) {
     Classes.exAppNotes(req.params.id)
         .then(list => res.send(list))
         .catch(function (error) {
@@ -62,7 +62,7 @@ router.get('/:id/exAppNotes', function (req, res) {
         });
 })
 
-router.get('/:id/appNotes', function (req, res) {
+router.get('/:id/notasAp', function (req, res) {
     Classes.appNotes(req.params.id)
         .then(list => res.send(list))
         .catch(function (error) {
@@ -70,7 +70,7 @@ router.get('/:id/appNotes', function (req, res) {
         });
 })
 
-router.get('/:id/delNotes', function (req, res) {
+router.get('/:id/notasEx', function (req, res) {
     Classes.delNotes(req.params.id)
         .then(list => res.send(list))
         .catch(function (error) {
@@ -78,7 +78,7 @@ router.get('/:id/delNotes', function (req, res) {
         });
 })
 
-router.get('/:id/related', function (req, res) {
+router.get('/:id/relacionados', function (req, res) {
     Classes.related(req.params.id)
         .then(list => res.send(list))
         .catch(function (error) {
@@ -86,7 +86,7 @@ router.get('/:id/related', function (req, res) {
         });
 })
 
-router.get('/:id/participants', function (req, res) {
+router.get('/:id/participantes', function (req, res) {
     Classes.participants(req.params.id)
         .then(list => res.send(list))
         .catch(function (error) {
@@ -94,11 +94,10 @@ router.get('/:id/participants', function (req, res) {
         });
 })
 
-router.put('/update', Auth.isLoggedInAPI, function (req, res) {
+router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
     Classes.updateClass(req.body.dataObj)
         .then(function (response) {
-            var id = req.body.dataObj.id;
-            Logging.logger.info('Update a classe \'' + id + '\' por utilizador \'' + req.user._id + '\'');
+            Logging.logger.info('Update a classe \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
 
             req.flash('success_msg', 'Info. de Classe actualizada');
             res.send("Actualizado!");
@@ -106,7 +105,7 @@ router.put('/update', Auth.isLoggedInAPI, function (req, res) {
         .catch(error => console.error(error));
 })
 
-router.post('/create', Auth.isLoggedInAPI, function (req, res) {
+router.post('/', Auth.isLoggedInAPI, function (req, res) {
     var dataObj = req.body;
 
     Classes.checkCodeAvailability(dataObj.Code)
@@ -129,7 +128,7 @@ router.post('/create', Auth.isLoggedInAPI, function (req, res) {
 
 })
 
-router.post('/delete', Auth.isLoggedInAPI, function (req, res) {
+router.post('/:id', Auth.isLoggedInAPI, function (req, res) {
     Classes.deleteClass(req.body.id)
         .then(function () {
             Logging.logger.info('Apagada classe \'' + req.body.id + '\' por utilizador \'' + req.user._id + '\'');

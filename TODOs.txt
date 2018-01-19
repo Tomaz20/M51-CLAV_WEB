@@ -2,29 +2,22 @@ TODOs:
     Utilizadores
         -controlo de níveis de acesso
         -fluxo de submissões
-        -editar utilizador
         -autenticação por CC
 
 
-    Tabelas de Seleção (em standby)
+    Tabelas de Seleção (em standby até estar tudo migrado e modelado)
         -acabar CRUD
         -ts a partir de org
         -listagem de classes em harmonização
 
-
-    Organizações
-        -CRUD conjuntos de orgs
-            -API
-                -create
-                -update
-                -delete
-        -CRUD tipologias de orgs
-            -API    
-                -create
-                -update
-                -delete
-        -Site
-            -tipologias a que organização pertence
+    Termos de Índice !!!!!!!!!!!!!!!
+        -CRUD
 
 
-    CRUD erros
+    API (geral)
+        -alterar deletes para fazer apenas remoção lógica (status=inativo)
+        -separar consultar em /:id (meta e relações) e /:id/base (meta)
+
+    MISC
+        -preparar as páginas e criar routes para /editar e /remover 
+        -mudar routes / para /listar

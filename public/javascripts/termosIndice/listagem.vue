@@ -1,27 +1,28 @@
-new Vue({
-    el: '#tabela-organizacoes',
+var termos = new Vue({
+    el: '#termos',
     data: {
         tableHeader: [],
         tableData: [[]],
         ready: false,
         content: [],
-        cwidth: ['4%','75%','8%','13%'],
+        cwidth: ['5%','70%','25%'],
     },
     methods: {
         rowClicked: function(row){
             var id = this.content[row[0]-1].id.value;
             id = id.replace(/[^#]+#(.*)/,'$1');
             
-            window.location.href = '/organizacoes/consultar/'+id;
+            window.location.href = '/classes/consultar/'+id;
         },
-        addOrg: function(row){
-            window.location.href = '/organizacoes/adicionar';
+        addTermo: function(row){
+            window.location.href = '/termosIndice/adicionar';
         },
         parse: function(){    
-            // key names for table header and parsing
-            var keys=["Nome","Sigla","Tipo"];
             // setting the table header
-            this.tableHeader=["#"].concat(keys);
+            this.tableHeader=["#","Termo","Classe"]
+
+            // key names for parsing
+            var keys=["Termo","Classe"];
 
             var temp=[];
 
@@ -36,27 +37,10 @@ new Vue({
                 this.tableData[i]=temp.slice();
 
             }
-            
-            conj = new RegExp("#Conjunto", "g");
-            tipol = new RegExp("#Tipologia", "g");
-
-            this.tableData.map( function(row){
-                if (conj.test(row[3])){
-                    row[3]="Conjunto";
-                }
-                else if (tipol.test(row[3])){
-                    row[3]="Tipologia";
-                }
-                else {
-                    row[3]="Organização";
-                }
-                return row;
-            })
-            
         }
     },
     created: function(){
-        this.$http.get("/api/organizacoes")
+        this.$http.get("/api/termosIndice")
         .then( function(response) { 
             this.content = response.body;
         })

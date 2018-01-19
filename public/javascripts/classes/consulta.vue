@@ -80,7 +80,7 @@ new Vue({
             var orgsToParse = [];
             var keys = ["id", "Sigla", "Nome"];
 
-            this.$http.get("/api/orgs")
+            this.$http.get("/api/organizacoes")
                 .then(function (response) {
                     orgsToParse = response.body;
                 })
@@ -105,7 +105,7 @@ new Vue({
             var orgsToParse = [];
             var keys = ["id", "Sigla", "Nome"];
 
-            this.$http.get("/api/classes/" + this.id+"/owners")
+            this.$http.get("/api/classes/" + this.id+"/donos")
                 .then(function (response) {
                     orgsToParse = response.body;
                 })
@@ -124,7 +124,7 @@ new Vue({
             var legsToParse = [];
             var keys = ["id","Tipo", "Número", "Titulo"];
 
-            this.$http.get("/api/leg")
+            this.$http.get("/api/legislacao")
                 .then(function (response) {
                     legsToParse = response.body;
                 })
@@ -149,7 +149,7 @@ new Vue({
             var legsToParse = [];
             var keys = ["id","Tipo", "Número", "Titulo"];
 
-            this.$http.get("/api/classes/" + this.id+"/legislation")
+            this.$http.get("/api/classes/" + this.id+"/legislacao")
                 .then(function (response) {
                     legsToParse = response.body;
                 })
@@ -167,7 +167,7 @@ new Vue({
             var notesToParse = [];
             var keys = ["id", "Nota"];
 
-            this.$http.get("/api/classes/" + this.id+"/appNotes")
+            this.$http.get("/api/classes/" + this.id+"/notasAp")
                 .then(function (response) {
                     notesToParse = response.body;
                 })
@@ -185,7 +185,7 @@ new Vue({
             var notesToParse = [];
             var keys = ["id", "Nota"];
 
-            this.$http.get("/api/classes/" + this.id+"/delNotes")
+            this.$http.get("/api/classes/" + this.id+"/notasEx")
                 .then(function (response) {
                     notesToParse = response.body;
                 })
@@ -203,7 +203,7 @@ new Vue({
             var notesToParse = [];
             var keys = ["Exemplo"];
 
-            this.$http.get("/api/classes/" + this.id+"/exAppNotes")
+            this.$http.get("/api/classes/" + this.id+"/exemplosNotasAp")
                 .then(function (response) {
                     notesToParse = response.body;
                 })
@@ -221,7 +221,7 @@ new Vue({
             var classesToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/api/classes/level=3")
+            this.$http.get("/api/classes/nivel=3")
                 .then(function (response) {
                     classesToParse = response.body;
                 })
@@ -246,7 +246,7 @@ new Vue({
             var relProcsToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/api/classes/" + this.id+"/related")
+            this.$http.get("/api/classes/" + this.id+"/relacionados")
                 .then(function (response) {
                     relProcsToParse = response.body;
                 })
@@ -294,7 +294,7 @@ new Vue({
             var participantsToParse = [];
             var keys = ['id', 'Nome', 'Sigla'];
 
-            this.$http.get("/api/classes/" + this.id+"/participants")
+            this.$http.get("/api/classes/" + this.id+"/participantes")
                 .then(function (response) {
                     participantsToParse = response.body;
                 })
@@ -699,14 +699,14 @@ new Vue({
                 }
             }
 
-            this.$http.put('/api/classes/update', { dataObj: dataObj },{
+            this.$http.put('/api/classes/'+this.id, { dataObj: dataObj },{
                 headers: {
                     'content-type' : 'application/json'
                 }
             })
             .then(function (response) {
                 this.message = response.body;
-                window.location.href = '/classes/consulta/'+this.id;
+                window.location.href = '/classes/consultar/'+this.id;
             })
             .catch(function (error) {
                 console.error(error);

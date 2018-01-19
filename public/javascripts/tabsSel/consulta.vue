@@ -32,7 +32,7 @@ new Vue({
         },
         loadSub: function(indexes,location,params){
             if(indexes.length==1){
-                this.$http.get("/api/selTabs/"+this.id+"/classes/"+params.rowData.codeID+"/children")
+                this.$http.get("/api/tabelasSelecao/"+this.id+"/classes/"+params.rowData.codeID+"/descendencia")
                 .then( function(response) { 
                     this.subTemp = response.body;
                 })
@@ -59,7 +59,7 @@ new Vue({
             }
         },
         rowClicked: function(params){
-            window.location.href = '/classes/consulta/c'+params.rowData[0];
+            window.location.href = '/classes/c'+params.rowData[0];
         },
         parse: function(){
             // parsing the JSON
@@ -124,7 +124,7 @@ new Vue({
 
         this.id= window.location.pathname.split('/')[3];
 
-        this.$http.get("/api/selTabs/"+this.id)
+        this.$http.get("/api/tabelasSelecao/"+this.id)
         .then( function(response) {
             this.name = response.body[0].Name.value;
         })
@@ -132,9 +132,11 @@ new Vue({
             console.error(error); 
         });
 
-        this.$http.get("/api/selTabs/"+this.id+"/classes")
+        this.$http.get("/api/tabelasSelecao/"+this.id+"/classes")
         .then( function(response) {
             this.content = response.body;
+            
+            console.log(response);
         })
         .then( function() {
             this.parse();

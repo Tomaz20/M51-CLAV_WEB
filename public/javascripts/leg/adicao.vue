@@ -46,7 +46,7 @@ new Vue({
                 dataObj[keys[i]]=this.legData[keys[i]].value;
             }
 
-            this.$http.post('/api/leg/create',dataObj,{
+            this.$http.post('/api/legislacao/',dataObj,{
                 headers: {
                     'content-type' : 'application/json'
                 }
@@ -55,7 +55,7 @@ new Vue({
                 regex = new RegExp(/leg_[0-9]+/, "gi");
 
                 if(regex.test(response.body)){
-                    window.location.href = '/legislacao/consulta/'+response.body;
+                    window.location.href = '/legislacao/consultar/'+response.body;
                 }
                 else {
                     this.message = response.body;

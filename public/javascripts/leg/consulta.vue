@@ -59,7 +59,7 @@ new Vue({
             var classesToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/api/classes/level=3")
+            this.$http.get("/api/classes/nivel=3")
                 .then(function (response) {
                     classesToParse = response.body;
                 })
@@ -83,7 +83,7 @@ new Vue({
             var classesToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/api/leg/" + this.id+"/regulates")
+            this.$http.get("/api/legislacao/" + this.id+"/regula")
                 .then(function (response) {
                     classesToParse = response.body;
                 })
@@ -147,7 +147,7 @@ new Vue({
                 }
             }
 
-            this.$http.put('/api/leg/update',dataObj,{
+            this.$http.put('/api/legislacao/'+this.id,dataObj,{
                 headers: {
                     'content-type' : 'application/json'
                 }
@@ -155,7 +155,7 @@ new Vue({
             .then( function(response) { 
                 this.message = response.body;
                 if(this.message=="Actualizado!"){
-                    window.location.href = '/legislacao/consulta/'+this.id;
+                    window.location.href = '/legislacao/consultar/'+this.id;
                 }
             })
             .catch( function(error) { 
@@ -171,7 +171,7 @@ new Vue({
             this.delConfirm=false;
         },
         deleteLeg: function(){
-            this.$http.post('/api/leg/delete',{id: this.id})
+            this.$http.post('/api/legislacao/'+this.id,{id: this.id})
             .then( function(response) { 
                 this.message = response.body;
                 window.location.href = '/legislacao';
@@ -184,7 +184,7 @@ new Vue({
     created: function(){
         this.id=window.location.pathname.split('/')[3];
 
-        this.$http.get("/api/leg/"+this.id)
+        this.$http.get("/api/legislacao/"+this.id)
         .then( function(response) { 
             this.content = response.body;
         })

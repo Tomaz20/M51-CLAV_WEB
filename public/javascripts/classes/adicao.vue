@@ -101,7 +101,7 @@ new Vue({
             var classesToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/api/classes/level=3")
+            this.$http.get("/api/classes/nivel=3")
                 .then(function (response) {
                     classesToParse = response.body;
                 })
@@ -125,7 +125,7 @@ new Vue({
             var orgsToParse = [];
             var keys = ["id", "Sigla", "Nome"];
 
-            this.$http.get("/api/orgs")
+            this.$http.get("/api/organizacoes")
                 .then(function (response) {
                     orgsToParse = response.body;
                 })
@@ -149,7 +149,7 @@ new Vue({
             var legsToParse = [];
             var keys = ["id", "Número", "Titulo", "Tipo"];
 
-            this.$http.get("/api/leg")
+            this.$http.get("/api/legislacao")
                 .then(function (response) {
                     legsToParse = response.body;
                 })
@@ -173,7 +173,7 @@ new Vue({
             var classesToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/api/classes/level=" + (this.type - 1))
+            this.$http.get("/api/classes/nivel=" + (this.type - 1))
                 .then(function (response) {
                     classesToParse = response.body;
                 })
@@ -390,7 +390,7 @@ new Vue({
 
             if(dataObj=this.checkready(dataObj)){        
                 
-                this.$http.post('/api/classes/create',dataObj,{
+                this.$http.post('/api/classescreate',dataObj,{
                     headers: {
                         'content-type' : 'application/json'
                     }
@@ -399,7 +399,7 @@ new Vue({
                     this.message = response.body;
                     
                     if(response.body=="Classe Inserida!"){
-                        window.location.href = '/classes/consulta/c'+this.code;
+                        window.location.href = '/classes/c'+this.code;
                     }
                 })
                 .catch( function(error) { 

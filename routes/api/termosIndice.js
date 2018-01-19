@@ -1,28 +1,28 @@
 var Logging = require('../../controllers/logging');
 var Auth = require('../../controllers/auth.js');
-var Leg = require('../../controllers/api/leg.js');
+var TermosIndice = require('../../controllers/api/termosIndice.js');
 
 var express = require('express');
 var router = express.Router();
 
 
 router.get('/', function (req, res) {
-    Leg.list()
-        .then(legs => res.send(legs))
+    TermosIndice.list()
+        .then(tis => res.send(tis))
         .catch(function (error) {
             console.error(error);
         });
 })
-
+/*
 router.get('/:id', function (req, res) {
-    Leg.stats(req.params.id).then(leg => res.send(leg))
+    TermosIndice.stats(req.params.id).then(leg => res.send(leg))
         .catch(function (error) {
             console.error(error);
         });
 })
 
 router.get('/:id/regula', function (req, res) {
-    Leg.regulates(req.params.id)
+    TermosIndice.regulates(req.params.id)
         .then(legs => res.send(legs))
         .catch(function (error) {
             console.error(error);
@@ -55,17 +55,17 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
 
     var dataObj = req.body;
 
-    Leg.checkNumberAvailability(dataObj.number)
+    TermosIndice.checkNumberAvailability(dataObj.number)
         .then(function (count) {
             if (count > 0) {
                 res.send("Número já existente!");
             }
             else {
-                Leg.list()
+                TermosIndice.list()
                     .then(function (ids) {
                         var newID = genID(ids)
 
-                        Leg.createDoc(newID, dataObj)
+                        TermosIndice.createDoc(newID, dataObj)
                             .then(function () {
                                 Logging.logger.info('Criada legislação \'' + newID + '\' por utilizador \'' + req.user._id + '\'');
 
@@ -85,15 +85,15 @@ router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
     var dataObj = req.body;
 
     if (dataObj.number) {
-        Leg.checkNumberAvailability(dataObj.number)
+        TermosIndice.checkNumberAvailability(dataObj.number)
             .then(function (count) {
                 if (count > 0) {
                     res.send("Número já existente!");
                 }
                 else {
-                    Leg.updateDoc(dataObj)
+                    TermosIndice.updateDoc(dataObj)
                         .then(function () {
-                            Logging.logger.info('Update a Legislação \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
+                            Logging.logger.info('Update a TermosIndiceislação \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
 
                             req.flash('success_msg', 'Info. de Documento actualizada');
                             res.send("Actualizado!");
@@ -104,9 +104,9 @@ router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
             .catch(error => console.error("Check error:\n" + error));
     }
     else {
-        Leg.updateDoc(dataObj)
+        TermosIndice.updateDoc(dataObj)
             .then(function () {
-                Logging.logger.info('Update a Legislação \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
+                Logging.logger.info('Update a TermosIndiceislação \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
 
                 req.flash('success_msg', 'Info. de Documento actualizada');
                 res.send("Actualizado!");
@@ -116,9 +116,9 @@ router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
 })
 
 router.delete('/:id', Auth.isLoggedInAPI, function (req, res) {
-    Leg.deleteDoc(req.params.id)
+    TermosIndice.deleteDoc(req.params.id)
         .then(function () {
-            Logging.logger.info('Apagada Legislação \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
+            Logging.logger.info('Apagada TermosIndiceislação \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
 
             req.flash('success_msg', 'Entrada apagada');
             res.send("Entrada apagada!");
@@ -127,5 +127,5 @@ router.delete('/:id', Auth.isLoggedInAPI, function (req, res) {
             console.error(error);
         });
 })
-
+*/
 module.exports = router;

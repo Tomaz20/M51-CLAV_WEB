@@ -68,7 +68,7 @@ block corpo
                         td(v-else style="width:80%")
                             ul(v-if="domainReady" style="padding-left:20px" :class="{'is-collapsed' : domainCollapsed }")
                                 li(v-for="c in domain")
-                                    a(:href="'/classes/consulta'+c.id") {{ c.Code }}
+                                    a(:href="'/classe/consultar/'+c.id") {{ c.Code }}
                                     |  - {{ c.Title }}
                             button(@click="domainCollapsed=!domainCollapsed" v-if="domain.length>4")
                                 span(v-if="domainCollapsed") Mostrar mais...
@@ -120,7 +120,7 @@ block corpo
                                     b Como {{ key }}:
                                     ul(:class="{'is-collapsed' : partsCollapsed[key] }")
                                         li(v-for="p in participations[key]")
-                                            a(:href="'/classes/consulta/'+p.id") {{ p.Code }}
+                                            a(:href="'/classe/consultar/'+p.id") {{ p.Code }}
                                             |  - {{ p.Title }}
                                     button(@click="partsCollapsed[key]=!partsCollapsed[key]" v-if="participations[key].length>4")
                                         span(v-if="partsCollapsed[key]") Mostrar mais...
@@ -160,7 +160,7 @@ block corpo
                         td(v-else style="width:80%")
                             ul(style="padding-left:20px")
                                 li(v-for="o in myConjList")
-                                    a(:href="'/organizacoes/consulta/'+o.id") {{ o.Sigla }} 
+                                    a(:href="'/organizacoes/consultar/'+o.id") {{ o.Sigla }} 
                                     | - {{ o.Nome }}
                         if user
                             td(style="width:10%")
@@ -197,7 +197,7 @@ block corpo
                         td(v-else style="width:80%")
                             ul(style="padding-left:20px")
                                 li(v-for="o in myTipolList")
-                                    a(:href="'/organizacoes/consulta/'+o.id") {{ o.Sigla }} 
+                                    a(:href="'/organizacoes/consultar/'+o.id") {{ o.Sigla }} 
                                     | - {{ o.Nome }}
                         if user
                             td(style="width:10%")
@@ -234,7 +234,7 @@ block corpo
                         td(v-else style="width:80%")
                             ul(style="padding-left:20px")
                                 li(v-for="o in elemList")
-                                    a(:href="'/organizacoes/consulta/'+o.id") {{ o.Sigla }} 
+                                    a(:href="'/organizacoes/consultar/'+o.id") {{ o.Sigla }} 
                                     | - {{ o.Nome }}
                         if user
                             td(style="width:10%")

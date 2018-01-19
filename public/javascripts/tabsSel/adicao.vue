@@ -71,7 +71,7 @@ new Vue({
         },
         loadSub: function (indexes, location, params) {
             if (indexes.length == 1) {
-                this.$http.get("/api/classes/" + params.rowData.codeID+"/children")
+                this.$http.get("/api/classes/" + params.rowData.codeID+"/descendencia")
                     .then(function (response) {
                         this.subTemp = response.body;
                     })
@@ -203,13 +203,13 @@ new Vue({
             } else if(dataObj.name.length==0){
                 this.message="O campo 'Designação' não pode estar vazio!"
             } else {
-                this.$http.post('/api/selTabs/create',dataObj,{
+                this.$http.post('/api/tabelasSelecao/',dataObj,{
                     headers: {
                         'content-type' : 'application/json'
                     }
                 })
                 .then( function(response) { 
-                    window.location.href = '/tabelasSelecao/consulta/'+response.body;
+                    window.location.href = '/tabelaSelecao/consultar/'+response.body;
                 })
                 .catch( function(error) { 
                     console.error(error); 

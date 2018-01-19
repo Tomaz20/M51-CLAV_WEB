@@ -21,7 +21,7 @@ router.get('/:id', function (req, res) {
         });
 })
 
-router.get('/:id/inConjs', function (req, res) {
+router.get('/:id/conjuntos', function (req, res) {
     Orgs.inConjs(req.params.id)
         .then(list => res.send(list))
         .catch(function (error) {
@@ -29,7 +29,7 @@ router.get('/:id/inConjs', function (req, res) {
         });
 })
 
-router.get('/:id/inTipols', function (req, res) {
+router.get('/:id/tipologias', function (req, res) {
     Orgs.inTipols(req.params.id)
         .then(list => res.send(list))
         .catch(function (error) {
@@ -37,7 +37,7 @@ router.get('/:id/inTipols', function (req, res) {
         });
 })
 
-router.get('/:id/elems', function (req, res) {
+router.get('/:id/elementos', function (req, res) {
     Orgs.elems(req.params.id)
         .then(list => res.send(list))
         .catch(function (error) {
@@ -45,7 +45,7 @@ router.get('/:id/elems', function (req, res) {
         });
 })
 
-router.get('/:id/domain', function (req, res) {
+router.get('/:id/dominio', function (req, res) {
     Orgs.domain(req.params.id)
         .then(org => res.send(org))
         .catch(function (error) {
@@ -53,7 +53,7 @@ router.get('/:id/domain', function (req, res) {
         });
 })
 
-router.get('/:id/participations', function (req, res) {
+router.get('/:id/participacoes', function (req, res) {
     Orgs.participations(req.params.id)
         .then(org => res.send(org))
         .catch(function (error) {
@@ -61,7 +61,7 @@ router.get('/:id/participations', function (req, res) {
         });
 })
 
-router.post('/create', Auth.isLoggedInAPI, function (req, res) {
+router.post('/', Auth.isLoggedInAPI, function (req, res) {
     var initials = req.body.initials;
     var name = req.body.name;
     var type = req.body.type;
@@ -97,7 +97,7 @@ router.post('/create', Auth.isLoggedInAPI, function (req, res) {
         .catch(error => console.error("General error:\n" + error));
 })
 
-router.put('/update', Auth.isLoggedInAPI, function (req, res) {
+router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
     var dataObj = req.body;
 
     //Executing queries
@@ -109,7 +109,7 @@ router.put('/update', Auth.isLoggedInAPI, function (req, res) {
             else {
                 Orgs.updateOrg(dataObj)
                     .then(function () {
-                        Logging.logger.info('Update a organização \'' + dataObj.id + '\' por utilizador \'' + req.user._id + '\'');
+                        Logging.logger.info('Update a organização \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
 
                         req.flash('success_msg', 'Info. de Organização actualizada');
                         res.send(dataObj.id);
@@ -121,12 +121,10 @@ router.put('/update', Auth.isLoggedInAPI, function (req, res) {
 
 })
 
-router.delete('/delete', Auth.isLoggedInAPI, function (req, res) {
-    var id = req.body.id;
-
-    Orgs.deleteOrg(id)
+router.delete('/:id', Auth.isLoggedInAPI, function (req, res) {
+    Orgs.deleteOrg(req.params.id)
         .then(function () {
-            Logging.logger.info('Apagada organização \'' + id + '\' por utilizador \'' + req.user._id + '\'');
+            Logging.logger.info('Apagada organização \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
 
             req.flash('success_msg', 'Entrada apagada');
             res.send("Entrada apagada!");

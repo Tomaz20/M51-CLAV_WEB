@@ -17,21 +17,17 @@ SelTabs.list = function () {
         });
 }
 
-SelTabs.listClasses = function (level, table) {
-    if (!level) {
-        level = 1;
-    }
-
+SelTabs.listClasses = function (table) {
     var listQuery = `
             SELECT ?id ?Code ?Title (count(?sub) as ?NChilds) FROM noInferences:
             WHERE {
-                ?id rdf:type clav:Classe_N${level} ;
+                ?id rdf:type clav:Classe_N1 ;
                     clav:codigo ?Code ;
                     clav:titulo ?Title ;
-                    clav:pertenceTS clav:${table} .
+                    clav:pertenceLC clav:${table} .
                 optional {
                     ?sub clav:temPai ?id ;
-                        clav:pertenceTS clav:${table} .
+                        clav:pertenceLC clav:${table} .
                 }
             }Group by ?id ?Code ?Title
         `;
@@ -50,15 +46,13 @@ SelTabs.classChildren = function (parent, table) {
         WHERE {
             ?Child clav:temPai clav:${parent} ;
                     clav:codigo ?Code ;
-                    clav:titulo ?Title ;
-                    clav:pertenceTS clav:${table} .
+                    clav:titulo ?Title
             optional {
                 ?sub clav:temPai ?Child ;
-                clav:pertenceTS clav:${table} .
             }
         }Group by ?Child ?Code ?Title
         `;
-    
+
     return client.query(fetchQuery)
         .execute()
         //getting the content we want
@@ -83,22 +77,106 @@ SelTabs.stats = function (id) {
         });
 }
 
-SelTabs.createTab = function (id, dataObj) {
+SelTabs.createTab = function (id, name, classes) {
+
+
     var createQuery = `
             INSERT DATA {
                 clav:${id} rdf:type owl:NamedIndividual ,
                         clav:TabelaSelecao ;
-                    clav:designacao '${dataObj.name}' .
+                    clav:designacao '${name}' .
         `;
 
-    for (let clas of dataObj.classes) {
-        createQuery += `clav:${clas} clav:pertenceTS clav:${id} .\n`;
+    for (let clas of classes) {
+        let clasID = id + '_' + clas.id.value.replace(/[^#]+#(.*)/, '$1');
+
+        let level = clas.Codigo.value.split('.').length;
+
+        var keyVal = {
+            ProcTipo: 'processoTipo',
+            ProcTransversal: 'processoTransversal',
+            Descricao: 'descricao',
+            Titulo: 'titulo'
+        };
+
+        createQuery += `
+            clav:${clasID} rdf:type owl:NamedIndividual ,
+                    clav:Classe_N${level} ;
+                clav:codigo "${clas.Codigo.value}" ;
+                clav:pertenceLC clav:${id} ;
+                clav:classeStatus "${clas.Status.value}" .
+        `;
+
+        if (clas.Pai) {
+            createQuery += `
+                clav:${clasID} clav:temPai clav:${id + '_' + clas.Pai.value.replace(/[^#]+#(.*)/, '$1')} .
+            `;
+        }
+
+        var keyVal = {
+            ProcTipo: 'processoTipo',
+            ProcTransversal: 'processoTransversal',
+            Descricao: 'descricao',
+            Titulo: 'titulo'
+        };
+
+        for (const key in keyVal) {
+            if (clas[key]) {
+                createQuery += `
+                    clav:${clasID} clav:${keyVal[key]} '${clas[key].value.replace(/\n|\r/g, '\\n')}' .
+                `;
+            }
+        }
+
+        if (clas.Exemplos.value) {
+            for (let val of clas.Exemplos.value.split('%%')) {
+                createQuery += `
+                    clav:${clasID} clav:exemploNA '${val}' .
+                `;
+            }
+        }
+
+        var keyMultVal = {
+            Donos: 'temDono',
+            NotasA: 'temNotaAplicacao',
+            NotasE: 'temNotaExclusao',
+            Parts1: 'temParticipanteApreciador',
+            Parts2: 'temParticipanteAssessor',
+            Parts3: 'temParticipanteComunicador',
+            Parts4: 'temParticipanteDecisor',
+            Parts5: 'temParticipanteExecutor',
+            Parts6: 'temParticipanteIniciador',
+            Diplomas: 'temLegislacao',
+            Rels1: 'eSintetizadoPor',
+            Rels2: 'eSinteseDe',
+            Rels3: 'eComplementarDe',
+            Rels4: 'eCruzadoCom',
+            Rels5: 'eSuplementoPara',
+            Rels6: 'eSucessorDe',
+            Rels7: 'eAntecessorDe',
+        }
+
+        for (const key in keyMultVal) {
+            if (clas[key].value) {
+                for (let val of clas[key].value.split('%%')) {
+                    createQuery += `
+                        clav:${clasID} clav:${keyMultVal[key]} clav:${val.replace(/[^#]+#(.*)/, '$1')} .
+                    `;
+                }
+            }
+        }
+        console.log(clas);
     }
 
     createQuery += "}"
 
+    console.log(createQuery);
 
     return client.query(createQuery).execute()
         .then(response => Promise.resolve(response))
         .catch(error => console.error("Error in create:\n" + error));
+}
+
+SelTabs.deleteTab = function (id) {
+
 }

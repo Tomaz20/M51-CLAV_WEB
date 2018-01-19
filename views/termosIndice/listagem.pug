@@ -1,0 +1,26 @@
+extends ../layout
+block corpo
+    h1.page-header Termos de Índice
+    .row
+        #termos.row.placeholders
+            custom-table-simple(
+                v-if="ready"
+
+                :header="tableHeader"
+                :complete-rows="tableData"
+                :ready="ready"
+                :cwidth="cwidth"
+                
+                class-table='table table-hover'
+                add="true"
+
+                @row-clicked="rowClicked($event)"
+                @add-clicked="addTermo"
+            )
+            h4(
+                v-else
+            ) Loading...    
+    //-
+
+append scripts    
+    script(src="/javascripts/termosIndice/listagem.vue")

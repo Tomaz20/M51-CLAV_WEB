@@ -29,7 +29,7 @@ new Vue({
         },
         loadSub: function(indexes,location,params){
             if(indexes.length==1){
-                this.$http.get("/api/classes/"+params.rowData.codeID+"/children")
+                this.$http.get("/api/classes/"+params.rowData.codeID+"/descendencia")
                 .then( function(response) { 
                     this.subTemp = response.body;
                 })
@@ -56,7 +56,7 @@ new Vue({
             }
         },
         rowClicked: function(params){
-            window.location.href = '/classes/consulta/c'+params.rowData[0];
+            window.location.href = '/classes/consultar/c'+params.rowData[0];
         },
         parse: function(){
             // parsing the JSON
@@ -113,7 +113,7 @@ new Vue({
             return ret;
         },
         addClass: function(row){
-            window.location.href = '/classes/criacao';
+            window.location.href = '/classes/adicionar';
         },
     },
     created: function(){

@@ -55,6 +55,122 @@ Classes.stats = function (id) {
         });
 }
 
+Classes.completeData = function (classes) {
+    var fetchQuery = `
+        SELECT 
+            ?id 
+            ?Titulo 
+            ?Codigo 
+            ?Pai 
+            ?CodigoPai 
+            ?TituloPai 
+            ?Status 
+            ?Descricao 
+            ?ProcTipo 
+            ?ProcTrans 
+            (group_concat(distinct ?Exemplo;separator="%%") as ?Exemplos) 
+            (group_concat(distinct ?Dono;separator="%%") as ?Donos) 
+            (group_concat(distinct ?NotaA;separator="%%") as ?NotasA) 
+            (group_concat(distinct ?NotaE;separator="%%") as ?NotasE) 
+            (group_concat(distinct ?Participante1;separator="%%") as ?Parts1) 
+            (group_concat(distinct ?Participante2;separator="%%") as ?Parts2) 
+            (group_concat(distinct ?Participante3;separator="%%") as ?Parts3) 
+            (group_concat(distinct ?Participante4;separator="%%") as ?Parts4) 
+            (group_concat(distinct ?Participante5;separator="%%") as ?Parts5) 
+            (group_concat(distinct ?Participante6;separator="%%") as ?Parts6) 
+            (group_concat(distinct ?Leg;separator="%%") as ?Diplomas) 
+            (group_concat(distinct ?Rel1;separator="%%") as ?Rels1) 
+            (group_concat(distinct ?Rel2;separator="%%") as ?Rels2) 
+            (group_concat(distinct ?Rel3;separator="%%") as ?Rels3) 
+            (group_concat(distinct ?Rel4;separator="%%") as ?Rels4) 
+            (group_concat(distinct ?Rel5;separator="%%") as ?Rels5) 
+            (group_concat(distinct ?Rel6;separator="%%") as ?Rels6) 
+            (group_concat(distinct ?Rel7;separator="%%") as ?Rels7) 
+        FROM noInferences: WHERE {
+            VALUES ?id { ${'clav:' + classes.join(' clav:')} }
+            ?id clav:titulo ?Titulo;
+                clav:codigo ?Codigo.
+            OPTIONAL {
+                ?id clav:temPai ?Pai.
+                ?Pai clav:codigo ?CodigoPai;
+                    clav:titulo ?TituloPai.
+            } 
+            OPTIONAL {
+                ?id clav:classeStatus ?Status.
+            } 
+            OPTIONAL {
+                ?id clav:descricao ?Descricao.
+            } 
+            OPTIONAL {
+                ?id clav:processoTipo ?ProcTipo.
+            } 
+            OPTIONAL {
+                ?id clav:processoTransversal ?ProcTrans.
+            } 
+            OPTIONAL {
+                ?id clav:exemploNA ?Exemplo.
+            }
+            OPTIONAL {
+                ?id clav:temDono ?Dono.
+            }
+            OPTIONAL {
+                ?id clav:temNotaAplicacao ?NotaA.
+            }
+            OPTIONAL {
+                ?id clav:temNotaExclusao ?NotaE.
+            }
+            OPTIONAL {
+                ?id clav:temParticipanteApreciador ?Participante1.
+            }
+            OPTIONAL {
+                ?id clav:temParticipanteAssessor ?Participante2.
+            }
+            OPTIONAL {
+                ?id clav:temParticipanteComunicador ?Participante3.
+            }
+            OPTIONAL {
+                ?id clav:temParticipanteDecisor ?Participante4.
+            }
+            OPTIONAL {
+                ?id clav:temParticipanteExecutor ?Participante5.
+            }
+            OPTIONAL {
+                ?id clav:temParticipanteIniciador ?Participante6.
+            }
+            OPTIONAL {
+                ?id clav:temLegislacao ?Leg.
+            }
+            OPTIONAL {
+                ?id clav:eSintetizadoPor ?Rel1.
+            }
+            OPTIONAL {
+                ?id clav:eSinteseDe ?Rel2.
+            }
+            OPTIONAL {
+                ?id clav:eComplementarDe ?Rel3.
+            }
+            OPTIONAL {
+                ?id clav:eCruzadoCom ?Rel4.
+            }
+            OPTIONAL {
+                ?id clav:eSuplementoPara ?Rel5.
+            }
+            OPTIONAL {
+                ?id clav:eSucessorDe ?Rel6.
+            }
+            OPTIONAL {
+                ?id clav:eAntecessorDe ?Rel7.
+            }
+        } GROUP BY ?id ?Titulo ?Codigo ?Pai ?CodigoPai ?TituloPai ?Status ?Descricao ?ProcTipo ?ProcTrans  
+    `;
+
+    return client.query(fetchQuery).execute()
+        .then(response => Promise.resolve(response.results.bindings))
+        .catch(function (error) {
+            console.error("Error in check:\n" + error);
+        });
+}
+
 Classes.children = function (id) {
     var fetchQuery = `
         SELECT ?Child ?Code ?Title (count(?sub) as ?NChilds)

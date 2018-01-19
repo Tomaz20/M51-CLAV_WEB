@@ -88,7 +88,7 @@ new Vue({
             var classesToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/api/classes/level=3")
+            this.$http.get("/api/classes/nivel=3")
                 .then(function (response) {
                     classesToParse = response.body;
                 })
@@ -112,7 +112,7 @@ new Vue({
             var orgsToParse = [];
             var keys = ["id", "Tipo", "Nome", "Sigla"];
 
-            this.$http.get("/api/orgs")
+            this.$http.get("/api/organizacoes")
                 .then(function (response) {
                     orgsToParse = response.body;
                 })
@@ -165,7 +165,7 @@ new Vue({
             var classesToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/api/orgs/" + this.id+"/domain")
+            this.$http.get("/api/organizacoes/" + this.id+"/dominio")
                 .then(function (response) {
                     classesToParse = response.body;
                 })
@@ -183,7 +183,7 @@ new Vue({
             var partsToParse = [];
             var keys = ['id', 'Title', 'Code'];
 
-            this.$http.get("/api/orgs/" + this.id + "/participations")
+            this.$http.get("/api/organizacoes/" + this.id + "/participacoes")
                 .then(function (response) {
                     partsToParse = response.body;
                 })
@@ -201,7 +201,7 @@ new Vue({
             var orgsToParse = [];
             var keys = ["id", "Tipo", "Nome", "Sigla"];
 
-            this.$http.get("/api/orgs/" + this.id + "/elems")
+            this.$http.get("/api/organizacoes/" + this.id + "/elementos")
                 .then(function (response) {
                     orgsToParse = response.body;
                 })
@@ -219,7 +219,7 @@ new Vue({
             var orgsToParse = [];
             var keys = ["id", "Tipo", "Nome", "Sigla"];
 
-            this.$http.get("/api/orgs/" + this.id + "/inConjs")
+            this.$http.get("/api/organizacoes/" + this.id + "/conjuntos")
                 .then(function (response) {
                     orgsToParse = response.body;
                 })
@@ -237,7 +237,7 @@ new Vue({
             var orgsToParse = [];
             var keys = ["id", "Tipo", "Nome", "Sigla"];
 
-            this.$http.get("/api/orgs/" + this.id + "/inTipols")
+            this.$http.get("/api/organizacoes/" + this.id + "/tipologias")
                 .then(function (response) {
                     orgsToParse = response.body;
                 })
@@ -457,7 +457,7 @@ new Vue({
 
             console.log(dataObj);
 
-            this.$http.put('/api/orgs/update', dataObj, {
+            this.$http.put('/api/organizacoes/'+this.id, dataObj, {
                 headers: {
                     'content-type': 'application/json'
                 }
@@ -465,7 +465,7 @@ new Vue({
                 .then(function (response) {
                     var resp = response.body;
                     if (resp != "Nome já existentente!") {
-                        window.location.href = '/organizacoes/consulta/' + this.id;
+                        window.location.href = '/organizacoes/consultar/' + this.id;
                     } else {
                         this.message = resp;
                     }
@@ -483,7 +483,7 @@ new Vue({
             this.delConfirm = false;
         },
         deleteOrg: function () {
-            this.$http.post('/api/orgs/delete', { id: this.id })
+            this.$http.post('/api/organizacoes/'+this.id, { id: this.id })
                 .then(function (response) {
                     this.message = response.body;
                     window.location.href = '/organizacoes';
@@ -495,11 +495,8 @@ new Vue({
     },
     created: function () {
         this.id = window.location.pathname.split('/')[3];
-        /*
-        let a = '#{orgID}';
-        console.log(a);
-        */
-        this.$http.get("/api/orgs/" + this.id)
+        
+        this.$http.get("/api/organizacoes/" + this.id)
             .then(function (response) {
                 this.parse(response.body);
             })

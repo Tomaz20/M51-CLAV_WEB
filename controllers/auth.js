@@ -5,7 +5,7 @@ Auth.isLoggedIn = function (req, res, next) {
         return next();
     }
     req.flash('warn_msg', 'Login necessário para aceder a esta página');
-    res.redirect('/iniciarSessao');
+    res.redirect('/users/login');
 }
 
 Auth.checkLevel2 = function (req, res, next) {
