@@ -74,6 +74,8 @@ block body
 						a(href='/classes') Classes
 					li
 						a(href='/tabelasSelecao') Tabelas de Seleção
+					li
+						a(href='/termosIndice') Termos de Índice
 	.container-fluid
 		.row
 			//does not appear on mobile
@@ -89,7 +91,9 @@ block body
 						a(href='/classes') Classes
 					li
 						a(href='/tabelasSelecao') Tabelas de Seleção
-					li#selTabs
+					li
+						a(href='/termosIndice') Termos de Índice
+					//li#selTabs
 						div(v-if="ready")
 							v-select.custom-select(
 								v-model="link"
