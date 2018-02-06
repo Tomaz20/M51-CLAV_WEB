@@ -513,6 +513,107 @@ Classes.checkCodeAvailability = function (code) {
         });
 }
 
+Classes.pca = function (id) {
+    var fetchQuery = `
+        SELECT 
+            ?Contagem
+            ?ContagemNorm
+            (GROUP_CONCAT(DISTINCT ?Nota; SEPARATOR="###") AS ?Notas)
+            (GROUP_CONCAT(DISTINCT ?Valor; SEPARATOR="###") AS ?Valores)
+            (GROUP_CONCAT(DISTINCT ?Criterio; SEPARATOR="###") AS ?Criterios)
+        WHERE { 
+            clav:${id} clav:temPCA ?pca .
+            OPTIONAL {
+                ?pca clav:pcaFormaContagem ?Contagem .
+            }
+            OPTIONAL {
+                ?pca clav:pcaFormaContagemNormalizada ?ContagemNorm .    
+            }
+            OPTIONAL {
+                ?pca clav:pcaNota ?Nota ;
+            }
+            OPTIONAL {
+                ?pca clav:pcaValor ?Valor ;
+            }
+            OPTIONAL {
+                ?pca clav:temJustificacao ?just .
+                ?just clav:temCriterio ?Criterio
+            }    
+        }GROUP BY ?Contagem ?ContagemNorm
+    `;
+    
+    console.log(fetchQuery);
+
+    return client.query(fetchQuery).execute()
+        //Getting the content we want
+        .then(response => Promise.resolve(response.results.bindings[0]))
+        .catch(function (error) {
+            console.error("Error in check:\n" + error);
+        });
+}
+
+Classes.df = function (id) {
+    var fetchQuery = `
+        SELECT 
+            (GROUP_CONCAT(DISTINCT ?Valor; SEPARATOR="###") AS ?Valores)
+            (GROUP_CONCAT(DISTINCT ?Criterio; SEPARATOR="###") AS ?Criterios)
+        WHERE { 
+            clav:${id} clav:temDF ?df .
+            OPTIONAL {
+                ?df clav:dfValor ?Valor ;
+            }
+            OPTIONAL {
+                ?df clav:temJustificacao ?just .
+                ?just clav:temCriterio ?Criterio
+            }    
+        }GROUP BY ?df
+    `;
+    
+    console.log(fetchQuery);
+
+    return client.query(fetchQuery).execute()
+        //Getting the content we want
+        .then(response => Promise.resolve(response.results.bindings[0]))
+        .catch(function (error) {
+            console.error("Error in check:\n" + error);
+        });
+}
+
+Classes.criteria = function (criteria) {
+    var fetchQuery = `
+        SELECT
+            ?Tipo
+            ?Conteudo
+            (GROUP_CONCAT(CONCAT(STR(?leg),":::",?LegTipo, ":::",?LegNumero); SEPARATOR="###") AS ?Legislacao)
+            (GROUP_CONCAT(CONCAT(STR(?proc),":::",?Codigo, ":::",?Titulo); SEPARATOR="###") AS ?Processos)
+        WHERE { 
+            VALUES ?id { ${'clav:' + criteria.join(' clav:')} }
+            ?id rdf:type ?Tipo ;
+                clav:conteudo ?Conteudo .
+            OPTIONAL {
+                ?id clav:temLegislacao ?leg .
+                ?leg clav:diplomaNumero ?LegNumero ;
+                    clav:diplomaTipo ?LegTipo .
+            }
+            OPTIONAL {
+                ?id clav:temProcessoRelacionado ?proc .
+                ?proc clav:codigo ?Codigo ;
+                      clav:titulo ?Titulo .
+            }
+            FILTER(?Tipo != owl:NamedIndividual && ?Tipo != clav:CriterioJustificacao && ?Tipo != clav:AtributoComposto)
+        } GROUP BY ?Tipo ?Conteudo
+    `;
+    
+    console.log(fetchQuery);
+
+    return client.query(fetchQuery).execute()
+        //Getting the content we want
+        .then(response => Promise.resolve(response.results.bindings))
+        .catch(function (error) {
+            console.error("Error in check:\n" + error);
+        });
+}
+
 Classes.createClass = function (data) {
     var id = "c" + data.Code;
     var level = "Classe_N" + data.Level;

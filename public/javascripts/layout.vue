@@ -62,6 +62,7 @@ new Vue({
             });
     }
 })
+*/
 
 var users = new Vue({
     el: '#users',

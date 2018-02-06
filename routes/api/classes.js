@@ -94,6 +94,42 @@ router.get('/:id/participantes', function (req, res) {
         });
 })
 
+router.get('/:id/pca', function (req, res) {
+    Classes.pca(req.params.id)
+        .then(function (data) {
+            let criteria = data.Criterios.value.split("###");
+            criteria = criteria.map(a => a.replace(/[^#]+#(.*)/, '$1'));
+
+            Classes.criteria(criteria)
+                .then(function (criteriaData) {
+                    data.Criterios.type = "array";
+                    data.Criterios.value = criteriaData;
+
+                    res.send(data);
+                })
+                .catch(error=>console.error(error));
+        })
+        .catch(error=>console.error(error));
+})
+
+router.get('/:id/df', function (req, res) {
+    Classes.df(req.params.id)
+        .then(function (data) {
+            let criteria = data.Criterios.value.split("###");
+            criteria = criteria.map(a => a.replace(/[^#]+#(.*)/, '$1'));
+
+            Classes.criteria(criteria)
+                .then(function (criteriaData) {
+                    data.Criterios.type = "array";
+                    data.Criterios.value = criteriaData;
+
+                    res.send(data);
+                })
+                .catch(error=>console.error(error));
+        })
+        .catch(error=>console.error(error));
+})
+
 router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
     Classes.updateClass(req.body.dataObj)
         .then(function (response) {
@@ -128,7 +164,7 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
 
 })
 
-router.post('/:id', Auth.isLoggedInAPI, function (req, res) {
+router.delete('/:id', Auth.isLoggedInAPI, function (req, res) {
     Classes.deleteClass(req.body.id)
         .then(function () {
             Logging.logger.info('Apagada classe \'' + req.body.id + '\' por utilizador \'' + req.user._id + '\'');

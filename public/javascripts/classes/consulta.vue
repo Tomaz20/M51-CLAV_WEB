@@ -26,6 +26,22 @@ new Vue({
             DelNotes: [],
             RelProcs: [],
             Participants: [],
+            PCA: {
+                formacontagem: "",
+                contagemnormalizada: "",
+                notas: ["Ola","Adeus"],
+                criterios: [
+                    {
+                        type: "Tipo",
+                        note: "Atchim",
+                        legislacao: [
+                            {
+                                titulo: "Titulo"
+                            }
+                        ]
+                    }
+                ],
+            }
         },
         newClass: {
             Title: "",
@@ -74,6 +90,10 @@ new Vue({
         classesReady: false,
         relProcsReady: false,
         pageReady: false,
+    },
+    components: {
+        accordion: VueStrap.accordion,
+        panel: VueStrap.panel
     },
     methods: {
         loadOrgs: function () {

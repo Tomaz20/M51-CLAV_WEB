@@ -1,6 +1,28 @@
 ﻿extends layout
 block corpo
-    h1 M51-CLAV  
-    h3 Arquivo Digital: Plataforma Modular para a Classificação e a Avaliação da Informação Pública
+    h3 CLAV: Plataforma para a Classificação e a Avaliação da Informação Pública
+    h1 
+    .col-md-6
+        #acordeao
+            accordion(type="info")
+                panel( header="O que é a CLAV")
+                    p Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
 
-    
+        table#navegacao.table
+            tr(v-for="linha in linhas")
+                td(width="90%") {{linha.valor}}
+                td  
+                    .botao
+                        a(:href="linha.consultar") Consultar
+                td
+                    .botao
+                        a(:href="linha.submeter") Submeter
+    .col-md-1
+    .col-md-3
+        .botao
+            a(href="#") ENTIDADES – identificação de representantes institucionais 
+        h1
+        .botao
+            a(href="#") Retomar Trabalho
+append scripts
+    script(src="/javascripts/index.vue")

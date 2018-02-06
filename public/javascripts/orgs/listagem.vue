@@ -20,7 +20,6 @@ new Vue({
         parse: function(){    
             // key names for table header and parsing
             var keys=["Nome","Sigla","Tipo"];
-            // setting the table header
             this.tableHeader=["#"].concat(keys);
 
             var temp=[];

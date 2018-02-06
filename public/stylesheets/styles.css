@@ -114,3 +114,27 @@
 .table-hover tbody:hover > tr:hover {
     background-color: rgba(201, 201, 201, 0.514) !important;
 }
+
+
+.botao {
+    box-sizing: border-box;
+    font-style: normal;
+    border: #000;
+    border-width: 1px;
+    padding: 5px;
+    background-color: rgba(197, 197, 197, 0.747)
+}
+
+.botao a {
+    color: #000 !important;
+}
+
+.footer {
+    z-index: 10000 !important;
+    position: fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:30px;
+    background: rgb(226, 226, 226)
+}

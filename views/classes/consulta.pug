@@ -127,7 +127,7 @@ block corpo
                                     v-model="edit.AppNotes"
                                 )
 
-                    //- EXEMPLOS NOTAS DE APLICAçÃO                        
+                    //- EXEMPLOS DE NOTAS DE APLICAçÃO                        
                     tr
                         td(style="width:10%" )
                             label Exemplo(s) de Nota(s) de Aplicação:
@@ -394,8 +394,7 @@ block corpo
                                     v-model="edit.RelProcs"
                                 )
 
-
-                    //- LEGISLAÇÕES
+                    //- LEGISLAÇÃO
                     tr(v-if="clas.Level==3")
                         td(style="width:10%")
                             label Legislação:
@@ -432,6 +431,43 @@ block corpo
                                     type="checkbox"
                                     v-model="edit.Legs"
                                 )
+
+                    //- PRAZO DE CONSERVAÇÃO ADMINISTRATIVA
+                    tr(v-if="clas.Level==3")
+                        td(style="width:10%")
+                            label Prazo de Conservação Administrativa: 
+                        td(style="width:80%")
+                            accordion(type="info")
+                                panel(header="Expandir")
+                                    table 
+                                        tr
+                                            td Forma de Contagem:
+                                            td {{clas.PCA.formacontagem}}
+                                        tr
+                                            td Forma de Contagem Normalizada:
+                                            td {{clas.PCA.contagemnormalizada}}
+                                        tr
+                                            td Notas:
+                                            td 
+                                                ul
+                                                    li(v-for="nota in clas.PCA.notas")
+                                                        | {{nota}}
+                                        tr
+                                            td Critérios:
+                                            td 
+                                                table(v-for="criterio in clas.PCA.criterios")
+                                                    tr
+                                                        td Tipo:
+                                                        td {{criterio.type}}
+                                                    tr
+                                                        td Nota:
+                                                        td {{criterio.note}}
+                                                    tr
+                                                        td Legislação:
+                                                        td
+                                                            ul
+                                                                li(v-for="diploma in criterio.legislacao") 
+                                                                    | {{diploma.titulo}}
 
             //- Buttons
             if user
