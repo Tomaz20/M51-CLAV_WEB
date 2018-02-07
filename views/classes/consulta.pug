@@ -42,7 +42,7 @@ block corpo
                         td(style="width:10%")
                             label Classe Pai: 
                         td(style="width:80%")
-                            a(:href="'/classe/consultar/'+clas.Parent.id") {{ clas.Parent.code }}
+                            a(:href="'/classes/consultar/'+clas.Parent.id") {{ clas.Parent.code }}
                             |  - {{ clas.Parent.title }}
 
                     //- CÓDIGO
@@ -384,7 +384,7 @@ block corpo
                                     b É {{ key }}
                                     ul
                                         li(v-for="c in clas.RelProcs[key]")
-                                            a(:href="'/classe/consultar/'+c.id") {{ c.Code }}
+                                            a(:href="'/classes/consultar/'+c.id") {{ c.Code }}
                                             |  - {{ c.Title }}
                         if user
                             td(style="width:10%")
@@ -433,7 +433,7 @@ block corpo
                                 )
 
                     //- PRAZO DE CONSERVAÇÃO ADMINISTRATIVA
-                    tr(v-if="clas.Level==3")
+                     tr(v-if="clas.Level==3")
                         td(style="width:10%")
                             label Prazo de Conservação Administrativa: 
                         td(style="width:80%")
