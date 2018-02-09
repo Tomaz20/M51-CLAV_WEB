@@ -48,9 +48,9 @@ block corpo
                     //- CLASSES DESCENDENTES
                     tr(v-if="clas.Level<4 && clas.Children")
                         td(style="width:10%")
-                            label Descendência: 
+                            label Classes Filhas: 
                         td(style="width:80%")
-                            ul
+                            ul(style="padding-left:20px")   
                                 li(v-for="child in clas.Children")
                                     a(:href="'/classes/consultar/c'+child.Code")
                                         | {{ child.Code }}
@@ -445,7 +445,7 @@ block corpo
                                 )
 
                     //- PRAZO DE CONSERVAÇÃO ADMINISTRATIVA
-                     tr(v-if="clas.Level==3")
+                    tr(v-if="clas.Level==3 && clas.PCA.valores.length")
                         td(style="width:10%")
                             label Prazo de Conservação Administrativa: 
                         td(style="width:80%")
@@ -505,7 +505,7 @@ block corpo
                                                                     |  - {{proc.titulo}} 
 
                     //- DESTINO FINAL
-                    tr(v-if="clas.Level==3")
+                    tr(v-if="clas.Level==3 && clas.DF.valores.length")
                         td(style="width:10%")
                             label Destino Final: 
                         td(style="width:80%")
