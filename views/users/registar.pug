@@ -18,14 +18,6 @@ block corpo
             
             button.btn.btn-lg.btn-block(type='submit') Registar
 
-            a.btn.btn-md.btn-primary(href="/loginFB" style="width:50%")
-                span.fa.fa-facebook
-                |  Facebook
-            
-            a.btn.btn-md.btn-danger(href="/loginG"  style="width:50%")
-                span.fa.fa-google
-                |  Google
-
         if errors
             each error in errors
                 h2(style="margin: 2px")
