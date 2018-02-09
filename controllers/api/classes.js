@@ -541,8 +541,6 @@ Classes.pca = function (id) {
             }    
         }GROUP BY ?Contagem ?ContagemNorm
     `;
-    
-    console.log(fetchQuery);
 
     return client.query(fetchQuery).execute()
         //Getting the content we want
@@ -568,8 +566,6 @@ Classes.df = function (id) {
             }    
         }GROUP BY ?df
     `;
-    
-    console.log(fetchQuery);
 
     return client.query(fetchQuery).execute()
         //Getting the content we want
@@ -603,8 +599,6 @@ Classes.criteria = function (criteria) {
             FILTER(?Tipo != owl:NamedIndividual && ?Tipo != clav:CriterioJustificacao && ?Tipo != clav:AtributoComposto)
         } GROUP BY ?Tipo ?Conteudo
     `;
-    
-    console.log(fetchQuery);
 
     return client.query(fetchQuery).execute()
         //Getting the content we want

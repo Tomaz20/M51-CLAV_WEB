@@ -68,7 +68,7 @@ block corpo
                         td(v-else style="width:80%")
                             ul(v-if="domainReady" style="padding-left:20px" :class="{'is-collapsed' : domainCollapsed }")
                                 li(v-for="c in domain")
-                                    a(:href="'/classe/consultar/'+c.id") {{ c.Code }}
+                                    a(:href="'/classes/consultar/'+c.id") {{ c.Code }}
                                     |  - {{ c.Title }}
                             button(@click="domainCollapsed=!domainCollapsed" v-if="domain.length>4")
                                 span(v-if="domainCollapsed") Mostrar mais...
@@ -120,7 +120,7 @@ block corpo
                                     b Como {{ key }}:
                                     ul(:class="{'is-collapsed' : partsCollapsed[key] }")
                                         li(v-for="p in participations[key]")
-                                            a(:href="'/classe/consultar/'+p.id") {{ p.Code }}
+                                            a(:href="'/classes/consultar/'+p.id") {{ p.Code }}
                                             |  - {{ p.Title }}
                                     button(@click="partsCollapsed[key]=!partsCollapsed[key]" v-if="participations[key].length>4")
                                         span(v-if="partsCollapsed[key]") Mostrar mais...

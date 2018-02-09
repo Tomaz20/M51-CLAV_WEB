@@ -1,0 +1,55 @@
+extends ../layout
+block corpo
+    .titlebox
+        | Questionário
+
+    table
+        tr
+            td
+                .infobox 
+                    b Indicação dos representantes das Entidades utilizadoras dos serviços CLAV
+
+                table.questionario
+                    tr
+                        td Nome da Entidade:
+                        td 
+                            input.in(type="text")
+                    tr
+                        td Serviço responsável pela representação na Plataforma:
+                        td 
+                            input.in(type="text")
+                    tr  
+                        td Endereço de e-mail do serviço responsável pela representação na Plataforma:
+                        td
+                            input.in(type="text")
+                    tr
+                        td Nome completo do representante da entidade:
+                        td  
+                            input.in(type="text")
+                    tr
+                        td Email do representante da entidade:
+                        td  
+                            input.in(type="text")
+                    tr
+                        td Número do Cartão cidadão:
+                        td  
+                            input.in(type="text")
+                    tr
+                        td Áreas de intervenção autorizadas:
+                        td
+                            span  
+                                | LC/Tabelas de Seleção
+                                input(type="checkbox")
+
+                            span
+                                | Autos de Eliminação
+                                input(type="checkbox")
+
+                            span
+                                | Consulta de Estatísticas
+                                input(type="checkbox")
+            td(valign="bottom")
+                button Imprimir
+            
+append scripts    
+    //script(src="/javascripts/orgs/questionario.vue")

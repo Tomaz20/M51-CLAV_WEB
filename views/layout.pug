@@ -25,7 +25,7 @@ block body
 				button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#users', aria-expanded='false', aria-controls='users')
 					span.sr-only Toggle authentication
 					span.glyphicon.glyphicon-user(style="color: white")
-				.navbar-brand M51-CLAV
+				.navbar-brand CLAV – Plataforma para a classificação e avaliação da informação pública
 			
 			//collapsable on mobile, fixed in desktop
 			#users.navbar-collapse.collapse
@@ -80,7 +80,7 @@ block body
 		.row
 			//does not appear on mobile
 			.col-sm-3.col-md-2.sidebar
-				ul.nav.nav-sidebar
+				ul.nav.nav-sidebar#navegacaoleft
 					li
 						a(href='/') Inicio
 					li
@@ -93,12 +93,31 @@ block body
 						a(href='/tabelasSelecao') Tabelas de Seleção
 					li
 						a(href='/termosIndice') Termos de Índice
-					//li#selTabs
-						div(v-if="ready")
-							v-select.custom-select(
-								v-model="link"
-								:options="selTabs"
-							)
+
+					li
+						accordion
+							panel(header="Testes")
+								ul.nav
+									li
+										a(href='/organizacoes/registo_entidade') Registo de Entidades
+									li
+										a(href='/organizacoes/registo_utilizador') Registo de Utilizadores
+									li
+										a(href='/organizacoes/questionario') Questionário
+									li
+										a(href='/organizacoes/autenticacao') Autenticação
+									li
+										a(href='/organizacoes/autenticacao_email') Autenticação por Email
+									li
+										a(href='/organizacoes/entidade') Página da Entidade
+									li
+										a(href='/organizacoes/escolha') Escolha do Tipo de TS
+									li
+										a(href='/organizacoes/escolha_processos') Escolha de Processos
+									li
+										a(href='/organizacoes/passos') Passos para criação de TS
+									li
+										a(href='/organizacoes/alteracao') Alteração da TS
 
 			.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
 				h3
@@ -118,7 +137,17 @@ block body
 
 block footer
 	table
-	a(href="http://dglab.gov.pt/" target="_blank") DGLAB - Direção-Geral do Livro, dos Arquivos e das Bibliotecas
+		tr
+			td(width="30%")
+				a(href="http://dglab.gov.pt/" target="_blank") DGLAB - Direção-Geral do Livro, dos Arquivos e das Bibliotecas
+			td
+				a(href="#") + Informações
+			td
+				a(href="#") Perguntas Frequentes
+			td
+				a(href="#") Contactos
+			td
+				a(href="#") Mapa do Site
 
 
 append scripts
@@ -126,11 +155,10 @@ append scripts
 	script(src="/javascripts/base/vue.js")
 	script(src="/javascripts/base/vue-resource.js")
 	script(src="/javascripts/base/vue-select.js")
+	script(src="/javascripts/base/vue-strap.js")
 	
 	script(src="/javascripts/base/axios.min.js")
 	script(src="/javascripts/base/lodash.min.js")
 	
 	script(src="/javascripts/components.vue")
 	script(src="/javascripts/layout.vue")
- 
-	script(src="/javascripts/base/vue-strap.js")

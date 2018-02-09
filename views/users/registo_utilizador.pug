@@ -1,0 +1,68 @@
+extends ../layout
+block corpo 
+    .titlebox
+        | Registar-me pela primeira vez
+
+    table
+        tr
+            td(
+                width="50%"
+                style="padding:10px"
+
+            )
+                p Nº C. Cidadão
+                input(
+                    style="width:100%"
+                    type="text"
+                )
+                br
+
+                p Nome completo
+                input(
+                    style="width:100%"
+                    type="text"
+                )
+                br
+
+                p Email pessoal institucional
+                input(
+                    style="width:100%"
+                    type="text"
+                )
+                br
+
+                p Entidade
+                input(
+                    style="width:100%"
+                    type="text"
+                )
+                br
+
+                div(align="right")
+                    button.next >
+
+            if !validated
+                td(valign="bottom")
+                    .textbox
+                        p É necessário que as entidades identifiquem os seus representantes 
+                            | antes destes se registarem.
+                        div(align="right")
+                            p Consulte os requisitos necessários. 
+                                button.next >
+            
+            else
+                td(valign="bottom")
+                    p Senha de Acesso
+                    input(type="text")
+                    br
+
+                    p Confirmação da Senha de Acesso
+                    input(type="text")
+                    br
+                      
+
+    if errors
+        each error in errors
+            h2(style="margin: 2px")
+                span.label.label-danger(style="background-color: #c71c2294")
+                    | #{error.msg}

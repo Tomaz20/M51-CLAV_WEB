@@ -55,7 +55,7 @@ block corpo
                         td(v-else style="width:80%")
                             ul(v-if="processesReady" style="padding-left:20px" :class="{'is-collapsed' : processesCollapsed }")
                                 li(v-for="c in processes")
-                                    a(:href="'/classe/consultar/'+c.id") {{ c.Code }}
+                                    a(:href="'/classes/consultar/'+c.id") {{ c.Code }}
                                     |  - {{ c.Title }}
                             button(@click="processesCollapsed=!processesCollapsed" v-if="processes.length>4")
                                 span(v-if="processesCollapsed") Mostrar mais...

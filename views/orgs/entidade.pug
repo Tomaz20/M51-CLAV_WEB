@@ -1,0 +1,79 @@
+extends ../layout
+block corpo
+    table 
+        tr
+            td
+                .infobox
+                    | As minhas propostas
+            td
+               button >
+        tr
+            td(colspan="2")
+                .textbox
+                    | Para Consultar propostas efectuadas e o respectivo estado
+        tr
+            td
+                .infobox
+                    | Retomar trabalho
+            td
+                button >
+        tr
+            td(colspan="2")        
+                .textbox
+                    | Para retomar uma proposta já iniciada
+
+    table
+        tr
+            td(valign="top")
+                .infobox()
+                    | Submeter
+            td
+                table
+                    tr
+                        td
+                            .textbox    
+                                | Processos de Negócio
+                        td
+                            button >
+                    tr
+                        td
+                            .textbox    
+                                | Tabelas de Seleção
+                        td
+                            button >
+                    tr
+                        td
+                            .textbox    
+                                | Autos de Eliminação
+                        td
+                            button >
+                    tr
+                        td
+                            .textbox    
+                                | Entidades
+                        td
+                            button >
+                    tr
+                        td
+                            .textbox    
+                                | Legislação (avaliação da informação)
+                        td
+                            button >
+                    
+                    
+        
+        tr
+            td(valign="top")
+                .infobox
+                    | Consultar
+            td
+                table
+                    tr
+                        td
+                            .textbox
+                                | As minhas Estatísticas
+                        td
+                            button >
+                
+append scripts    
+    //script(src="/javascripts/classes/listagem.vue")

@@ -73,3 +73,11 @@ var users = new Vue({
         this.location= window.location.pathname+window.location.search;
     }
 })
+
+new Vue({
+    el: '#navegacaoleft',
+    components:{
+        accordion: VueStrap.accordion,
+        panel: VueStrap.panel
+    }
+})

@@ -10,6 +10,7 @@ new Vue({
         classList: [],
         clas: {
             Title: "",
+            Children: "",
             Code: "",
             Parent: {
                 id: "",
@@ -29,19 +30,14 @@ new Vue({
             PCA: {
                 formacontagem: "",
                 contagemnormalizada: "",
-                notas: ["Ola","Adeus"],
-                criterios: [
-                    {
-                        type: "Tipo",
-                        note: "Atchim",
-                        legislacao: [
-                            {
-                                titulo: "Titulo"
-                            }
-                        ]
-                    }
-                ],
-            }
+                notas: [],
+                valores: [],
+                criterios: [],
+            },
+            DF: {
+                valores: [],
+                criterios: [],
+            },
         },
         newClass: {
             Title: "",
@@ -96,6 +92,22 @@ new Vue({
         panel: VueStrap.panel
     },
     methods: {
+        loadChildren: function () {
+            var classesToParse = [];
+            var keys = ["Child", "Code", "Title"];
+
+            this.$http.get("/api/classes/"+this.id+"/descendencia")
+                .then(function (response) {
+                    classesToParse = response.body;
+                })
+                .then(function () {
+                    if(classesToParse[0].Code)
+                        this.clas.Children = this.parse(classesToParse, keys);
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
         loadOrgs: function () {
             var orgsToParse = [];
             var keys = ["id", "Sigla", "Nome"];
@@ -356,6 +368,163 @@ new Vue({
 
             return dest;
         },
+        loadPCA: function () {
+            var infoToParse = [];
+
+            this.$http.get("/api/classes/" + this.id+"/pca")
+                .then(function (response) {
+                    infoToParse = response.body;
+                })
+                .then(function () {
+                    this.clas.PCA = this.parsePCA(infoToParse);
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        parsePCA: function (data) {
+            let PCA = {
+                formacontagem: "",
+                contagemnormalizada: "",
+                notas: [],
+                valores: [],
+                criterios: [],
+            }
+
+            if(data.Contagem){
+                PCA.formacontagem = data.Contagem.value;
+            }
+            
+            if(data.ContagemNorm){
+                PCA.contagemnormalizada = data.ContagemNorm.value;
+            }
+
+            if(data.Notas.value){
+                PCA.notas = data.Notas.value.split('###');
+            }
+
+            if(data.Valores.value){
+                PCA.valores = data.Valores.value.split('###');
+            }
+
+            if(data.Criterios.value.length){
+                for(let criterio of data.Criterios.value) {
+                    let newCrit = {
+                        tipo: "",
+                        nota: "",
+                        processos: [],
+                        legislacao: []
+                    }
+
+                    newCrit.tipo = criterio.Tipo.value
+                        .replace(/[^#]+#(.*)/, '$1')
+                        .split(/(?=[A-Z])/)
+                        .slice(1)
+                        .join(' ');
+                    
+                    newCrit.nota = criterio.Conteudo.value;
+
+                    if ( criterio.Processos.value ){
+                        for(let proc of criterio.Processos.value.split('###')){
+                            proc = proc.split(':::');
+
+                            newCrit.processos.push({
+                                id: proc[0].replace(/[^#]+#(.*)/, '$1'),
+                                codigo: proc[1],
+                                titulo: proc[2]
+                            })
+                        }
+                    }
+
+                    if ( criterio.Legislacao.value ){
+                        for(let doc of criterio.Legislacao.value.split('###')){
+                            doc = doc.split(':::');
+
+                            newCrit.legislacao.push({
+                                id: doc[0].replace(/[^#]+#(.*)/, '$1'),
+                                tipo: doc[1],
+                                numero: doc[2]
+                            })
+                        }
+                    }
+
+                    PCA.criterios.push(newCrit);
+                }
+            }
+            
+            return PCA;
+        },
+        loadDF: function () {
+            var infoToParse = [];
+
+            this.$http.get("/api/classes/" + this.id+"/df")
+                .then(function (response) {
+                    infoToParse = response.body;
+                })
+                .then(function () {
+                    this.clas.DF = this.parseDF(infoToParse);
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        parseDF: function (data) {
+            let DF = {
+                valores: [],
+                criterios: [],
+            }
+            
+            if(data.Valores.value){
+                DF.valores = data.Valores.value.split('###');
+            }
+
+            if(data.Criterios.value.length){
+                for(let criterio of data.Criterios.value) {
+                    let newCrit = {
+                        tipo: "",
+                        nota: "",
+                        processos: [],
+                        legislacao: []
+                    }
+
+                    newCrit.tipo = criterio.Tipo.value
+                        .replace(/[^#]+#(.*)/, '$1')
+                        .split(/(?=[A-Z])/)
+                        .slice(1)
+                        .join(' ');
+                    
+                    newCrit.nota = criterio.Conteudo.value;
+
+                    if ( criterio.Processos.value ){
+                        for(let proc of criterio.Processos.value.split('###')){
+                            proc = proc.split(':::');
+
+                            newCrit.processos.push({
+                                id: proc[0].replace(/[^#]+#(.*)/, '$1'),
+                                codigo: proc[1],
+                                titulo: proc[2]
+                            })
+                        }
+                    }
+
+                    if ( criterio.Legislacao.value ){
+                        for(let doc of criterio.Legislacao.value.split('###')){
+                            doc = doc.split(':::');
+
+                            newCrit.legislacao.push({
+                                id: doc[0].replace(/[^#]+#(.*)/, '$1'),
+                                tipo: doc[1],
+                                numero: doc[2]
+                            })
+                        }
+                    }
+
+                    DF.criterios.push(newCrit);
+                }
+            }
+            
+            return DF;
+        },
         parse: function (content, keys) {
             var dest = [];
             var temp = {};
@@ -403,6 +572,8 @@ new Vue({
                 this.newClass.ProcTrans = dataObj.ProcTrans.value;
             }
 
+            this.loadChildren();
+
             this.loadOwners();
             this.loadOrgs();
 
@@ -417,6 +588,9 @@ new Vue({
             this.loadRelProcs();
 
             this.loadParticipants();
+
+            this.loadPCA();
+            this.loadDF();
         },
         remOwner: function (index) {
             this.newClass.Owners.splice(index, 1);

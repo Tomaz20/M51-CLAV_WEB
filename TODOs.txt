@@ -5,19 +5,20 @@ TODOs:
         -autenticação por CC
 
 
-    Tabelas de Seleção (em standby até estar tudo migrado e modelado)
-        -acabar CRUD
-        -ts a partir de org
+    Tabelas de Seleção
         -listagem de classes em harmonização
 
-    Termos de Índice !!!!!!!!!!!!!!!
-        -CRUD
 
-
-    API (geral)
+    API
         -alterar deletes para fazer apenas remoção lógica (status=inativo)
         -separar consultar em /:id (meta e relações) e /:id/base (meta)
 
     MISC
         -preparar as páginas e criar routes para /editar e /remover 
-        -mudar routes / para /listar
+        -mudar routes / para /listar?
+
+    
+    classes
+        -linkar processos referenciados em notas de aplicação/exclusão
+        -apresentar classes filhas
+

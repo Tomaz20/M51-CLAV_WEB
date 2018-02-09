@@ -1,0 +1,50 @@
+extends ../layout
+block corpo
+    .titlebox
+        | Utilizador do Serviços CLAV
+
+    table
+        tr
+            td(width="40%" style="padding:20px")
+                .textbox
+                    | Pode proceder à autenticação para utilização dos serviços CLAV através do cartão de cidadão, da chave móvel 
+                    | digital ou do seu email pessoal institucional e respetiva senha de acesso
+            td
+                .textbox
+                    .infobox
+                        | Autenticação
+                    center
+                        table
+                            tr
+                                td Cartão de Cidadão
+                                td(style="padding:5px")
+                                    button >
+                            tr
+                                td Chave Móvel Digital
+                                td(style="padding:5px")
+                                    button >
+                            tr
+                                td Email Pessoal Institucional
+                                td(style="padding:5px")
+                                    button >
+    
+    table(style="margin-left:20px")
+        tr
+            td 
+                .textbox
+                    | É a 1ª vez que utiliza estes serviços?
+            td
+                .button 
+                    a(href="#") Registar-me pela 1ª vez
+        tr 
+            td 
+                .textbox
+                    | Esqueceu-se da sua senha de acesso?
+            td
+                .button 
+                    a(href="#") Obter nova senha de acesso
+            
+            
+
+append scripts    
+    //script(src="/javascripts/classes/listagem.vue")

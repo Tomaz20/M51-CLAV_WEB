@@ -1,0 +1,128 @@
+extends ../layout 
+block corpo
+    #tabs    
+        .titlebox
+            | Tabela de Seleção {{ entidade.nome }}
+        
+        tabs
+            tab(header="Processos Comuns")#tab1
+                .textbox
+                    | A partir da lista de processos comuns (passíveis de existirem em qualquer 
+                    | entidade) identifique a natureza de intervenção da sua entidade, como dono 
+                    | ou participante, em cada processo de negócio.
+
+                
+                .infobox(style="margin-top:10px")
+                    b Lista Consolidada - Processos Comuns
+
+                #tabela(style="margin-top:30px")
+                    custom-table-waterfall(
+                        v-if="ready"
+
+                        pages-on="true"
+                        select-on="true"
+
+                        :header="tableHeader"
+                        :complete-rows="tableData"
+                        :cwidth="cwidth"
+                        :n-edits="nEdits"
+                        
+                        table-class='table table-hover'
+                        
+                        @drop-clicked="dropClicked($event)"
+                        @select-clicked="selectClicked($event)"
+                    )
+                    h4(
+                        v-else
+                    ) Loading...
+
+                div(align="centre")
+                    button.next <
+                    button Guardar
+                    button.next >
+
+            tab(header="Processos Específicos")#tab2
+                .textbox
+                    | Selecione a tipologia de entidade a que pertence.
+
+                div(style="margin-top:10px")
+                    v-select.custom-select(
+                        v-model="entidade.tipologia"
+                        :options="tipolList"
+                    )
+
+                .textbox(style="margin-top:30px")
+                    | Assinale na lista apresentada a natureza da intervenção da entidade, 
+                    | na qualidade de Dono e/ou Participante
+
+
+                
+                .infobox(style="margin-top:10px")
+                    b Lista Consolidada - Seleção por entidade e tipologia
+
+                #tabela(style="margin-top:30px")
+                    custom-table-waterfall(
+                        v-if="ready"
+
+                        pages-on="true"
+                        select-on="true"
+
+                        :header="tableHeader"
+                        :complete-rows="tableData"
+                        :cwidth="cwidth"
+                        :n-edits="nEdits"
+                        
+                        table-class='table table-hover'
+                        
+                        @drop-clicked="dropClicked($event)"
+                        @select-clicked="selectClicked($event)"
+                    )
+                    h4(
+                        v-else
+                    ) Loading...
+
+                div(align="centre")
+                    button.next <
+                    button Guardar
+                    button.next >
+
+            tab(header="Processos Restantes")#tab3
+                .textbox
+                    | Selecione na lista de processos de negócio específicos restantes 
+                    |aqueles em que a sua entidade intervém e assinale a natureza da 
+                    |intervenção, na qualidade de Dono e/ou Participante
+                
+                .infobox(style="margin-top:10px")
+                    b Lista Consolidada - Processos Específicos Restantes
+
+                #tabela(style="margin-top:30px")
+                    custom-table-waterfall(
+                        v-if="ready"
+
+                        pages-on="true"
+                        select-on="true"
+
+                        :header="tableHeader"
+                        :complete-rows="tableData"
+                        :cwidth="cwidth"
+                        :n-edits="nEdits"
+                        
+                        table-class='table table-hover'
+                        
+                        @drop-clicked="dropClicked($event)"
+                        @select-clicked="selectClicked($event)"
+                    )
+                    h4(
+                        v-else
+                    ) Loading...
+
+                div(align="centre")
+                    button.next <
+                    button Guardar
+                    button.next >
+        
+append scripts
+    script(src="/javascripts/tabsSel/escolha_processos.vue")
+
+
+    

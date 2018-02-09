@@ -1,0 +1,61 @@
+extends ../layout 
+block corpo
+    .titlebox
+        | Designação de Nova Tabela de Seleção
+        
+    .graybox
+        | Tabela de seleção {{ entidade.nome }}
+
+    .infobox
+        | Passos para a construção da TS organizacional:
+
+    table
+        tr
+            td
+                .infobox
+                    | Passo 1
+            td(rowspan="3")
+                | Identificação da natureza de intervenção da sua entidade, 
+                | como dono ou participante, em cada processo de negócio, a 
+                | partir da lista de:
+            td
+                | Processos comuns (passíveis de existirem em qualquer entidade)
+            td
+                button.next >
+        
+        tr
+            td
+                .infobox
+                    | Passo 2
+            td
+                | Processos de negócio específicos da entidade e tipologia em que se enquadre
+            td
+        tr
+            td
+                .infobox
+                    | Passo 3
+            td
+                | Processos de negócio específicos restantes 
+            td
+        tr
+            td
+                .infobox
+                    | Passo 4
+            td(colspan="2")
+                | Alteração do conteúdo dos campos nos processos de negócio selecionados: 
+                | Notas de aplicação; Exemplos de NA; Notas de exclusão; 
+                | Termos de índice; Legislação.
+            td
+        tr
+            td
+                .infobox
+                    | Passo 5
+            td(colspan="2")
+                | Proposta de novos processos de negócio
+            td
+                button.next >
+
+
+        
+
+            

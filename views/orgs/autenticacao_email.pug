@@ -1,0 +1,43 @@
+extends ../layout
+block corpo
+    .titlebox
+        | Utilizador do Serviços CLAV
+
+    .textbox(align="center")
+        .button 
+            | Autenticação
+        table
+            tr 
+                td Email Pessoal Institucional
+                td
+                    input(type="text")
+            tr 
+                td Senha de Acesso
+                td  
+                    input(type="text")
+            tr
+                td
+                td
+                    div(align="right")
+                        button >
+
+    table
+        tr
+            td 
+                .textbox
+                    | É a 1ª vez que utiliza estes serviços?
+            td
+                .button 
+                    a(href="#") Registar-me pela 1ª vez
+        tr 
+            td 
+                .textbox
+                    | Esqueceu-se da sua senha de acesso?
+            td
+                .button 
+                    a(href="#") Obter nova senha de acesso
+       
+            
+
+append scripts    
+    //script(src="/javascripts/classes/listagem.vue")
