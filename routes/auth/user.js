@@ -61,9 +61,9 @@ router.post('/registar', function (req, res) {
 
 // Local authentication
 router.post('/login',
-    passport.authenticate('local', { failureRedirect: '/iniciarSessao', failureFlash: true }),
+    passport.authenticate('local', { failureRedirect: '/users/login', failureFlash: true }),
     function (req, res) {
-        res.redirect(req.body.location);
+        res.redirect('/');
     }
 );
 
