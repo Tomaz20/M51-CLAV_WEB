@@ -6,7 +6,7 @@ new Vue({
         tableData: [],
         ready: false,
         content: [],
-        cwidth: ['15%','81%'],
+        cwidth: ['9%','88%'],
         subTemp: [],
         nEdits: 0,
     },

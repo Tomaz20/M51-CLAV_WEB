@@ -92,6 +92,57 @@ new Vue({
         panel: VueStrap.panel
     },
     methods: {
+        prepData: function (dataObj) {
+            this.clas.Title = dataObj.Titulo.value;
+            this.clas.Code = dataObj.Codigo.value;
+
+            if (dataObj.Status) {
+                this.clas.Status = dataObj.Status.value;
+                this.newClass.Status = dataObj.Status.value;
+            }
+            if (dataObj.Pai) {
+                this.clas.Parent.id = dataObj.Pai.value.replace(/[^#]+#(.*)/, '$1');
+                this.clas.Parent.code = dataObj.CodigoPai.value;
+                this.clas.Parent.title = dataObj.TituloPai.value;
+            }
+
+            this.loadChildren();
+            
+            this.pageReady=true;
+
+            if (dataObj.Desc) {
+                this.clas.Desc = dataObj.Desc.value;
+                this.newClass.Desc = dataObj.Desc.value;
+            }
+
+            this.loadExAppNotes();
+            this.loadAppNotes();
+            this.loadDelNotes();
+
+            if(this.clas.Level==3){
+
+                if (dataObj.ProcTipo) {
+                    this.clas.ProcType = dataObj.ProcTipo.value;
+                    this.newClass.ProcType = dataObj.ProcTipo.value;
+                }
+                if (dataObj.ProcTrans) {
+                    this.clas.ProcTrans = dataObj.ProcTrans.value;
+                    this.newClass.ProcTrans = dataObj.ProcTrans.value;
+                }      
+
+                this.loadOwners();
+                this.loadParticipants();
+                this.loadRelProcs();
+                this.loadLegs();
+
+                this.loadPCA();
+                this.loadDF();
+            }
+
+            this.loadClasses();
+            this.loadOrgs();            
+            this.loadLegList();            
+        },
         loadChildren: function () {
             var classesToParse = [];
             var keys = ["Child", "Code", "Title"];
@@ -407,7 +458,7 @@ new Vue({
                 PCA.valores = data.Valores.value.split('###');
             }
 
-            if(data.Criterios.value.length){
+            if(data.Criterios.value[0].Tipo){
                 for(let criterio of data.Criterios.value) {
                     let newCrit = {
                         tipo: "",
@@ -423,16 +474,24 @@ new Vue({
                         .join(' ');
                     
                     newCrit.nota = criterio.Conteudo.value;
-
+                    
                     if ( criterio.Processos.value ){
                         for(let proc of criterio.Processos.value.split('###')){
                             proc = proc.split(':::');
 
+                            let id = proc[0].replace(/[^#]+#(.*)/, '$1');
+                            let codigo = proc[1];
+                            let titulo = proc[2];
+
                             newCrit.processos.push({
-                                id: proc[0].replace(/[^#]+#(.*)/, '$1'),
-                                codigo: proc[1],
-                                titulo: proc[2]
-                            })
+                                id: id,
+                                codigo: codigo,
+                                titulo: titulo
+                            });
+
+                            let regex = new RegExp(codigo+" - "+titulo, "gi");
+                            newCrit.nota = newCrit.nota
+                                .replace(regex,"<a href='/classes/consultar/"+id+"'>"+codigo+" - "+titulo+"</a>");
                         }
                     }
 
@@ -440,11 +499,19 @@ new Vue({
                         for(let doc of criterio.Legislacao.value.split('###')){
                             doc = doc.split(':::');
 
+                            let id = doc[0].replace(/[^#]+#(.*)/, '$1');
+                            let tipo = doc[1];
+                            let numero = doc[2];
+
                             newCrit.legislacao.push({
                                 id: doc[0].replace(/[^#]+#(.*)/, '$1'),
                                 tipo: doc[1],
                                 numero: doc[2]
                             })
+
+                            let regex = new RegExp("\\["+tipo+" "+numero+"\\]", "gi");
+                            newCrit.nota = newCrit.nota
+                                .replace(regex,"<a href='/legislacao/consultar/"+id+"'>"+tipo+" "+numero+"</a>");
                         }
                     }
 
@@ -478,7 +545,7 @@ new Vue({
                 DF.valores = data.Valores.value.split('###');
             }
 
-            if(data.Criterios.value.length){
+            if(data.Criterios.value[0].Tipo){
                 for(let criterio of data.Criterios.value) {
                     let newCrit = {
                         tipo: "",
@@ -499,11 +566,19 @@ new Vue({
                         for(let proc of criterio.Processos.value.split('###')){
                             proc = proc.split(':::');
 
+                            let id = proc[0].replace(/[^#]+#(.*)/, '$1');
+                            let codigo = proc[1];
+                            let titulo = proc[2];
+
                             newCrit.processos.push({
-                                id: proc[0].replace(/[^#]+#(.*)/, '$1'),
-                                codigo: proc[1],
-                                titulo: proc[2]
-                            })
+                                id: id,
+                                codigo: codigo,
+                                titulo: titulo
+                            });
+
+                            let regex = new RegExp(codigo+" - "+titulo, "gi");
+                            newCrit.nota = newCrit.nota
+                                .replace(regex,"<a href='/classes/consultar/"+id+"'>"+codigo+" - "+titulo+"</a>");
                         }
                     }
 
@@ -511,11 +586,19 @@ new Vue({
                         for(let doc of criterio.Legislacao.value.split('###')){
                             doc = doc.split(':::');
 
+                            let id = doc[0].replace(/[^#]+#(.*)/, '$1');
+                            let tipo = doc[1];
+                            let numero = doc[2];
+
                             newCrit.legislacao.push({
                                 id: doc[0].replace(/[^#]+#(.*)/, '$1'),
                                 tipo: doc[1],
                                 numero: doc[2]
                             })
+
+                            let regex = new RegExp("\\["+tipo+" "+numero+"\\]", "gi");
+                            newCrit.nota = newCrit.nota
+                                .replace(regex,"<a href='/legislacao/consultar/"+id+"'>"+tipo+" "+numero+"</a>");
                         }
                     }
 
@@ -543,54 +626,6 @@ new Vue({
             }
 
             return dest;
-        },
-        prepData: function (dataObj) {
-            this.clas.Title = dataObj.Titulo.value;
-            this.clas.Code = dataObj.Codigo.value;
-
-            console.log()
-
-            if (dataObj.Pai) {
-                this.clas.Parent.id = dataObj.Pai.value.replace(/[^#]+#(.*)/, '$1');
-                this.clas.Parent.code = dataObj.CodigoPai.value;
-                this.clas.Parent.title = dataObj.TituloPai.value;
-            }
-            if (dataObj.Status) {
-                this.clas.Status = dataObj.Status.value;
-                this.newClass.Status = dataObj.Status.value;
-            }
-            if (dataObj.Desc) {
-                this.clas.Desc = dataObj.Desc.value;
-                this.newClass.Desc = dataObj.Desc.value;
-            }
-            if (dataObj.ProcTipo) {
-                this.clas.ProcType = dataObj.ProcTipo.value;
-                this.newClass.ProcType = dataObj.ProcTipo.value;
-            }
-            if (dataObj.ProcTrans) {
-                this.clas.ProcTrans = dataObj.ProcTrans.value;
-                this.newClass.ProcTrans = dataObj.ProcTrans.value;
-            }
-
-            this.loadChildren();
-
-            this.loadOwners();
-            this.loadOrgs();
-
-            this.loadLegs();
-            this.loadLegList();
-
-            this.loadExAppNotes();
-            this.loadAppNotes();
-            this.loadDelNotes();
-
-            this.loadClasses();
-            this.loadRelProcs();
-
-            this.loadParticipants();
-
-            this.loadPCA();
-            this.loadDF();
         },
         remOwner: function (index) {
             this.newClass.Owners.splice(index, 1);
@@ -937,7 +972,6 @@ new Vue({
             })
             .then(function () {
                 this.prepData(content[0]);
-                this.pageReady=true;
             })
             .catch(function (error) {
                 console.error(error);

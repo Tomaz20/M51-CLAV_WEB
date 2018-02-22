@@ -8,7 +8,8 @@ TermosIndice.list = function () {
         ?s rdf:type clav:TermoIndice ;
             clav:termo ?Termo ;
             clav:estaAssocClasse ?id .
-        ?id clav:codigo ?Classe .
+        ?id clav:codigo ?Classe ;
+            clav:titulo ?Tit .
     }`;
 
     return client.query(fetchQuery)

@@ -1,18 +1,19 @@
 extends ../layout
 block corpo
-    .titlebox
-        | Questionário
+    center
+        .titlebox(style="width:40%")
+            | Questionário
 
     table
         tr
-            td
+            td#questionario
                 .infobox 
                     b Indicação dos representantes das Entidades utilizadoras dos serviços CLAV
 
                 table.questionario
                     tr
                         td Nome da Entidade:
-                        td 
+                        td
                             input.in(type="text")
                     tr
                         td Serviço responsável pela representação na Plataforma:
@@ -22,34 +23,56 @@ block corpo
                         td Endereço de e-mail do serviço responsável pela representação na Plataforma:
                         td
                             input.in(type="text")
+                table.questionario(v-for="rep in representantes" style="margin-bottom:-5px")
                     tr
                         td Nome completo do representante da entidade:
                         td  
-                            input.in(type="text")
+                            input.in(
+                                type="text"
+                                v-model="rep.nome"
+                            )
                     tr
                         td Email do representante da entidade:
                         td  
-                            input.in(type="text")
+                            input.in(
+                                type="text"
+                                v-model="rep.email"    
+                            )
                     tr
                         td Número do Cartão cidadão:
                         td  
-                            input.in(type="text")
+                            input.in(
+                                type="text"
+                                v-model="rep.cc"    
+                            )
                     tr
                         td Áreas de intervenção autorizadas:
                         td
                             span  
                                 | LC/Tabelas de Seleção
-                                input(type="checkbox")
+                                input(
+                                    type="checkbox"
+                                    v-model="rep.perm.LC"    
+                                )
 
                             span
                                 | Autos de Eliminação
-                                input(type="checkbox")
+                                input(
+                                    type="checkbox"
+                                    v-model="rep.perm.AE"    
+                                )
 
                             span
                                 | Consulta de Estatísticas
-                                input(type="checkbox")
+                                input(
+                                    type="checkbox"
+                                    v-model="rep.perm.ES"    
+                                )
+                button(@click="addRep" style="margin:5px; margin-top:10px") Adicionar Representante
+                
+                button(@click="remRep") Remover Representante
             td(valign="bottom")
                 button Imprimir
             
 append scripts    
-    //script(src="/javascripts/orgs/questionario.vue")
+    script(src="/javascripts/orgs/questionario.vue")

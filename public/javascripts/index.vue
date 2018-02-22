@@ -11,7 +11,7 @@ new Vue({
     data: {
         linhas: [
             {
-                valor: 'Lista Consolidada',
+                valor: 'Lista Consolidada - Processos de Negócio',
                 consultar: '/classes',
                 submeter: '/classes/adicionar',
             },
@@ -36,7 +36,7 @@ new Vue({
                 submeter: '/legislacao/adicionar',
             },
             {
-                valor: 'Estatísticas',
+                valor: 'Estatísticas (WIP)',
                 consultar: '#',
                 submeter: '#',
             },

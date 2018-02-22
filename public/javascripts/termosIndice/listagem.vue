@@ -5,7 +5,7 @@ var termos = new Vue({
         tableData: [[]],
         ready: false,
         content: [],
-        cwidth: ['5%','70%','25%'],
+        cwidth: ['5%','55%','40%'],
     },
     methods: {
         rowClicked: function(row){
@@ -22,7 +22,7 @@ var termos = new Vue({
             this.tableHeader=["#","Termo","Classe"]
 
             // key names for parsing
-            var keys=["Termo","Classe"];
+            var keys=["Termo","Classe", "Tit"];
 
             var temp=[];
 
@@ -34,7 +34,9 @@ var termos = new Vue({
                     temp[j+1] = this.content[i][keys[j]].value;
                 }
                 
-                this.tableData[i]=temp.slice();
+                temp[2]=temp[2]+" - "+temp[3];
+
+                this.tableData[i]=temp.slice(0,3);
 
             }
         }

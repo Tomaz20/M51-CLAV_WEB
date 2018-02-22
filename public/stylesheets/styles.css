@@ -41,7 +41,8 @@
 .cascata-row {
     padding:0px !important; 
     padding-left:30px !important; 
-    border:0px !important
+    border:0px !important;
+    width: 100%;
 }
 
 .cascata-row-root {
@@ -49,10 +50,38 @@
     border:0px !important
 }
 
+.fixed {
+    table-layout: fixed;
+}
+
 .cascata-drop {
+    text-align: center;
+    background-color: #90CAF9; 
     border-right:1px solid #ddd; 
-    margin-right: 5px;
-    width: 5%;
+    width: 100% !important;
+    overflow: hidden;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.texto {
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.cascata-drop-select {
+    text-align: center;
+    background-color: #90CAF9; 
+    border-right:1px solid #ddd; 
+    width: 48px !important;
+    overflow: hidden;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.codigo {
+    background-color: #E3F2FD;
+    white-space: nowrap;
 }
 
 .drop-row {
@@ -66,10 +95,11 @@
     border-bottom: 1px solid #ddd;
 }
 
-
 .consulta td{
+    padding-left: 5px;
     padding-bottom: 5px;
-    padding-top: 10px;
+    padding-top: 5px;
+    align-content: center;
 }
 
 .cria tr{
@@ -110,9 +140,17 @@
     display: none;
 }
 
-
 .table-hover tbody:hover > tr:hover {
-    background-color: rgba(201, 201, 201, 0.514) !important;
+    background-color: #BBDEFB !important;
+}
+
+.custom-table-cell {
+    max-width: 0; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    white-space: nowrap; 
+    cursor: pointer;
+    cursor: hand !important;
 }
 
 
@@ -123,12 +161,16 @@
     border-width: 1px;
     border-style: solid;
     padding: 5px;
-    background-color: rgba(197, 197, 197, 0.747)
-}
-
-.botao a {
+    background-color: #f5f5f5;
     color: #000 !important;
 }
+
+.botao:hover {
+    border: #555;
+    text-decoration: none !important;
+    outline: none;
+}
+
 
 .footer {
     z-index: 10000 !important;
@@ -140,9 +182,14 @@
     background: rgb(226, 226, 226)
 }
 
+.footer td{
+    padding: 8px;
+    text-align: center;
+}
+
 .titlebox {
     color: beige;
-    background: rgb(0, 5, 71);
+    background: #0D47A1;
     border-style: solid;
     border-width: 1px;
     padding: 7px;
@@ -153,7 +200,7 @@
 
 
 .infobox {
-    background: rgb(154, 195, 241);
+    background: #90CAF9;
     border-style: solid;
     border-width: 1px;
     padding: 5px;
@@ -162,21 +209,32 @@
 
 .textbox {
     border-style: solid;
+    background-color: #E3F2FD;
+    border-width: 1px;
+    padding: 5px;
+    margin: 5px;
+}
+
+.whitebox {
+    border-style: solid;
     border-width: 1px;
     padding: 5px;
     margin: 5px;
 }
 
 .questionario {
+    width:99%;
     border-style: solid;
     border-width: 2px;
     padding: 5px;
     margin:5px;
+    table-layout: fixed;
 }
 
 .questionario tr {
     padding-right: 5px;
-    border-bottom-style: dashed;
+    padding-left: 5px;
+    border-style: dashed;
     border-width: 1px;
 }
 
@@ -187,7 +245,8 @@
 }
 
 .questionario .in {
-    width: 100%;
+    width: 98%;
+    height: 24.5px;
 }
 
 .questionario span {
@@ -204,9 +263,70 @@
     padding:5px;
     border: solid;
     border-width: 1px;
-    background: rgb(77, 154, 243)
+    background: #90CAF9;
 }
 
 .button a {
     color: beige !important;
+}
+
+.info-classe .panel {
+    margin-bottom: 10px;
+}
+
+.info-label {
+    padding: 5px; 
+    font-weight: 400;
+    width: 100%;
+    background-color: #E3F2FD;
+    font-weight: bold;
+}
+
+.noborder {
+    width: 100%;
+}
+
+.noborder tr {
+    border: none;
+}
+
+.consulta td:nth-of-type(2) {
+    vertical-align: middle;
+    padding-left: 15px;
+}
+
+.tabela-navegacao td{
+    vertical-align: middle;
+    border:none !important;
+}
+
+.tabela-navegacao td:nth-of-type(1) div{
+    text-align: left !important;
+}
+
+.tabela-navegacao{
+    border: none !important;
+}
+
+.ownercheck {
+    width:56px;
+    text-align: center;
+    display:inline-block;
+}
+
+.partcheck {
+    width:108px;
+    text-align: center;
+    display:inline-block;
+}
+
+
+.checks {
+    width:168px;
+    float: right;
+}
+
+
+.next {
+    border-radius: 50%;
 }

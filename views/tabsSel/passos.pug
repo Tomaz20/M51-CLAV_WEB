@@ -1,61 +1,67 @@
 extends ../layout 
 block corpo
-    .titlebox
-        | Designação de Nova Tabela de Seleção
-        
-    .graybox
-        | Tabela de seleção {{ entidade.nome }}
+    div
+        .titlebox(style="width:30%;display:inline-block")
+            | Designação de Nova Tabela de Seleção
+        div(style="display:inline-block;width:70%;vertical-align:middle;padding-left:9px;padding-bottom:20px")
+            center
+                .textbox
+                    | Tabela de seleção #{entidade}
 
     .infobox
         | Passos para a construção da TS organizacional:
 
-    table
+    table(style="table-layout:fixed")
         tr
             td
                 .infobox
                     | Passo 1
-            td(rowspan="3")
-                | Identificação da natureza de intervenção da sua entidade, 
-                | como dono ou participante, em cada processo de negócio, a 
-                | partir da lista de:
+            td(rowspan="3" width="25%" style="height:1px;padding-top:5px;padding-bottom:5px")
+                .whitebox(style="height:100%")
+                    | Identificação da natureza de intervenção da sua entidade, 
+                    | como dono ou participante, em cada processo de negócio, a 
+                    | partir da lista de:
             td
-                | Processos comuns (passíveis de existirem em qualquer entidade)
+                .whitebox
+                    | Processos comuns (passíveis de existirem em qualquer entidade)
             td
-                button.next >
+                button.next(onclick='window.location.href="/organizacoes/escolha_processos"') >
         
         tr
             td
                 .infobox
                     | Passo 2
             td
-                | Processos de negócio específicos da entidade e tipologia em que se enquadre
+                .whitebox
+                    | Processos de negócio específicos da entidade e tipologia em que se enquadre
             td
         tr
             td
                 .infobox
                     | Passo 3
             td
-                | Processos de negócio específicos restantes 
+                .whitebox
+                    | Processos de negócio específicos restantes 
             td
         tr
             td
                 .infobox
                     | Passo 4
             td(colspan="2")
-                | Alteração do conteúdo dos campos nos processos de negócio selecionados: 
-                | Notas de aplicação; Exemplos de NA; Notas de exclusão; 
-                | Termos de índice; Legislação.
+                .whitebox
+                    | Alteração do conteúdo dos campos nos processos de negócio selecionados: 
+                    | Notas de aplicação; Exemplos de NA; Notas de exclusão; 
+                    | Termos de índice; Legislação.
             td
         tr
             td
                 .infobox
                     | Passo 5
             td(colspan="2")
-                | Proposta de novos processos de negócio
+                .whitebox
+                    | Proposta de novos processos de negócio
             td
-                button.next >
-
-
+                button.next(href="/classes/adicionar") >
         
 
             

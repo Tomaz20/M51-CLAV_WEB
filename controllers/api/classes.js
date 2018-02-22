@@ -596,6 +596,11 @@ Classes.criteria = function (criteria) {
                 ?proc clav:codigo ?Codigo ;
                       clav:titulo ?Titulo .
             }
+            OPTIONAL {
+                ?id clav:eComplementarDe ?proc .
+                ?proc clav:codigo ?Codigo ;
+                      clav:titulo ?Titulo .
+            }
             FILTER(?Tipo != owl:NamedIndividual && ?Tipo != clav:CriterioJustificacao && ?Tipo != clav:AtributoComposto)
         } GROUP BY ?Tipo ?Conteudo
     `;

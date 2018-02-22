@@ -3,24 +3,94 @@ var separadors = new Vue({
     data: {
         entidade: {
             nome: "Teste",
-            tipologia: ""
         },
-        tipolList: ["Tipo1", "Tipo2", "Tipo3"],
+        newTipol: null,
+        tipolList: [],
+        myTipolList: [],
         tableHeader: [],
-        tableData: [],
+        commonProcs: [],
+        specificProcs: [],
+        restProcs: [],
         ready: false,
-        content: [],
         cwidth: ['15%', '81%'],
         subTemp: [],
         nEdits: 0,
         name: "",
         message: "",
     },
-    components:{
+    components: {
         tabs: VueStrap.tabs,
         tab: VueStrap.tab
     },
+    watch: {
+        myTipolList: function () {
+            this.loadSpecificProcs();
+        },
+    },
     methods: {
+        loadTipols: function () {
+            let orgsToParse = [];
+            let keys = ["id", "Tipo", "Nome", "Sigla"];
+
+            this.$http.get("/api/organizacoes")
+                .then(function (response) {
+                    orgsToParse = response.body;
+                })
+                .then(function () {
+                    let completeList = this.parseList(orgsToParse, keys);
+
+                    //tipologias
+                    this.tipolList = completeList.filter(
+                        a => (a.Tipo == "Tipologia")
+                    ).map(function (item) {
+                        return {
+                            label: item.Sigla + " - " + item.Nome,
+                            value: item,
+                        }
+                    }).sort(function (a, b) {
+                        return a.label.localeCompare(b.label);
+                    });
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        parseList: function (content, keys) {
+            var dest = [];
+            var temp = {};
+
+            // parsing the JSON
+            for (var i = 0; i < content.length; i++) {
+                for (var j = 0; j < keys.length; j++) {
+                    temp[keys[j]] = content[i][keys[j]].value;
+
+                    if (keys[j] == "id") {
+                        temp.id = temp.id.replace(/[^#]+#(.*)/, '$1');
+                    }
+                    if (keys[j] == "Tipo") {
+
+                        conj = new RegExp("#Conjunto", "g");
+                        tipol = new RegExp("#Tipologia", "g");
+
+                        if (conj.test(temp.Tipo)) {
+                            temp.Tipo = "Conjunto";
+                        }
+                        else if (tipol.test(temp.Tipo)) {
+                            temp.Tipo = "Tipologia";
+                        }
+                        else {
+                            temp.Tipo = "Organização";
+                        }
+                    }
+                }
+
+                dest[i] = JSON.parse(JSON.stringify(temp));
+            }
+
+            return dest.sort(function (a, b) {
+                return a.id.localeCompare(b.id);
+            });
+        },
         swap: function (array, pos1, pos2) {
             var temp = array[pos1];
             array[pos1] = array[pos2];
@@ -28,11 +98,41 @@ var separadors = new Vue({
 
             return array;
         },
-        selectClicked: function (params) {
+        loadSpecificProcs() {
+            let content = [];
+
+            this.$http.get("/api/classes")
+            .then(function (response) {
+                content = response.body;
+            })
+            .then(function () {
+                this.parse(content, this.specificProcs);
+                this.ready = true;
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
+        },  
+        loadRestProcs() {
+            let content = [];
+
+            this.$http.get("/api/classes")
+            .then(function (response) {
+                content = response.body;
+            })
+            .then(function () {
+                this.parse(content, this.restProcs);
+                this.ready = true;
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
+        },
+        selectClicked: function (params, struct) {
             var id = params.id;
 
             var path = id.split('.');
-            this.selectTree(path, this.tableData, !params.rowData.selected, params);
+            this.selectTree(path, struct, !params.rowData.selected, params);
         },
         selectTree: function (indexes, location, selected, params) {
             if (indexes.length == 1) {
@@ -53,6 +153,15 @@ var separadors = new Vue({
             }
         },
         selectSons: function (location, selected, params) {
+            if(!selected){
+                if(location.owner){
+                    location.owner=false;
+                }
+                if(location.participant){
+                    location.participant=false;
+                }
+            }
+
             location.selected = selected;
             var tempParams = null;
 
@@ -68,19 +177,18 @@ var separadors = new Vue({
                 this.dropClicked(params);
             }
         },
-        dropClicked: function (params) {
+        dropClicked: function (params, struct) {
             var id = params.id;
             var ready = params.rowData.subReady;
-
             if (!ready) {
                 //split the id; example: '1.1.2' becomes ['1','1','2']
                 var path = id.split('.');
-                this.loadSub(path, this.tableData, params);
+                this.loadSub(path, struct, params);
             }
         },
         loadSub: function (indexes, location, params) {
             if (indexes.length == 1) {
-                this.$http.get("/api/classes/" + params.rowData.codeID+"/descendencia")
+                this.$http.get("/api/classes/" + params.rowData.codeID + "/descendencia")
                     .then(function (response) {
                         this.subTemp = response.body;
                     })
@@ -88,7 +196,7 @@ var separadors = new Vue({
                         //load child classes on the sublevel of the parent
                         location[indexes[0]].sublevel = this.parseSub(location[indexes[0]].selected);
 
-                        //if class is selected load every all descendants
+                        //if class is selected load every descendant
                         if (location[indexes[0]].selected) {
                             for (var i = 0; i < location[indexes[0]].sublevel.length; i++) {
                                 if (location[indexes[0]].sublevel[i].sublevel && !location[indexes[0]].sublevel[i].sublevel.length) {
@@ -119,9 +227,9 @@ var separadors = new Vue({
                 this.loadSub(tail, newLocation, params);
             }
         },
-        parse: function () {
+        parse: function (dataToParse, destination) {
             // parsing the JSON
-            for (var i = 0; i < this.content.length; i++) {
+            for (var i = 0; i < dataToParse.length; i++) {
                 var temp = {
                     content: "",
                     sublevel: false,
@@ -130,20 +238,20 @@ var separadors = new Vue({
                     subReady: false,
                 };
 
-                var id = this.content[i].id.value.replace(/[^#]+#(.*)/, '$1');
-                var code = this.content[i].Code.value;
-                var title = this.content[i].Title.value;
+                var id = dataToParse[i].id.value.replace(/[^#]+#(.*)/, '$1');
+                var code = dataToParse[i].Code.value;
+                var title = dataToParse[i].Title.value;
 
                 temp.content = [code, title];
                 temp.codeID = id;
 
-                if (this.content[i].NChilds.value > 0) {
+                if (dataToParse[i].NChilds.value > 0) {
                     temp.sublevel = true;
                 }
 
-                this.tableData[i] = JSON.parse(JSON.stringify(temp));
+                destination[i] = JSON.parse(JSON.stringify(temp));
             }
-            this.tableData.sort(function (a, b) {
+            destination.sort(function (a, b) {
                 return a.content[0].localeCompare(b.content[0]);
             })
         },
@@ -194,6 +302,7 @@ var separadors = new Vue({
                 if (location[i].selected) {
                     list.push(location[i].codeID);
 
+
                     if (location[i].sublevel && location[i].sublevel.length) {
                         list = list.concat(this.getSelected(location[i].sublevel));
                     }
@@ -204,26 +313,39 @@ var separadors = new Vue({
         createSelTab: function () {
             var dataObj = {
                 name: this.name,
-                classes: this.getSelected(this.tableData),
+                classes: this.getSelected(this.commonProcs),
             }
 
-            if (dataObj.classes.length==0){
-                this.message="É necessário selecionar uma ou mais classes!";
-            } else if(dataObj.name.length==0){
-                this.message="O campo 'Designação' não pode estar vazio!"
+            if (dataObj.classes.length == 0) {
+                this.message = "É necessário selecionar uma ou mais classes!";
+            } else if (dataObj.name.length == 0) {
+                this.message = "O campo 'Designação' não pode estar vazio!"
             } else {
-                this.$http.post('/api/tabelasSelecao/',dataObj,{
+                this.$http.post('/api/tabelasSelecao/', dataObj, {
                     headers: {
-                        'content-type' : 'application/json'
+                        'content-type': 'application/json'
                     }
                 })
-                .then( function(response) { 
-                    window.location.href = '/tabelaSelecao/consultar/'+response.body;
-                })
-                .catch( function(error) { 
-                    console.error(error); 
-                });
+                    .then(function (response) {
+                        window.location.href = '/tabelaSelecao/consultar/' + response.body;
+                    })
+                    .catch(function (error) {
+                        console.error(error);
+                    });
             }
+        },
+        saveInfo: function () {
+            let selected = {
+                comuns: this.getSelected(this.commonProcs),
+                especificos: this.getSelected(this.specificProcs),
+                restantes: this.getSelected(this.restProcs),
+            };
+
+            /* do stuff */
+        },
+        loadInfo: function() {
+            /* get info */
+            /* apply info */ 
         }
     },
     created: function () {
@@ -232,13 +354,18 @@ var separadors = new Vue({
             "TÍTULO"
         ];
 
+        let content=[];
+
         this.$http.get("/api/classes")
             .then(function (response) {
-                this.content = response.body;
+                content = response.body;
             })
             .then(function () {
-                this.parse();
+                this.parse(content, this.commonProcs);
                 this.ready = true;
+
+                this.loadTipols();
+                this.loadRestProcs();
             })
             .catch(function (error) {
                 console.error(error);
