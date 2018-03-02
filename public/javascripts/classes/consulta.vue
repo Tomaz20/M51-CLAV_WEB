@@ -434,6 +434,7 @@ new Vue({
                 });
         },
         parsePCA: function (data) {
+
             let PCA = {
                 formacontagem: "",
                 contagemnormalizada: "",
@@ -470,7 +471,6 @@ new Vue({
                     newCrit.tipo = criterio.Tipo.value
                         .replace(/[^#]+#(.*)/, '$1')
                         .split(/(?=[A-Z])/)
-                        .slice(1)
                         .join(' ');
                     
                     newCrit.nota = criterio.Conteudo.value;
@@ -491,7 +491,7 @@ new Vue({
 
                             let regex = new RegExp(codigo+" - "+titulo, "gi");
                             newCrit.nota = newCrit.nota
-                                .replace(regex,"<a href='/classes/consultar/"+id+"'>"+codigo+" - "+titulo+"</a>");
+                                .replace(regex,"<a href='/classes/consultar/"+id+"'>"+codigo+"</a> - "+titulo);
                         }
                     }
 
@@ -510,6 +510,7 @@ new Vue({
                             })
 
                             let regex = new RegExp("\\["+tipo+" "+numero+"\\]", "gi");
+                            
                             newCrit.nota = newCrit.nota
                                 .replace(regex,"<a href='/legislacao/consultar/"+id+"'>"+tipo+" "+numero+"</a>");
                         }
@@ -557,7 +558,6 @@ new Vue({
                     newCrit.tipo = criterio.Tipo.value
                         .replace(/[^#]+#(.*)/, '$1')
                         .split(/(?=[A-Z])/)
-                        .slice(1)
                         .join(' ');
                     
                     newCrit.nota = criterio.Conteudo.value;

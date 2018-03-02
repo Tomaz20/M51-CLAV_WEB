@@ -613,6 +613,45 @@ Classes.criteria = function (criteria) {
         });
 }
 
+Classes.common = function() {
+    var fetchQuery = `
+        SELECT 
+            ?Avo ?AvoCodigo ?AvoTitulo 
+            ?Pai ?PaiCodigo ?PaiTitulo 
+            ?PN ?PNCodigo ?PNTitulo   
+            ?Filho ?FilhoCodigo ?FilhoTitulo
+        WHERE {    
+            ?AP :orgSigla "AP";
+                :participaEm ?PN.
+            
+            ?PN :temPai ?Pai.
+            ?Pai :temPai ?Avo.
+            
+            ?PN :codigo ?PNCodigo;
+                :titulo ?PNTitulo.
+            
+            ?Pai :codigo ?PaiCodigo;
+                :titulo ?PaiTitulo.
+            
+            ?Avo :codigo ?AvoCodigo;
+                :titulo ?AvoTitulo.
+            
+            OPTIONAL {
+                ?Filho :temPai ?PN;
+                    :codigo ?FilhoCodigo;
+                    :titulo ?FilhoTitulo
+            }
+        }
+    `;
+
+    return client.query(fetchQuery).execute()
+        //Getting the content we want
+        .then(response => Promise.resolve(response.results.bindings))
+        .catch(function (error) {
+            console.error("Error in check:\n" + error);
+        });
+}
+
 Classes.createClass = function (data) {
     var id = "c" + data.Code;
     var level = "Classe_N" + data.Level;

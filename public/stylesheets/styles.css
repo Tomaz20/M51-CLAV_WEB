@@ -45,6 +45,10 @@
     width: 100%;
 }
 
+.cascata-row:hover {
+    background: white !important;
+}
+
 .cascata-row-root {
     padding:0px !important; 
     border:0px !important
@@ -141,6 +145,14 @@
 }
 
 .table-hover tbody:hover > tr:hover {
+    background-color: #BBDEFB !important;
+}
+
+.partial-hover tbody:hover > tr:hover {
+    background-color: none !important;
+}
+
+.partial-hover td:nth-of-type(3):hover{
     background-color: #BBDEFB !important;
 }
 

@@ -204,7 +204,7 @@ Vue.component('row-waterfall', {
     template: `
         <tr>
             <td colspan=5 :class="[root ? 'cascata-row-root' : 'cascata-row']">
-                <table :class="[selectOn ? tableClass : (tableClass+' fixed')]">
+                <table :class="[selectOn ? tableClass : (tableClass+' fixed')]"  class="partial-hover">
                     <tbody name="table">
                         <tr>
                             <td v-if="row.sublevel"

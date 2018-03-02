@@ -461,117 +461,61 @@ block corpo
                                         )
 
                     panel(header="Decisões de Avaliação" v-if="clas.Level==3")
-                        table.consulta(v-if="pageReady" style="border-color: white; border-style:solid")
+                        table.consulta.noborder(v-if="pageReady" style="border-color: white; border-style:solid")
                             //- PRAZO DE CONSERVAÇÃO ADMINISTRATIVA
+                            tr
+                                td
+                                    .info-label(style="text-align:center")
+                                        | Prazo de Conservação Administrativa
                             tr(v-if="clas.PCA.valores.length")
-                                td(style="width: 10%")
-                                    .info-label Prazo de Conservação Administrativa: 
-                                td(style="width:80%")
-                                    table(style="border-color: white; border-style:solid")
-                                        tr(v-if="clas.PCA.formacontagem")
-                                            td(style="width:10%") Forma de Contagem:
-                                            td {{clas.PCA.formacontagem}}
-                                        
-                                        tr(v-if="clas.PCA.contagemnormalizada")
-                                            td Forma de Contagem Normalizada:
-                                            td {{clas.PCA.contagemnormalizada}}
-                                        
-                                        tr(v-if="clas.PCA.notas.length")
-                                            td Notas:
-                                            td 
-                                                ul
-                                                    li(v-for="nota in clas.PCA.notas")
-                                                        | {{ nota }}
-
-                                        tr(v-if="clas.PCA.valores.length")
-                                            td Valores:
-                                            td 
-                                                ul
-                                                    li(v-for="valor in clas.PCA.valores")
-                                                        | {{valor}}
-
-                                        tr(v-if="clas.PCA.criterios.length")
-                                            td Critérios:
-                                            td 
-                                                table(v-for="criterio in clas.PCA.criterios" style="border-color: white; border-style:solid; margin-bottom: 20px")
+                                td
+                                    table.noborder
+                                        tr
+                                            td
+                                                .info-label Prazo:
+                                            td(width="10%")
+                                                | {{ clas.PCA.valores.join(', ') }}
+                                            td(style="padding-left:10px")
+                                                .info-label Forma de Contagem:
+                                            td
+                                                | {{ clas.PCA.contagemnormalizada }}                                        
+                                        tr
+                                            td
+                                                .info-label Justificação:
+                                            td(colspan=3)
+                                                table(v-for="criterio in clas.PCA.criterios")
                                                     tr
-                                                        td Tipo:
-                                                        td {{criterio.tipo}}
-                                                    
+                                                        td
+                                                            b {{ criterio.tipo }}
                                                     tr
-                                                        td Nota:
                                                         td 
                                                             p(v-html="criterio.nota")
-                                                    
-                                                    //-tr(v-if="criterio.legislacao.length")
-                                                        td Legislação:
-                                                        td
-                                                            ul
-                                                                li(v-for="diploma in criterio.legislacao") 
-                                                                    | {{diploma.tipo}} - 
-                                                                    a(:href="'/legislacao/consultar/'+diploma.id")
-                                                                        | {{diploma.numero}}
-
-                                                    //-tr(v-if="criterio.processos.length")
-                                                        td Processos:
-                                                        td
-                                                            ul
-                                                                li(v-for="proc in criterio.processos") 
-                                                                    a(:href="'/classes/consultar/'+proc.id")
-                                                                        | {{proc.codigo}}
-                                                                    |  - {{proc.titulo}} 
-
+                                
                             //- DESTINO FINAL
+                            tr
+                                td
+                                    .info-label(style="text-align:center") 
+                                        | Destino Final
                             tr(v-if="clas.DF.valores.length")
-                                td(style="width: 10%")
-                                    .info-label Destino Final: 
-                                td(style="width:80%")
-                                    table(style="border-color: white; border-style:solid")
-                                        tr(v-if="clas.DF.valores.length")
-                                            td Valores:
-                                            td 
-                                                ul
-                                                    li(v-for="valor in clas.DF.valores")
-                                                        | {{valor}}
-
-                                        tr(v-if="clas.DF.criterios.length")
-                                            td Critérios:
-                                            td 
-                                                table(
-                                                    v-for="criterio in clas.DF.criterios" 
-                                                    style=`
-                                                        border-color: white; 
-                                                        border-style:solid; 
-                                                        margin-bottom: 20px
-                                                    `
-                                                )
+                                td
+                                    table.noborder
+                                        tr
+                                            td
+                                                .info-label Destino Final:
+                                            td
+                                                | {{ clas.DF.valores.join(', ') }}                                            
+                                        tr
+                                            td
+                                                .info-label Justificação:
+                                            td
+                                                table(v-for="criterio in clas.DF.criterios")
                                                     tr
-                                                        td Tipo:
-                                                        td {{criterio.tipo}}
-                                                    
-                                                    tr
-                                                        td Nota:
                                                         td
+                                                            b {{ criterio.tipo }}
+                                                    tr
+                                                        td 
                                                             p(v-html="criterio.nota")
-                                                    
-                                                    //-tr(v-if="criterio.legislacao.length")
-                                                        td Legislação:
-                                                        td
-                                                            ul
-                                                                li(v-for="diploma in criterio.legislacao") 
-                                                                    | {{diploma.tipo}} - 
-                                                                    a(:href="'/legislacao/consultar/'+diploma.id")
-                                                                        | {{diploma.numero}}
-
-                                                    //-tr(v-if="criterio.processos.length")
-                                                        td Processos:
-                                                        td
-                                                            ul
-                                                                li(v-for="proc in criterio.processos") 
-                                                                    a(:href="'/classes/consultar/'+proc.id")
-                                                                        | {{proc.codigo}}
-                                                                    |  - {{proc.titulo}} 
-                                                                    
+                                                             
             //- Buttons
             if user
                 input.btn.btn-xs.btn-default.col-sm-1(
