@@ -22,6 +22,34 @@ router.get('/nivel=:n', function (req, res) {
         });
 })
 
+router.get('/filtrar/comuns', function (req, res) {
+    Classes.filterCommon()
+        .then(list => res.send(list))
+        .catch(function (error) {
+            console.error(error);
+        });
+})
+
+router.get('/filtrar/restantes/(:orgs)?', function (req, res) {
+    if(req.params.orgs){
+        var orgs = req.params.orgs.split(',');
+    }
+
+    Classes.filterRest(orgs)
+        .then(list => res.send(list))
+        .catch(function (error) {
+            console.error(error);
+        });
+})
+
+router.get('/filtrar/:orgs', function (req, res) {
+    Classes.filterByOrgs(req.params.orgs.split(','))
+        .then(list => res.send(list))
+        .catch(function (error) {
+            console.error(error);
+        });
+})
+
 router.get('/:id', function (req, res) {
     Classes.stats(req.params.id)
         .then(clas => res.send(clas))

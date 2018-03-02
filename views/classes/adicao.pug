@@ -16,26 +16,7 @@ block corpo
                                 option(value=2) Classe_N2
                                 option(value=3) Classe_N3
                                 option(value=4) Classe_N4
-
-                    //-STATUS
-                    tr(v-if="type==3")
-                        td(style="padding-top:10px")
-                            label Status: 
-                        td
-                            select(
-                                v-model="status"
-                            )
-                                option(
-                                    value="H"
-                                    selected
-                                )   Harmonização
-                                option(
-                                    value="A"
-                                )   Activa
-                                option(
-                                    value="I"
-                                ) Inactiva
-
+                                
                     //-PAI
                     tr(v-if="type>1 && parentsReady")
                         td(style="width:10%")

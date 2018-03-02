@@ -209,7 +209,7 @@ new Vue({
                     }
                 })
                 .then( function(response) { 
-                    window.location.href = '/tabelaSelecao/consultar/'+response.body;
+                    window.location.href = '/tabelasSelecao/consultar/'+response.body;
                 })
                 .catch( function(error) { 
                     console.error(error); 

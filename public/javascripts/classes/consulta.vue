@@ -544,6 +544,22 @@ new Vue({
             
             if(data.Valores.value){
                 DF.valores = data.Valores.value.split('###');
+
+                for(let [index, valor] of DF.valores.entries()){
+                    if(valor=="C"){
+                        valor="Conservação";
+                    }
+                    else if(valor=="E"){
+                        valor="Eliminação";
+                    }
+                    else if(valor=="CP"){
+                        valor="Conservação Parcial";
+                    }
+                    else if(valor=="NE"){
+                        valor=data.Nota.value;
+                    }
+                    DF.valores[index]=valor;
+                }
             }
 
             if(data.Criterios.value[0].Tipo){
@@ -578,7 +594,7 @@ new Vue({
 
                             let regex = new RegExp(codigo+" - "+titulo, "gi");
                             newCrit.nota = newCrit.nota
-                                .replace(regex,"<a href='/classes/consultar/"+id+"'>"+codigo+" - "+titulo+"</a>");
+                                .replace(regex,"<a href='/classes/consultar/"+id+"'>"+codigo+"</a> - "+titulo);
                         }
                     }
 

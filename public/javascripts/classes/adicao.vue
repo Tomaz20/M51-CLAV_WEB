@@ -273,11 +273,10 @@ new Vue({
                 if(this.parent && this.code && this.title){
                     if(this.type==3){
                         if(this.procTrans=='S'){
-                            var keys = Object.keys(this.participants);
-                            var check=0;
+                            let check=0;
 
-                            for (var k = 0; k < keys.length; k++) {
-                                check+=this.participants[keys[k]].length;
+                            for (const key in this.participants) {
+                                check+=this.participants[key].length;
                             }
 
                             if(check==0){
@@ -390,7 +389,7 @@ new Vue({
 
             if(dataObj=this.checkready(dataObj)){        
                 
-                this.$http.post('/api/classescreate',dataObj,{
+                this.$http.post('/api/classes',dataObj,{
                     headers: {
                         'content-type' : 'application/json'
                     }
@@ -399,12 +398,15 @@ new Vue({
                     this.message = response.body;
                     
                     if(response.body=="Classe Inserida!"){
-                        window.location.href = '/classes/c'+this.code;
-                    }
+                        window.location.href = '/classes/consultar/c'+this.code;
+                    } 
                 })
                 .catch( function(error) { 
                     console.error(error); 
                 });
+            }
+            else {
+                console.log("mistakes");
             }
         }
     },

@@ -42,23 +42,6 @@ router.get('/entidade', function(req, res) {
     res.render('orgs/entidade');
 });
 
-router.get('/escolha_processos', function(req, res) {
-    res.render('tabsSel/escolha_processos');
-});
-
-router.get('/escolha', function(req, res) {
-    res.render('tabsSel/escolha');
-});
-
-router.get('/passos', function(req, res) {
-    res.render('tabsSel/passos');
-});
-
-router.get('/alteracao', function(req, res) {
-    res.render('tabsSel/alteracao');
-});
-
-
 //----------------------------------------------------------
 
 module.exports = router;
