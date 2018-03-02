@@ -1,21 +1,19 @@
 extends ../layout 
 block corpo
-    div
+    div(style="vertical-align:middle")
         .titlebox(style="width:30%;display:inline-block")
             | Designação de Nova Tabela de Seleção
-        div(style="display:inline-block;width:70%;vertical-align:middle;padding-left:9px;padding-bottom:20px")
-            center
-                .textbox
+        .textbox(style="width:65%;display:inline-block")
                     | Tabela de seleção #{entidade}
 
-    .infobox
-        | Passos para a construção da TS organizacional:
+    .infobox(style="width:50%")
+        b Passos para a construção da TS organizacional:
 
     table(style="table-layout:fixed")
         tr
             td
                 .infobox
-                    | Passo 1
+                    b Passo 1
             td(rowspan="3" width="25%" style="height:1px;padding-top:5px;padding-bottom:5px")
                 .whitebox(style="height:100%")
                     | Identificação da natureza de intervenção da sua entidade, 
@@ -25,12 +23,12 @@ block corpo
                 .whitebox
                     | Processos comuns (passíveis de existirem em qualquer entidade)
             td
-                button.next(onclick='window.location.href="/organizacoes/escolha_processos"') >
+                button.next(onclick='window.location.href="/tabelasSelecao/escolha_processos"') >
         
         tr
             td
                 .infobox
-                    | Passo 2
+                    b Passo 2
             td
                 .whitebox
                     | Processos de negócio específicos da entidade e tipologia em que se enquadre
@@ -38,7 +36,7 @@ block corpo
         tr
             td
                 .infobox
-                    | Passo 3
+                    b Passo 3
             td
                 .whitebox
                     | Processos de negócio específicos restantes 
@@ -46,7 +44,7 @@ block corpo
         tr
             td
                 .infobox
-                    | Passo 4
+                    b Passo 4
             td(colspan="2")
                 .whitebox
                     | Alteração do conteúdo dos campos nos processos de negócio selecionados: 
@@ -56,7 +54,7 @@ block corpo
         tr
             td
                 .infobox
-                    | Passo 5
+                    b Passo 5
             td(colspan="2")
                 .whitebox
                     | Proposta de novos processos de negócio

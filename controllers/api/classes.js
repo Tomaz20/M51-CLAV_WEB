@@ -6,13 +6,19 @@ Classes.list = function (level) {
     if (!level) { level = 1 }
 
     var listQuery = `
-            SELECT ?id ?Code ?Title (count(?sub) as ?NChilds) FROM noInferences:
+            SELECT ?id ?Code ?Title (count(?sub) as ?NChilds)
             WHERE {
                 ?id rdf:type clav:Classe_N${level} ;
                     clav:codigo ?Code ;
                     clav:titulo ?Title .
-                optional {
+
+                OPTIONAL {
                     ?sub clav:temPai ?id .
+                }
+
+                MINUS { 
+                    ?id clav:pertenceLC ?lc
+                    filter( ?lc != clav:lc1 )
                 }
             }Group by ?id ?Code ?Title
         `;
@@ -553,6 +559,7 @@ Classes.pca = function (id) {
 Classes.df = function (id) {
     var fetchQuery = `
         SELECT 
+            ?Nota
             (GROUP_CONCAT(DISTINCT ?Valor; SEPARATOR="###") AS ?Valores)
             (GROUP_CONCAT(DISTINCT ?Criterio; SEPARATOR="###") AS ?Criterios)
         WHERE { 
@@ -561,10 +568,13 @@ Classes.df = function (id) {
                 ?df clav:dfValor ?Valor ;
             }
             OPTIONAL {
+                ?df clav:dfNota ?Nota ;
+            }
+            OPTIONAL {
                 ?df clav:temJustificacao ?just .
                 ?just clav:temCriterio ?Criterio
             }    
-        }GROUP BY ?df
+        }GROUP BY ?df ?Nota
     `;
 
     return client.query(fetchQuery).execute()
@@ -605,6 +615,156 @@ Classes.criteria = function (criteria) {
         } GROUP BY ?Tipo ?Conteudo
     `;
 
+    return client.query(fetchQuery).execute()
+        //Getting the content we want
+        .then(response => Promise.resolve(response.results.bindings))
+        .catch(function (error) {
+            console.error("Error in check:\n" + error);
+        });
+}
+
+Classes.filterByOrgs = function(orgs) {
+    var fetchQuery = `
+        SELECT DISTINCT
+            ?Avo ?AvoCodigo ?AvoTitulo 
+            ?Pai ?PaiCodigo ?PaiTitulo 
+            ?PN ?PNCodigo ?PNTitulo   
+            (GROUP_CONCAT(CONCAT(STR(?Filho),":::",?FilhoCodigo, ":::",?FilhoTitulo); SEPARATOR="###") AS ?Filhos)
+        WHERE {  
+            {
+                SELECT ?PN where {
+                    VALUES ?org { clav:${orgs.join(' clav:')} }
+                    ?org clav:eDonoProcesso ?PN .
+                }
+            } UNION {
+                SELECT ?PN where {
+                    VALUES ?org { clav:${orgs.join(' clav:')} }
+                    ?org clav:participaEm ?PN .
+                }
+            } 
+            
+            ?PN clav:temPai ?Pai.
+            ?Pai clav:temPai ?Avo.
+            
+            ?PN clav:codigo ?PNCodigo;
+                clav:titulo ?PNTitulo.
+            
+            ?Pai clav:codigo ?PaiCodigo;
+                clav:titulo ?PaiTitulo.
+            
+            ?Avo clav:codigo ?AvoCodigo;
+                clav:titulo ?AvoTitulo.
+            
+            OPTIONAL {
+                ?Filho clav:temPai ?PN;
+                   clav:codigo ?FilhoCodigo;
+                   clav:titulo ?FilhoTitulo
+            }
+        }
+        Group By ?PN ?PNCodigo ?PNTitulo ?Pai ?PaiCodigo ?PaiTitulo ?Avo ?AvoCodigo ?AvoTitulo 
+        Order By ?PN
+    `;
+
+    return client.query(fetchQuery).execute()
+        //Getting the content we want
+        .then(response => Promise.resolve(response.results.bindings))
+        .catch(function (error) {
+            console.error("Error in check:\n" + error);
+        });
+}
+
+Classes.filterCommon = function(orgs) {
+    var fetchQuery = `
+        SELECT DISTINCT
+            ?Avo ?AvoCodigo ?AvoTitulo 
+            ?Pai ?PaiCodigo ?PaiTitulo 
+            ?PN ?PNCodigo ?PNTitulo   
+            (GROUP_CONCAT(CONCAT(STR(?Filho),":::",?FilhoCodigo, ":::",?FilhoTitulo); SEPARATOR="###") AS ?Filhos)
+        WHERE {  
+            ?PN rdf:type clav:Classe_N3 .
+            ?PN clav:processoTipo "PC" .
+            
+            ?PN clav:temPai ?Pai.
+            ?Pai clav:temPai ?Avo.
+            
+            ?PN clav:codigo ?PNCodigo;
+                clav:titulo ?PNTitulo.
+            
+            ?Pai clav:codigo ?PaiCodigo;
+                clav:titulo ?PaiTitulo.
+            
+            ?Avo clav:codigo ?AvoCodigo;
+                clav:titulo ?AvoTitulo.
+            
+            OPTIONAL {
+                ?Filho clav:temPai ?PN;
+                   clav:codigo ?FilhoCodigo;
+                   clav:titulo ?FilhoTitulo
+            }
+        }
+        Group By ?PN ?PNCodigo ?PNTitulo ?Pai ?PaiCodigo ?PaiTitulo ?Avo ?AvoCodigo ?AvoTitulo 
+        Order By ?PN
+    `;
+
+    return client.query(fetchQuery).execute()
+        //Getting the content we want
+        .then(response => Promise.resolve(response.results.bindings))
+        .catch(function (error) {
+            console.error("Error in check:\n" + error);
+        });
+}
+
+Classes.filterRest = function(orgs) {
+    var fetchQuery = `
+        SELECT DISTINCT 
+            ?Avo ?AvoCodigo ?AvoTitulo 
+            ?Pai ?PaiCodigo ?PaiTitulo 
+            ?PN ?PNCodigo ?PNTitulo
+            (GROUP_CONCAT(CONCAT(STR(?Filho),":::",?FilhoCodigo, ":::",?FilhoTitulo); SEPARATOR="###") AS ?Filhos)
+        WHERE { 
+            ?PN rdf:type clav:Classe_N3 .
+            ?PN clav:processoTipo "PE" .
+    `;
+    if(orgs){
+        fetchQuery+=`
+                MINUS {
+                    {
+                        SELECT ?PN where {
+                            VALUES ?org { clav:${orgs.join(' clav:')} }
+                            ?org clav:eDonoProcesso ?PN .
+                        }
+                    } UNION {
+                        SELECT ?PN where {
+                            VALUES ?org { clav:${orgs.join(' clav:')} }
+                            ?org clav:participaEm ?PN .
+                        }
+                    }
+                }
+        `;
+    }
+    fetchQuery+=`
+            ?PN clav:temPai ?Pai.
+            ?Pai clav:temPai ?Avo.
+            
+            ?PN clav:codigo ?PNCodigo;
+                clav:titulo ?PNTitulo.
+            
+            ?Pai clav:codigo ?PaiCodigo;
+                clav:titulo ?PaiTitulo.
+            
+            ?Avo clav:codigo ?AvoCodigo;
+                clav:titulo ?AvoTitulo.
+            
+            OPTIONAL {
+                ?Filho clav:temPai ?PN;
+                    clav:codigo ?FilhoCodigo;
+                    clav:titulo ?FilhoTitulo
+            }
+        }
+        GROUP BY ?PN ?PNCodigo ?PNTitulo ?Pai ?PaiCodigo ?PaiTitulo ?Avo ?AvoCodigo ?AvoTitulo 
+        ORDER BY ?PN
+    `;
+    
     return client.query(fetchQuery).execute()
         //Getting the content we want
         .then(response => Promise.resolve(response.results.bindings))

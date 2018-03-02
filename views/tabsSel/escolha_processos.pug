@@ -1,12 +1,12 @@
 extends ../layout 
 block corpo
-    #tabs    
+    #tabs
         .titlebox
             | Tabela de Seleção {{ entidade.nome }}
         
-        tabs
+        tabs(:value="activeTab" @input="inputed($event)")
             //- PROCESSOS COMUNS
-            tab(header="Processos Comuns")#tab1
+            tab(header="Processos Comuns" ref="tab1")
                 .textbox
                     | A partir da lista de processos comuns (passíveis de existirem em qualquer 
                     | entidade) identifique a natureza de intervenção da sua entidade, como dono 
@@ -16,11 +16,14 @@ block corpo
                 .infobox(style="margin-top:10px")
                     b Lista Consolidada - Processos Comuns
 
+                div(style="float:right")
+                    button(@click="clean(0)") 
+                        | Limpar Seleção
+
                 #tabela(style="margin-top:30px")
                     custom-table-waterfall(
                         v-if="ready"
 
-                        pages-on="true"
                         select-on="true"
 
                         suffix="common"
@@ -32,45 +35,34 @@ block corpo
                         
                         table-class='table table-hover'
                         
-                        @drop-clicked-common="dropClicked($event, commonProcs)"
                         @select-clicked-common="selectClicked($event, commonProcs)"
                     )
                     h4(
                         v-else
                     ) Loading...
 
-                div(align="centre")
-                    button.next <
-                    button(@click="saveInfo") Guardar
-                    button.next >
-
 
             //-PROCESSOS ESPECÍFICOS
-            tab(header="Processos Específicos")#tab2
+            tab(header="Processos Específicos" ref="tab2")
                 .textbox
                     | Selecione a tipologia de entidade a que pertence.
 
                 div(style="margin-top:10px")
-                    table(style="width:100%;table-layout:fixed")
-                        tr
-                            td(width="500px")
-                                v-select.custom-select( 
-                                    style="width:500px"
-                                    v-model="newTipol"
-                                    :options="tipolList"
-                                )
-                            td(valign="top")
-                                button(
-                                    @click="myTipolList.unshift(newTipol.value)"
-                                ) +
-                        tr(v-if="myTipolList.length")
-                            td(colspan="2" style="padding-top:10px")
-                                ul(style="padding-left:20px")
-                                    li(v-for="(o,index) in myTipolList")
-                                        | {{ o.Sigla }} - {{ o.Nome }}
-                                        button(
-                                            @click="myTipolList.splice(index,1)"
-                                        ) x
+                    custom-table-select(
+                        v-if="tipolsReady"
+
+                        :header="tipolsTableHeader"
+                        :complete-rows="tipolList"
+                        :ready="tipolsReady"
+                        :cwidth="tipolsTableWidth"
+                        
+                        class-table='table table-condensed'
+
+                        @select-clicked="tipolSelected($event)"
+                    )
+                    h4(
+                        v-else
+                    ) Loading...
 
                 .textbox(style="margin-top:30px")
                     | Assinale na lista apresentada a natureza da intervenção da entidade, 
@@ -81,11 +73,14 @@ block corpo
                 .infobox(style="margin-top:10px")
                     b Lista Consolidada - Seleção por entidade e tipologia
 
+                div(style="float:right")
+                    button(@click="clean(1)") 
+                        | Limpar Seleção
+
                 #tabela(style="margin-top:30px")
                     custom-table-waterfall(
-                        v-if="ready"
+                        v-if="specReady && myTipolList.length"
 
-                        pages-on="true"
                         select-on="true"
                         
                         suffix="specific"
@@ -97,21 +92,15 @@ block corpo
                         
                         table-class='table table-hover'
                         
-                        @drop-clicked-specific="dropClicked($event, specificProcs)"
                         @select-clicked-specific="selectClicked($event, specificProcs)"
                     )
                     h4(
                         v-else
-                    ) Loading...
-
-                div(align="centre")
-                    button.next <
-                    button Guardar
-                    button.next >
+                    ) Nenhuma tipologia selecionada...
 
 
             //-PROCESSOS RESTANTES
-            tab(header="Processos Restantes")#tab3
+            tab(header="Processos Restantes" @click="activeTab=1")
                 .textbox
                     | Selecione na lista de processos de negócio específicos restantes 
                     |aqueles em que a sua entidade intervém e assinale a natureza da 
@@ -120,11 +109,14 @@ block corpo
                 .infobox(style="margin-top:10px")
                     b Lista Consolidada - Processos Específicos Restantes
 
+                div(style="float:right")
+                    button(@click="clean(2)") 
+                        | Limpar Seleção
+
                 #tabela(style="margin-top:30px")
                     custom-table-waterfall(
-                        v-if="ready"
+                        v-if="restReady"
 
-                        pages-on="true"
                         select-on="true"
                         
                         suffix="rest"
@@ -136,17 +128,42 @@ block corpo
                         
                         table-class='table table-hover'
                         
-                        @drop-clicked-rest="dropClicked($event, restProcs)"
                         @select-clicked-rest="selectClicked($event, restProcs)"
                     )
                     h4(
                         v-else
                     ) Loading...
 
-                div(style="float:right")
-                    button.next <
-                    button Guardar
-                    button.next >
+        center
+            button.next(@click="activeTab--" :disabled="activeTab<=0") <
+            button(@click="saveInfo") Guardar
+            button.next(@click="activeTab++" :disabled="activeTab>=2") >
+        
+        div(style="float:right")
+            button(@click="loadSavedInfo") Continuar Trabalho
+
+        div(style="align:left")
+            input.btn(
+                type="button" 
+                @click="createSelTab(0)" 
+                value="Criar Tabela de Seleção" 
+            )
+
+            div(v-html="message")
+
+            input.btn.btn-xs.btn-danger(
+                v-if="createConfirm"
+                type="button" 
+                @click="createSelTab(1)" 
+                value="OK" 
+            )
+            input.btn.btn-xs.btn-info(
+                v-if="createConfirm"
+                type="button" 
+                @click="createConfirm=!createConfirm" 
+                value="<-" 
+            )
+                
         
 append scripts
     script(src="/javascripts/tabsSel/escolha_processos.vue")

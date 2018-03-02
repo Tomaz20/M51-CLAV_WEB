@@ -1,34 +1,76 @@
-var separadors = new Vue({
+var escolha = new Vue({
     el: '#tabs',
     data: {
         entidade: {
             nome: "Teste",
         },
         newTipol: null,
+
+        tipolsTableHeader: ["#", "Sigla", "Nome"],
+        tipolsTableWidth: ["4%", "20%", "80%"],
         tipolList: [],
         myTipolList: [],
+        tipolsReady: false,
+
         tableHeader: [],
         commonProcs: [],
         specificProcs: [],
         restProcs: [],
         ready: false,
-        cwidth: ['15%', '81%'],
+        specReady: false,
+        restReady: false,
+        cwidth: ['16%', '81%'],
         subTemp: [],
         nEdits: 0,
         name: "",
         message: "",
+        activeTab: 0,
+
+        commonPNSelected: [],
+        specPNSelected: [],
+        restPNSelected: [],
+
+        message: "",
+        createConfirm: false, 
     },
     components: {
         tabs: VueStrap.tabs,
+        tabGroup: VueStrap.tabGroup,
         tab: VueStrap.tab
     },
-    watch: {
-        myTipolList: function () {
-            this.loadSpecificProcs();
-        },
-    },
     methods: {
+        tipolSelected: function (row) {
+            if (!row.selected) {
+                this.myTipolList.push(row.id);
+            }
+            else {
+                let index = this.myTipolList.indexOf(row.id);
+                if (index != -1) {
+                    this.myTipolList.splice(index, 1);
+                }
+            }
+
+            this.specPNSelected = this.getSelected(this.specificProcs);
+            this.restPNSelected = this.getSelected(this.restProcs);
+
+            this.specReady = false;
+            this.restReady = false;
+            if (this.myTipolList.length) {
+                this.loadSpecificProcs();
+            }
+            else {
+                this.specificProcs = [{ content: [000, "Nenhuma tipologia selecionada..."] }];
+                this.specReady = false;
+            }
+            this.loadRestProcs();
+        },
+        inputed: function (event) {
+            this.activeTab = event;
+        },
         loadTipols: function () {
+            this.tipolsReady = false;
+            this.tipolList = [];
+            
             let orgsToParse = [];
             let keys = ["id", "Tipo", "Nome", "Sigla"];
 
@@ -38,18 +80,23 @@ var separadors = new Vue({
                 })
                 .then(function () {
                     let completeList = this.parseList(orgsToParse, keys);
+                    let i = 0;
 
+                    let selection = this.myTipolList;
                     //tipologias
                     this.tipolList = completeList.filter(
                         a => (a.Tipo == "Tipologia")
                     ).map(function (item) {
                         return {
-                            label: item.Sigla + " - " + item.Nome,
-                            value: item,
+                            data: [i++, item.Sigla, item.Nome],
+                            selected: selection.indexOf(item.id) != -1,
+                            id: item.id
                         }
                     }).sort(function (a, b) {
-                        return a.label.localeCompare(b.label);
+                        return a.data[1].localeCompare(b.data[1]);
                     });
+
+                    this.tipolsReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -98,35 +145,57 @@ var separadors = new Vue({
 
             return array;
         },
+        loadCommonProcs() {
+            this.ready=false;
+            let content = [];
+
+            this.$http.get("/api/classes/filtrar/comuns")
+                .then(function (response) {
+                    content = response.body;
+                })
+                .then(function () {
+
+                    this.commonProcs = [];
+                    this.parse(content, this.commonProcs, this.commonPNSelected);
+                    this.ready = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
         loadSpecificProcs() {
             let content = [];
 
-            this.$http.get("/api/classes")
-            .then(function (response) {
-                content = response.body;
-            })
-            .then(function () {
-                this.parse(content, this.specificProcs);
-                this.ready = true;
-            })
-            .catch(function (error) {
-                console.error(error);
-            });
-        },  
+            this.$http.get("/api/classes/filtrar/" + this.myTipolList.join(','))
+                .then(function (response) {
+                    content = response.body;
+                })
+                .then(function () {
+
+                    this.specificProcs = [];
+                    this.parse(content, this.specificProcs, this.specPNSelected);
+                    this.specReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
         loadRestProcs() {
             let content = [];
 
-            this.$http.get("/api/classes")
-            .then(function (response) {
-                content = response.body;
-            })
-            .then(function () {
-                this.parse(content, this.restProcs);
-                this.ready = true;
-            })
-            .catch(function (error) {
-                console.error(error);
-            });
+            this.$http.get("/api/classes/filtrar/restantes/" + this.myTipolList.join(','))
+                .then(function (response) {
+                    content = response.body;
+                })
+                .then(function () {
+
+                    this.restProcs = [];
+                    this.parse(content, this.restProcs, this.restPNSelected);
+                    this.restReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
         },
         selectClicked: function (params, struct) {
             var id = params.id;
@@ -153,12 +222,12 @@ var separadors = new Vue({
             }
         },
         selectSons: function (location, selected, params) {
-            if(!selected){
-                if(location.owner){
-                    location.owner=false;
+            if (!selected) {
+                if (location.owner) {
+                    location.owner = false;
                 }
-                if(location.participant){
-                    location.participant=false;
+                if (location.participant) {
+                    location.participant = false;
                 }
             }
 
@@ -177,122 +246,90 @@ var separadors = new Vue({
                 this.dropClicked(params);
             }
         },
-        dropClicked: function (params, struct) {
-            var id = params.id;
-            var ready = params.rowData.subReady;
-            if (!ready) {
-                //split the id; example: '1.1.2' becomes ['1','1','2']
-                var path = id.split('.');
-                this.loadSub(path, struct, params);
-            }
-        },
-        loadSub: function (indexes, location, params) {
-            if (indexes.length == 1) {
-                this.$http.get("/api/classes/" + params.rowData.codeID + "/descendencia")
-                    .then(function (response) {
-                        this.subTemp = response.body;
-                    })
-                    .then(function () {
-                        //load child classes on the sublevel of the parent
-                        location[indexes[0]].sublevel = this.parseSub(location[indexes[0]].selected);
+        parse: function (dataToParse, destination, selectedPNs) {
+            const indexes = {};
+            let avo;
+            let pai;
 
-                        //if class is selected load every descendant
-                        if (location[indexes[0]].selected) {
-                            for (var i = 0; i < location[indexes[0]].sublevel.length; i++) {
-                                if (location[indexes[0]].sublevel[i].sublevel && !location[indexes[0]].sublevel[i].sublevel.length) {
-                                    tempParams = JSON.parse(JSON.stringify(params));
-                                    tempParams.id += "." + i;
-                                    tempParams.rowData.codeID = location[indexes[0]].sublevel[i].codeID;
+            for (let pn of dataToParse) {
+                let codeAvo = pn.AvoCodigo.value;
+                let indexesAvo = indexes[codeAvo];
+                let codePai = pn.PaiCodigo.value;
 
-                                    this.dropClicked(tempParams);
-                                }
-                            }
+                let pnSelected = (selectedPNs.indexOf(pn.PN.value.replace(/[^#]+#(.*)/, '$1')) != -1);
+
+
+                if (indexesAvo) {
+                    avo = indexesAvo.i;
+
+                    if (indexesAvo.sub[codePai] != undefined) {
+                        pai = indexesAvo.sub[codePai];
+                    }
+                    else {
+                        pai = Object.keys(indexesAvo.sub).length;
+
+                        indexes[codeAvo].sub[codePai] = pai;
+
+                        let infoPai = {
+                            codeID: pn.Pai.value.replace(/[^#]+#(.*)/, '$1'),
+                            content: [codePai, pn.PaiTitulo.value],
+                            drop: false,
+                            selected: pnSelected,
+                            subReady: true,
+                            sublevel: []
                         }
-
-                        //let child components know that the rows are ready to render
-                        location[indexes[0]].subReady = true;
-                        this.nEdits++;
-                    })
-                    .catch(function (error) {
-                        console.error(error);
-                    });
-            }
-            else {
-                //get the path tail
-                var tail = indexes.splice(1, indexes.length - 1);
-
-                //next level in the data structure
-                var newLocation = location[indexes[0]].sublevel;
-
-                this.loadSub(tail, newLocation, params);
-            }
-        },
-        parse: function (dataToParse, destination) {
-            // parsing the JSON
-            for (var i = 0; i < dataToParse.length; i++) {
-                var temp = {
-                    content: "",
-                    sublevel: false,
-                    selected: false,
-                    drop: false,
-                    subReady: false,
-                };
-
-                var id = dataToParse[i].id.value.replace(/[^#]+#(.*)/, '$1');
-                var code = dataToParse[i].Code.value;
-                var title = dataToParse[i].Title.value;
-
-                temp.content = [code, title];
-                temp.codeID = id;
-
-                if (dataToParse[i].NChilds.value > 0) {
-                    temp.sublevel = true;
-                }
-
-                destination[i] = JSON.parse(JSON.stringify(temp));
-            }
-            destination.sort(function (a, b) {
-                return a.content[0].localeCompare(b.content[0]);
-            })
-        },
-        parseSub: function (selecValue) {
-            var ret = []
-            var temp = {
-                content: "",
-                sublevel: false,
-                selected: selecValue,
-                drop: false,
-                subReady: false
-            };
-
-            // parsing the JSON
-            for (var i = 0; i < this.subTemp.length; i++) {
-
-                var id = this.subTemp[i].Child.value.replace(/[^#]+#(.*)/, '$1');
-                var code = this.subTemp[i].Code.value;
-                var title = this.subTemp[i].Title.value;
-
-                temp.content = [code, title];
-                temp.codeID = id;
-
-                if (parseInt(this.subTemp[i].NChilds.value) > 0) {
-                    temp.sublevel = true;
+                        destination[avo].sublevel.push(infoPai);
+                    }
                 }
                 else {
-                    temp.sublevel = false;
+                    avo = Object.keys(indexes).length;
+                    pai = 0;
+
+                    indexes[codeAvo] = { i: avo, sub: {} };
+                    indexes[codeAvo].sub[codePai] = pai;
+
+                    let infoAvo = {
+                        codeID: pn.Avo.value.replace(/[^#]+#(.*)/, '$1'),
+                        content: [codeAvo, pn.AvoTitulo.value],
+                        drop: false,
+                        selected: pnSelected,
+                        subReady: true,
+                        sublevel: [{
+                            codeID: pn.Pai.value.replace(/[^#]+#(.*)/, '$1'),
+                            content: [codePai, pn.PaiTitulo.value],
+                            drop: false,
+                            selected: pnSelected,
+                            subReady: true,
+                            sublevel: [],
+                        }]
+                    }
+                    destination.push(infoAvo);
                 }
 
-                ret[i] = JSON.parse(JSON.stringify(temp));
+                let pninfo = {
+                    codeID: pn.PN.value.replace(/[^#]+#(.*)/, '$1'),
+                    content: [pn.PNCodigo.value, pn.PNTitulo.value],
+                    drop: false,
+                    selected: pnSelected,
+                }
+
+                if (pn.Filhos.value.length) {
+                    pninfo.subReady = true;
+                    pninfo.sublevel = [];
+
+                    for (let filho of pn.Filhos.value.split('###')) {
+                        let filhoInfo = filho.split(':::');
+
+                        pninfo.sublevel.push({
+                            codeID: filhoInfo[0].replace(/[^#]+#(.*)/, '$1'),
+                            content: [filhoInfo[1], filhoInfo[2]],
+                            drop: false,
+                            selected: pnSelected,
+                        });
+                    }
+                }
+                destination[avo].sublevel[pai].sublevel.push(pninfo);
             }
-
-            ret.sort(function (a, b) {
-                a1 = parseInt(a.content[0].replace(/([0-9]+\.)*([0-9]+)/, '$2'));
-                b1 = parseInt(b.content[0].replace(/([0-9]+\.)*([0-9]+)/, '$2'));
-
-                return a1 - b1;
-            })
-
-            return ret;
         },
         getSelected: function (location) {
             var list = [];
@@ -310,42 +347,131 @@ var separadors = new Vue({
             }
             return list;
         },
-        createSelTab: function () {
-            var dataObj = {
-                name: this.name,
-                classes: this.getSelected(this.commonProcs),
-            }
+        getAllSelected: function () {
+            var list = [];
 
-            if (dataObj.classes.length == 0) {
-                this.message = "É necessário selecionar uma ou mais classes!";
-            } else if (dataObj.name.length == 0) {
-                this.message = "O campo 'Designação' não pode estar vazio!"
-            } else {
-                this.$http.post('/api/tabelasSelecao/', dataObj, {
-                    headers: {
-                        'content-type': 'application/json'
-                    }
-                })
-                    .then(function (response) {
-                        window.location.href = '/tabelaSelecao/consultar/' + response.body;
-                    })
-                    .catch(function (error) {
-                        console.error(error);
-                    });
+            list = list.concat(this.getSelected(this.commonProcs))
+                .concat(this.getSelected(this.specificProcs))
+                .concat(this.getSelected(this.restProcs));
+
+            return Array.from(new Set(list));
+        },
+        clean: function(i){
+            if(i==0) {
+                this.commonPNSelected=[];
+                this.ready=false;
+                this.loadCommonProcs();
+            } 
+            else if(i==1) {
+                this.specPNSelected=[];
+                this.specReady=false;
+                this.loadSpecificProcs();
             }
+            else if(i==2) {
+                this.restPNSelected=[];
+                this.restReady=false;
+                this.loadRestProcs();
+            }
+            
         },
         saveInfo: function () {
             let selected = {
+                tipologias: this.myTipolList,
                 comuns: this.getSelected(this.commonProcs),
                 especificos: this.getSelected(this.specificProcs),
                 restantes: this.getSelected(this.restProcs),
             };
 
-            /* do stuff */
+            this.$http.put('/users/save/escolhaProcessos', selected, {
+                headers: {
+                    'content-type': 'application/json'
+                }
+            })
+                .then(function (response) {
+                    var resp = response.body;
+                    console.log(resp);
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
         },
-        loadInfo: function() {
-            /* get info */
-            /* apply info */ 
+        loadSavedInfo: function () {
+            this.$http.get("/users/load/escolhaProcessos")
+                .then(function (response) {
+                    content = response.body;
+                })
+                .then(function(){
+                    console.log(content);
+
+                    this.commonPNSelected=content.comuns;
+                    this.ready=false;
+                    this.loadCommonProcs();
+                    
+                    this.myTipolList=content.tipologias;
+                    this.tipolsReady=false;
+                    this.loadTipols();
+
+                    this.specPNSelected=content.especificos;
+                    this.specReady=false;
+                    this.loadSpecificProcs();
+
+                    this.restPNSelected=content.restantes;
+                    this.restReady=false;
+                    this.loadRestProcs();
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        createSelTab: function (force) {
+            let ok=force;
+
+            if(!ok){
+                this.message="";
+                ok=true;
+                if(this.getSelected(this.commonProcs).length==0){
+                    this.message += "<p>Nenhum processo comum selecionado!</p>";
+                    ok=false;
+                }
+                if(this.getSelected(this.specificProcs).length==0){
+                    this.message += "<p>Nenhum processo específico selecionado!</p>";
+                    ok=false;
+                }
+                if(this.getSelected(this.restPNSelected).length==0){
+                    this.message += "<p>Nenhum processo restante selecionado!</p>";
+                    ok=false;
+                }
+                if(!ok){
+                    this.message += "<p>Continuar mesmo assim?</p>"
+                }
+                this.createConfirm=true;
+            }
+
+            if(ok){
+                var dataObj = {
+                    name: this.entidade.nome,
+                    classes: this.getAllSelected(this.tableData),
+                }
+
+                if (dataObj.classes.length == 0) {
+                    this.message = "É necessário selecionar um ou mais processos!";
+                    this.createConfirm=false;
+                }
+                else {
+                    this.message="<p>A criar tabela de seleção!</p><p> Será redirecionado para a respectiva página após a criação.</p>";
+                    this.$http.post('/api/tabelasSelecao/', dataObj, {
+                        headers: {
+                            'content-type': 'application/json'
+                        }
+                    })
+                        .then(function (response) {
+                            window.location.href = '/tabelasSelecao/consultar/' + response.body;
+                        })
+                        .catch(function (error) {
+                            console.error(error);
+                        });
+                }
+            }
         }
     },
     created: function () {
@@ -354,21 +480,9 @@ var separadors = new Vue({
             "TÍTULO"
         ];
 
-        let content=[];
-
-        this.$http.get("/api/classes")
-            .then(function (response) {
-                content = response.body;
-            })
-            .then(function () {
-                this.parse(content, this.commonProcs);
-                this.ready = true;
-
-                this.loadTipols();
-                this.loadRestProcs();
-            })
-            .catch(function (error) {
-                console.error(error);
-            });
+        this.loadCommonProcs();
+        this.loadTipols();
+        this.loadRestProcs();
+        
     }
 })

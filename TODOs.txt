@@ -1,6 +1,6 @@
 TODOs:
     Utilizadores
-        -controlo de níveis de acesso
+        -controlo de permissões
         -fluxo de submissões
         -autenticação por CC
 
@@ -9,5 +9,7 @@ TODOs:
         -separar consultar em /:id (meta e relações) e /:id/base (meta)
 
     MISC
-        -mudar routes / para /listar?
         -arrumar CSS
+
+    LOGs
+        Classe::timestamp::campo(alterado)::user::valor_antigo

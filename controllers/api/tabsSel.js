@@ -178,5 +178,5 @@ SelTabs.createTab = function (id, name, classes) {
 }
 
 SelTabs.deleteTab = function (id) {
-
+    
 }
