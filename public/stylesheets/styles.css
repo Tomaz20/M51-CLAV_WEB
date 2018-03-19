@@ -181,14 +181,18 @@
     border-width: 1px;
     border-style: solid;
     padding: 5px;
-    background-color: #f5f5f5;
+    background-color: #e4e4e4;
     color: #000 !important;
 }
 
 .botao:hover {
-    border: #555;
+    border: none;
+    margin:1px;
+    background-color: #d1cfcf;
+}
+
+a:hover{
     text-decoration: none !important;
-    outline: none;
 }
 
 
@@ -218,6 +222,23 @@
     text-align: center;
 }
 
+.labelbox {
+    color: beige;
+    background: rgb(74, 134, 224);
+    border-style: solid;
+    border-width: 1px;
+    padding: 7px;
+    margin-bottom: 10px;
+    font-weight: bolder;
+    text-align: center;
+}
+
+.noticiabox {
+    background: rgb(178, 217, 250);
+    border: none;
+    padding: 9px;
+    margin: 2px;
+}
 
 .infobox {
     background: #90CAF9;
@@ -327,6 +348,7 @@
 }
 
 .tabela-navegacao td{
+    padding:0px !important;
     vertical-align: middle;
     border:none !important;
 }
@@ -337,6 +359,11 @@
 
 .tabela-navegacao{
     border: none !important;
+}
+
+.nav-canto td{
+    padding-left: 7px;
+    padding-right: 7px;
 }
 
 .ownercheck {
@@ -360,4 +387,16 @@
 
 .next {
     border-radius: 50%;
+}
+
+li .panel-group{
+    margin:0px;
+}
+
+li .panel-body{
+    padding:0px;
+}
+
+li .panel-body li{
+    margin-left:20px;
 }

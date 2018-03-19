@@ -40,6 +40,17 @@ new Vue({
                 consultar: '#',
                 submeter: '#',
             },
+        ],
+    }
+})
+
+new Vue({
+    el: '#noticias',
+    data: {
+        noticias: [
+            "Exemplo Noticia 1",
+            "Exemplo Noticia 2",
+            "Exemplo Noticia 3",
         ]
     }
 })

@@ -12,11 +12,29 @@ var db = mongoose.connection;
 
 // User Schema
 var UserSchema = mongoose.Schema({
+	internal: {
+		type: Boolean,
+	},
 	level: {
 		type: Number,
 	},
+	permissions: {
+		LC: {
+			type: Boolean,
+		},
+		AE: {
+			type: Boolean,
+		},
+		ES: {
+			type: Boolean,
+		},
+	},
 	email: {
 		type: String,
+		index: true
+	},
+	cc: {
+		type: Number,
 		index: true
 	},
 	name: {
@@ -27,22 +45,24 @@ var UserSchema = mongoose.Schema({
 			type: String
 		}
 	},
-	facebook: {
-		id: {
-			type: String
+	/*
+		facebook: {
+			id: {
+				type: String
+			},
+			token: {
+				type: String
+			}
 		},
-		token: {
-			type: String
-		}
-	},
-	google: {
-		id: {
-			type: String
+		google: {
+			id: {
+				type: String
+			},
+			token: {
+				type: String
+			}
 		},
-		token: {
-			type: String
-		}
-	},
+	*/
 	savedStates: {
 		escolhaProcessos: {
 			tipologias: {
@@ -74,6 +94,11 @@ module.exports.createUser = function (newUser, callback) {
 
 module.exports.getUserByEmail = function (email, callback) {
 	var query = { email: email };
+	User.findOne(query, callback);
+}
+
+module.exports.getUserByCC = function (cc, callback) {
+	var query = { cc: cc };
 	User.findOne(query, callback);
 }
 

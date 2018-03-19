@@ -1,7 +1,5 @@
 ﻿extends layout
 block corpo
-    h3 CLAV: Plataforma para a Classificação e a Avaliação da Informação Pública
-    h1 
     .col-lg-6
         #acordeao
             accordion(type="info")
@@ -9,25 +7,48 @@ block corpo
                     p Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
 
         table#navegacao.table.tabela-navegacao
-            tr(v-for="linha in linhas")
-                td(width="90%")
-                    .titlebox(style="margin-bottom:0px") {{linha.valor}}
-                td  
-                    a(:href="linha.consultar")
-                        .botao
-                            | Consultar
+            tr 
                 td
-                    a(:href="linha.submeter")
+                    .labelbox(style="width:20%")
+                        | Consulte:
+            tr(v-for="linha in linhas")
+                td(style="padding-left:50px !important")
+                    a(:href="linha.consultar")
+                        .titlebox(style="margin-bottom:0px")
+                            | {{linha.valor}}
+            tr 
+                td(style="padding-top:15px !important")
+                    .labelbox
+                        | Documentação Técnica de Apoio
+    .col-lg-1
+    .col-lg-5
+        table.nav-canto(style="float:right; margin-bottom:40px")
+            tr
+                td(rowspan="2")
+                    .greybox(style="border:none !important; font-weight:bolder")
+                        | Entidades
+                
+                td
+                    a(href="/organizacoes/registo_entidade")
                         .botao
-                            | Submeter
-    .col-md-1
-    .col-lg-3
-        a(href="/organizacoes/registo_entidade")
-            .botao
-                | ENTIDADES – identificação de representantes 
-        h1
-        a(href="#")
-            .botao
-                | Retomar Trabalho
+                            | Identificação de Representantes
+            tr 
+                td 
+                    a(href="#")
+                        .botao
+                            | Área de Trabalho
+        
+        table#noticias.table.tabela-navegacao
+            tr 
+                td
+                    .labelbox(style="with:100%")
+                        | Notícias:
+            tr(v-for="noticia in noticias")
+                td 
+                    .noticiabox(style="border:none; margin:2px")
+                        | {{noticia}}
+            
+            
+
 append scripts
     script(src="/javascripts/index.vue")

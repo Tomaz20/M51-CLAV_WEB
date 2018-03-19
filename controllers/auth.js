@@ -8,6 +8,38 @@ Auth.isLoggedIn = function (req, res, next) {
     res.redirect('/users/login');
 }
 
+Auth.isInternal = function (req, res, next) {
+    if (req.isAuthenticated()) {
+        if (req.user.internal) {
+            return next();
+        }
+        else {
+            req.flash('warn_msg', 'Não tem permissões para aceder a esta página');
+            res.redirect('back');
+        }
+    }
+    else {
+        req.flash('warn_msg', 'Login necessário para aceder a esta página');
+        res.redirect('/users/login');
+    }
+}
+
+Auth.isExternal = function (req, res, next) {
+    if (req.isAuthenticated()) {
+        if (!req.user.internal) {
+            return next();
+        }
+        else {
+            req.flash('warn_msg', 'Não tem permissões para aceder a esta página');
+            res.redirect('back');
+        }
+    }
+    else {
+        req.flash('warn_msg', 'Login necessário para aceder a esta página');
+        res.redirect('/users/login');
+    }
+}
+
 Auth.checkLevel2 = function (req, res, next) {
     return isLevel(2, req, res, next);
 }

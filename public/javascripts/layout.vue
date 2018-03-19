@@ -77,6 +77,45 @@ var users = new Vue({
 
 new Vue({
     el: '#navegacaoleft',
+    data: {
+        linhas: [
+            {
+                valor: 'Lista Consolidada',
+                consultar: '/classes',
+                submeter: '/classes/adicionar',
+            },
+            {
+                valor: 'Tabelas de Seleção',
+                consultar: '/tabelasSelecao',
+                submeter: '/tabelasSelecao/escolha',
+            },
+            {
+                valor: 'Autos de Eliminação',
+                consultar: '#',
+                submeter: '#',
+            },
+            {
+                valor: 'Entidades',
+                consultar: '/organizacoes',
+                submeter: '/organizacoes/adicionar',
+            },
+            {
+                valor: 'Legislação',
+                consultar: '/legislacao',
+                submeter: '/legislacao/adicionar',
+            },
+            {
+                valor: 'Estatísticas',
+                consultar: '#',
+                submeter: '#',
+            },
+            {
+                valor: 'Termos de Índice',
+                consultar: '/termosIndice',
+                submeter: '#',
+            },
+        ],
+    },
     components:{
         accordion: VueStrap.accordion,
         panel: VueStrap.panel

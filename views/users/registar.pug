@@ -1,8 +1,17 @@
 extends ../layout
 block corpo
     .container
-        form.form-signin(action="/auth/registar" method="post" style="width:60%")
+        form#registo.form-signin(action="/auth/registar" method="post" style="width:60%")
             h2.form-signin-heading Registar
+            
+            select#type(name="type" form="registo")
+                option(value="7") Administrador de Perfil Tecnológico
+                option(value="6") Administrador de Perfil Funcional
+                option(value="5") Utilizador Validador
+                option(value="4") Utilizador Avançado
+                option(value="3") Utilizador Decisor
+                option(value="2" Selected="true") Utilizador Simples
+                option(value="1") Representante Entidade
             
             label.sr-only(for='name') Nome
             input#name.form-control(name='name' type='text', placeholder='Nome Apelido', required='', autofocus='')
@@ -17,6 +26,8 @@ block corpo
             input#password2.form-control(name='password2' type='password', placeholder='Repetir Password', required='')
             
             button.btn.btn-lg.btn-block(type='submit') Registar
+
+
 
         if errors
             each error in errors

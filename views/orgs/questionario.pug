@@ -3,76 +3,78 @@ block corpo
     center
         .titlebox(style="width:40%")
             | Questionário
+    div#questionario
+        table
+            tr
+                td
+                    .infobox 
+                        b Indicação dos representantes das Entidades utilizadoras dos serviços CLAV
 
-    table
-        tr
-            td#questionario
-                .infobox 
-                    b Indicação dos representantes das Entidades utilizadoras dos serviços CLAV
-
-                table.questionario
-                    tr
-                        td Nome da Entidade:
-                        td
-                            input.in(type="text")
-                    tr
-                        td Serviço responsável pela representação na Plataforma:
-                        td 
-                            input.in(type="text")
-                    tr  
-                        td Endereço de e-mail do serviço responsável pela representação na Plataforma:
-                        td
-                            input.in(type="text")
-                table.questionario(v-for="rep in representantes" style="margin-bottom:-5px")
-                    tr
-                        td Nome completo do representante da entidade:
-                        td  
-                            input.in(
-                                type="text"
-                                v-model="rep.nome"
-                            )
-                    tr
-                        td Email do representante da entidade:
-                        td  
-                            input.in(
-                                type="text"
-                                v-model="rep.email"    
-                            )
-                    tr
-                        td Número do Cartão cidadão:
-                        td  
-                            input.in(
-                                type="text"
-                                v-model="rep.cc"    
-                            )
-                    tr
-                        td Áreas de intervenção autorizadas:
-                        td
-                            span  
-                                | LC/Tabelas de Seleção
-                                input(
-                                    type="checkbox"
-                                    v-model="rep.perm.LC"    
+                    table.questionario
+                        tr
+                            td Nome da Entidade:
+                            td
+                                input.in(type="text" v-model="entidade.nome")
+                        tr
+                            td Serviço responsável pela representação na Plataforma:
+                            td 
+                                input.in(type="text" v-model="entidade.servico")
+                        tr  
+                            td Endereço de e-mail do serviço responsável pela representação na Plataforma:
+                            td
+                                input.in(type="text" v-model="entidade.email")
+                                
+                    table.questionario(v-for="rep in representantes" style="margin-bottom:-5px")
+                        tr
+                            td Nome completo do representante da entidade:
+                            td  
+                                input.in(
+                                    type="text"
+                                    v-model="rep.nome"
                                 )
-
-                            span
-                                | Autos de Eliminação
-                                input(
-                                    type="checkbox"
-                                    v-model="rep.perm.AE"    
+                        tr
+                            td Email do representante da entidade:
+                            td  
+                                input.in(
+                                    type="text"
+                                    v-model="rep.email"    
                                 )
-
-                            span
-                                | Consulta de Estatísticas
-                                input(
-                                    type="checkbox"
-                                    v-model="rep.perm.ES"    
+                        tr
+                            td Número do Cartão cidadão:
+                            td  
+                                input.in(
+                                    type="text"
+                                    v-model="rep.cc"    
                                 )
-                button(@click="addRep" style="margin:5px; margin-top:10px") Adicionar Representante
+                        tr
+                            td Áreas de intervenção autorizadas:
+                            td
+                                span  
+                                    | LC/Tabelas de Seleção
+                                    input(
+                                        type="checkbox"
+                                        v-model="rep.perm.LC"    
+                                    )
+
+                                span
+                                    | Autos de Eliminação
+                                    input(
+                                        type="checkbox"
+                                        v-model="rep.perm.AE"    
+                                    )
+
+                                span
+                                    | Consulta de Estatísticas
+                                    input(
+                                        type="checkbox"
+                                        v-model="rep.perm.ES"    
+                                    )
+                    button(@click="addRep" style="margin:5px; margin-top:10px") Adicionar Representante
+                    
+                    button(@click="remRep") Remover Representante
+                td(valign="bottom")
+                    button(@click="submitEntity") Imprimir
+        div(v-html="message")
                 
-                button(@click="remRep") Remover Representante
-            td(valign="bottom")
-                button Imprimir
-            
 append scripts    
     script(src="/javascripts/orgs/questionario.vue")

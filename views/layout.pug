@@ -25,7 +25,7 @@ block body
 				button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#users', aria-expanded='false', aria-controls='users')
 					span.sr-only Toggle authentication
 					span.glyphicon.glyphicon-user(style="color: white")
-				.navbar-brand CLAV – Plataforma para a classificação e avaliação da informação pública
+				a(href="/").navbar-brand CLAV – Plataforma para a Classificação e Avaliação da Informação Pública
 			
 			//collapsable on mobile, fixed in desktop
 			#users.navbar-collapse.collapse
@@ -65,8 +65,6 @@ block body
 			#navbar.collapse
 				ul.nav.navbar-nav
 					li
-						a(href='/') Inicio
-					li
 						a(href='/organizacoes') Entidades
 					li
 						a(href='/legislacao') Legislação
@@ -81,20 +79,22 @@ block body
 			//does not appear on mobile
 			.col-sm-3.col-md-2.sidebar
 				ul.nav.nav-sidebar#navegacaoleft
-					li
-						a(href='/') Inicio
-					li
-						a(href='/organizacoes') Entidades
-					li
-						a(href='/legislacao') Legislação
-					li
-						a(href='/classes') Classes
-					li
-						a(href='/tabelasSelecao') Tabelas de Seleção
-					li
-						a(href='/termosIndice') Termos de Índice
-					//-
-						li
+					if user
+						li(v-for="linha in linhas")
+							accordion
+								panel(:header="linha.valor")
+									ul.nav
+										li
+											a(:href='linha.consultar') Consultar
+										li
+											a(:href='linha.submeter') Submeter
+					
+					else
+						li(v-for="linha in linhas")
+							a(:href="linha.consultar")
+								| {{linha.valor}}
+
+					//li
 						accordion
 							panel(header="Testes")
 								ul.nav
