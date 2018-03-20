@@ -29,8 +29,12 @@ new Vue({
         },
         message: "",
     },
+    components: {
+        spinner: VueStrap.spinner,
+    },
     methods: {
         add: function(){
+            this.$refs.spinner.show();
             var dataObj = {
                 year: null,
                 date: null,
@@ -60,6 +64,7 @@ new Vue({
                 else {
                     this.message = response.body;
                 }
+                this.$refs.spinner.hide();
             })
             .catch( function(error) { 
                 console.error(error); 

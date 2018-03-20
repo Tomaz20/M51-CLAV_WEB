@@ -517,6 +517,8 @@ block corpo
                                                             p(v-html="criterio.nota")
                                                              
             //- Buttons
+            spinner(ref="spinner" size="lg" fixed text="Por favor aguarde...")
+
             if user
                 input.btn.btn-xs.btn-default.col-sm-1(
                     type="button" 

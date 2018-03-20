@@ -507,7 +507,7 @@ Vue.component('row-waterfall', {
                         />
 
                         <tr v-if="row.drop && !row.subReady">
-                            <td colspan=4> Loading... </td>
+                            <td colspan=4> A carregar... </td>
                         </tr>
                     </tbody>
                 </table>

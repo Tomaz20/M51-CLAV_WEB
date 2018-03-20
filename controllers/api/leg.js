@@ -24,7 +24,7 @@ Leg.list = function () {
 Leg.stats = function (id) {
     var fetchQuery = `
             SELECT * WHERE { 
-                    clav:`+ id + ` clav:diplomaAno ?Ano;
+                    clav:${id} clav:diplomaAno ?Ano;
                     clav:diplomaData ?Data;
                     clav:diplomaNumero ?Número;
                     clav:diplomaTipo ?Tipo;
@@ -73,50 +73,52 @@ Leg.checkNumberAvailability = function (number) {
 }
 
 Leg.createDoc = function (newID, dataObj) {
-    var createQuery = SPARQL`
-            INSERT DATA {
-                ${{ clav: newID }} rdf:type owl:NamedIndividual ,
-                        clav:Legislacao ;
-                    clav:diplomaAno ${dataObj.year} ;
-                    clav:diplomaData ${dataObj.date} ;
-                    clav:diplomaNumero ${dataObj.number} ;
-                    clav:diplomaTipo ${dataObj.type} ;
-                    clav:diplomaTitulo ${dataObj.title} ;
-                    clav:diplomaLink ${dataObj.link} .
-            }
-        `;
+    var createQuery = `
+        INSERT DATA {
+            clav:${newID} rdf:type owl:NamedIndividual ,
+                    clav:Legislacao ;
+                clav:diplomaAno '${dataObj.year}' ;
+                clav:diplomaData '${dataObj.date}' ;
+                clav:diplomaNumero '${dataObj.number}' ;
+                clav:diplomaTipo '${dataObj.type}' ;
+                clav:diplomaTitulo '${dataObj.title}' ;
+                clav:diplomaLink '${dataObj.link}' .
+        }
+    `;
 
+    
     return client.query(createQuery).execute()
         .then(response => Promise.resolve(response))
         .catch(error => console.error("Error in create:\n" + error));
 }
 
-Leg.updateDoc = function(dataObj) {
+Leg.updateDoc = function (dataObj) {
+
     var del = "";
     var ins = "";
     var wer = "";
 
-    if (year) {
+    if (dataObj.year) {
         del += `clav:${dataObj.id} clav:diplomaAno ?y .\n`;
         ins += `clav:${dataObj.id} clav:diplomaAno "${dataObj.year}" .\n`;
     }
-    if (date) {
+    if (dataObj.date) {
         del += `clav:${dataObj.id} clav:diplomaData ?d .\n`;
         ins += `clav:${dataObj.id} clav:diplomaData "${dataObj.date}" .\n`;
     }
-    if (number) {
+    if (dataObj.number) {
         del += `clav:${dataObj.id} clav:diplomaNumero ?n .\n`;
         ins += `clav:${dataObj.id} clav:diplomaNumero "${dataObj.number}" .\n`;
     }
-    if (type) {
+    if (dataObj.type) {
         del += `clav:${dataObj.id} clav:diplomaTipo ?t .\n`;
         ins += `clav:${dataObj.id} clav:diplomaTipo "${dataObj.type}" .\n`;
     }
-    if (title) {
+    if (dataObj.title) {
         del += `clav:${dataObj.id} clav:diplomaTitulo ?tit .\n`;
         ins += `clav:${dataObj.id} clav:diplomaTitulo "${dataObj.title}" .\n`;
     }
-    if (link) {
+    if (dataObj.link) {
         del += `clav:${dataObj.id} clav:diplomaLink ?l .\n`;
         ins += `clav:${dataObj.id} clav:diplomaLink "${dataObj.link}" .\n`;
     }
@@ -126,16 +128,18 @@ Leg.updateDoc = function(dataObj) {
     ins = "INSERT {" + ins + "}\n";
 
     var updateQuery = del + ins + wer;
+    
+    console.log("ola");
 
     return client.query(updateQuery).execute()
         .then(response => Promise.resolve(response))
         .catch(error => console.error("Error in update:\n" + error));
 }
 
-Leg.deleteDoc = function(id){
-    return client.query(SPARQL`
+Leg.deleteDoc = function (id) {
+    return client.query(`
                 DELETE {
-                    ${{ clav: id }} ?o ?p
+                    clav:${id} ?o ?p
                 }
                 WHERE { ?s ?o ?p }
             `).execute()

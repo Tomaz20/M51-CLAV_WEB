@@ -66,7 +66,9 @@ block corpo
                                 type="checkbox"
                                 v-model="editProcesses"
                             )
-                h3(v-else) Loading...
+                h3(v-else) A carregar...
+
+            spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")            
 
             if user
                 input.btn.btn-xs.btn-default.col-sm-1(

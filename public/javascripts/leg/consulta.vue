@@ -54,6 +54,9 @@ new Vue({
         processesCollapsed: true,
         processesReady: false,
     },
+    components: {
+        spinner: VueStrap.spinner,
+    },
     methods: {
         loadClasses: function () {
             var classesToParse = [];
@@ -129,6 +132,8 @@ new Vue({
             this.ready=true;
         },
         update: function(){
+            this.$refs.spinner.show();
+
             var dataObj = {
                 id: this.id,
                 year: null,
@@ -157,6 +162,7 @@ new Vue({
                 if(this.message=="Actualizado!"){
                     window.location.href = '/legislacao/consultar/'+this.id;
                 }
+                this.$refs.spinner.hide();
             })
             .catch( function(error) { 
                 console.error(error); 
@@ -171,10 +177,13 @@ new Vue({
             this.delConfirm=false;
         },
         deleteLeg: function(){
-            this.$http.post('/api/legislacao/'+this.id,{id: this.id})
+            this.$refs.spinner.show();
+
+            this.$http.delete('/api/legislacao/'+this.id)
             .then( function(response) { 
                 this.message = response.body;
                 window.location.href = '/legislacao';
+                this.$refs.spinner.hide();                
             })
             .catch( function(error) { 
                 console.error(error); 

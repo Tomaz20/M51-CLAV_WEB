@@ -267,6 +267,8 @@ block corpo
                                                     @click="newLegList.splice(index,1)"
                                                 ) x
 
+            spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
+
             input.btn.btn-xs.btn-default.col-sm-2(
                 type="button" 
                 @click="add" 

@@ -57,6 +57,9 @@ new Vue({
         myNewTipolList: [],
 
     },
+    components: {
+        spinner: VueStrap.spinner,
+    },
     methods: {
 
         subtractArray: function (from, minus) {
@@ -343,6 +346,8 @@ new Vue({
             return dest;
         },
         update: function () {
+            this.$refs.spinner.show();            
+
             var dataObj = {
                 id: this.id,
                 type: this.type,
@@ -463,6 +468,8 @@ new Vue({
                 }
             })
                 .then(function (response) {
+                    this.$refs.spinner.hide();
+                    
                     var resp = response.body;
                     if (resp != "Nome já existentente!") {
                         window.location.href = '/organizacoes/consultar/' + this.id;
@@ -483,8 +490,12 @@ new Vue({
             this.delConfirm = false;
         },
         deleteOrg: function () {
-            this.$http.post('/api/organizacoes/'+this.id, { id: this.id })
+            this.$refs.spinner.show();
+            
+            this.$http.delete('/api/organizacoes/'+this.id)
                 .then(function (response) {
+                    this.$refs.spinner.hide();
+
                     this.message = response.body;
                     window.location.href = '/organizacoes';
                 })

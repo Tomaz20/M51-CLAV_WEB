@@ -4,6 +4,9 @@ new Vue({
         emulateJSON: true,
         emulateHTTP: true
     },
+    components: {
+        spinner: VueStrap.spinner,
+    },
     data: {
         type: 1,
 
@@ -356,6 +359,7 @@ new Vue({
             }
         },
         add: function () {
+            this.$refs.spinner.show();
 
             if(this.appNotes){
                 for (var i = 0; i < this.appNotes.length; i++) {
@@ -395,6 +399,7 @@ new Vue({
                     }
                 })
                 .then( function(response) { 
+                    this.$refs.spinner.hide();
                     this.message = response.body;
                     
                     if(response.body=="Classe Inserida!"){

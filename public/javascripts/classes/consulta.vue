@@ -89,7 +89,8 @@ new Vue({
     },
     components: {
         accordion: VueStrap.accordion,
-        panel: VueStrap.panel
+        panel: VueStrap.panel,
+        spinner: VueStrap.spinner,
     },
     methods: {
         prepData: function (dataObj) {
@@ -797,6 +798,7 @@ new Vue({
             return ret;
         },
         updateClass: function () {
+            this.$refs.spinner.show();
             this.message = "Updating...";
 
             var dataObj = {
@@ -950,6 +952,7 @@ new Vue({
                 }
             })
             .then(function (response) {
+                this.$refs.spinner.hide();
                 this.message = response.body;
                 window.location.href = '/classes/consultar/'+this.id;
             })
@@ -966,8 +969,10 @@ new Vue({
             this.delConfirm = false;
         },
         deleteClass: function () {    
-            this.$http.post('/api/classes/delete',{id: this.id})
+            this.$refs.spinner.show();
+            this.$http.delete('/api/classes/'+this.id)
             .then( function(response) { 
+                this.$refs.spinner.hide();
                 this.message = response.body;
                 window.location.href = '/classes';
             })
