@@ -193,9 +193,9 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
 })
 
 router.delete('/:id', Auth.isLoggedInAPI, function (req, res) {
-    Classes.deleteClass(req.body.id)
+    Classes.deleteClass(req.params.id)
         .then(function () {
-            Logging.logger.info('Apagada classe \'' + req.body.id + '\' por utilizador \'' + req.user._id + '\'');
+            Logging.logger.info('Apagada classe \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
 
             req.flash('success_msg', 'Entrada apagada');
             res.send("Entrada apagada!");

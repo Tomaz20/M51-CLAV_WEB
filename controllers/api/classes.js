@@ -871,27 +871,27 @@ Classes.createClass = function (data) {
 
 Classes.deleteClass = function (id) {
     var delQuery = `
-            DELETE {
-                clav:${id} ?p ?o .
+        DELETE {
+            clav:${id} ?p ?o .
+            ?relS ?relP clav:${id} .
+            ?na ?naP ?naO .
+            ?ne ?neP ?neO .
+        }
+        WHERE {
+            clav:${id} ?p ?o .
+            OPTIONAL {
                 ?relS ?relP clav:${id} .
+            }
+            OPTIONAL {
+                clav:${id} clav:temNotaAplicacao ?na .
                 ?na ?naP ?naO .
+            }
+            OPTIONAL{
+                clav:${id} clav:temNotaExclusao ?ne .
                 ?ne ?neP ?neO .
             }
-            WHERE {
-                clav:${id} ?p ?o .
-                OPTIONAL {
-                    ?relS ?relP clav:${id} .
-                }
-                OPTIONAL {
-                    clav:${id} clav:temNotaAplicacao ?na .
-                    ?na ?naP ?naO .
-                }
-                OPTIONAL{
-                    clav:${id} clav:temNotaExclusao ?ne .
-                    ?ne ?neP ?neO .
-                }
-            }
-        `;
+        }
+    `;
 
     return client.query(delQuery).execute()
         //getting the content we want
