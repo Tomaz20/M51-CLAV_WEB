@@ -1,0 +1,26 @@
+extends ../layout 
+block corpo
+    center
+        #pedido.whitebox(style="width:600px")
+            hidden-table(
+                :titulo="titulo"
+                :cabecalho="cabecalho"
+                :linhas="linhas"
+
+                open
+            )
+
+            .textbox(style="text-align:left")
+                p
+                    b Pedido submetido com sucesso. 
+                p 
+                    b Aguarde a notificação de resposta ao seu pedido.
+    
+    p Em desenvolvimento
+    p Página exemplo
+
+append scripts
+    script(src="/javascripts/users/pedido_submetido.vue")
+
+
+    
