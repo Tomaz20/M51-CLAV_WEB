@@ -15,7 +15,7 @@ new Vue({
             window.location.href = '/tabelasSelecao/consultar/'+id;
         },
         addTab: function(row){
-            window.location.href = '/tabelasSelecao/adicionar';
+            window.location.href = '/tabelasSelecao/submeter';
         },
         parse: function(){    
             // setting the table header

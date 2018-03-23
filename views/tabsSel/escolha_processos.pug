@@ -142,6 +142,7 @@ block corpo
         div(style="float:right")
             button(@click="loadSavedInfo") Continuar Trabalho
 
+
         div(style="align:left")
             input.btn(
                 type="button" 
@@ -164,7 +165,7 @@ block corpo
                 value="<-" 
             )
                 
-        
+        spinner(ref="spinner" size="lg" fixed text="A criar Tabela de Seleção... Por favor aguarde...")        
 append scripts
     script(src="/javascripts/tabsSel/escolha_processos.vue")
 

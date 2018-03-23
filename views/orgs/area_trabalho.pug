@@ -1,0 +1,15 @@
+extends ../layout
+block corpo
+    .titlebox
+        | Área da Entidade
+
+    #work
+        hidden-table(
+            :titulo="titulo"
+            :cabecalho="cabecalho"
+            :linhas="linhas"
+        )
+
+
+append scripts    
+    script(src="/javascripts/orgs/area_trabalho.vue")

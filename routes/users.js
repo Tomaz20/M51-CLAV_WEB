@@ -16,6 +16,10 @@ router.get('/perfil', Auth.isLoggedIn, function(req, res) {
     res.render('users/perfil');
 });
 
+router.get('/pedido_submetido/:id', Auth.isLoggedIn, function(req, res) {
+    res.render('users/pedido_submetido');
+});
+
 // Guardar trabalho
 router.put('/save/:type', Auth.isLoggedInAPI, function (req, res) {
     User.getUserById(req.user._id, function(err, user){

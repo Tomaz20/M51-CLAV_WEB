@@ -7,20 +7,20 @@ router.get('/', function(req, res, next) {
 	res.render('tabsSel/listagem');
 });
 
-router.get('/escolha_processos', Auth.isLoggedIn, function(req, res) {
-    res.render('tabsSel/escolha_processos');
-});
-
-router.get('/escolha', Auth.isLoggedIn, function(req, res) {
+router.get('/submeter', Auth.isLoggedIn, function(req, res) {
     res.render('tabsSel/escolha');
 });
 
-router.get('/passos', Auth.isLoggedIn, function(req, res) {
+router.get('/submeter/passos', Auth.isLoggedIn, function(req, res) {
     res.render('tabsSel/passos');
 });
 
-router.get('/alteracao', function(req, res) {
-    res.render('tabsSel/alteracao');
+router.get('/submeter/escolher_processos', Auth.isLoggedIn, function(req, res) {
+    res.render('tabsSel/escolha_processos');
+});
+
+router.get('/submeter/alterar_PNs/:id', Auth.isLoggedIn, function(req, res) {
+    res.render('tabsSel/alterar_PNs');
 });
 
 router.get('/adicionar', Auth.isLoggedIn, function(req, res) {

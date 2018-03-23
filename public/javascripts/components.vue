@@ -199,6 +199,7 @@ Vue.component('custom-table-simple', {
     }
 })
 
+
 Vue.component('custom-table-select', {
     template: `
         <div>
@@ -287,9 +288,9 @@ Vue.component('custom-table-select', {
         },
     },
     methods: {
-        selectRow: function(index) {
+        selectRow: function (index) {
             this.$emit('select-clicked', this.rowsShow[index]);
-            this.rowsShow[index].selected=!this.rowsShow[index].selected;
+            this.rowsShow[index].selected = !this.rowsShow[index].selected;
         },
         selectClicked: function (index) { //emit event when a row is selected
             this.$emit('select-clicked', this.rowsShow[index]);
@@ -311,11 +312,11 @@ Vue.component('custom-table-select', {
             regex = new RegExp(filt, "gi");
 
             retList = list.filter(function (item) {
-                if(item.selected){
+                if (item.selected) {
                     return true;
                 }
 
-                for (let cell of item.data){
+                for (let cell of item.data) {
                     if (regex.test(cell)) {
                         return true;
                     }
@@ -569,6 +570,7 @@ Vue.component('row-waterfall', {
                 type: "row",
                 params: {
                     id: this.id,
+                    trueID: this.row.codeID,
                     rowData: this.row.content
                 }
             };
@@ -686,7 +688,7 @@ Vue.component('custom-table-waterfall', {
             if (!this.filtered) {
                 this.filtered = true;
             }
-            else if(!filt) {
+            else if (!filt) {
                 this.filtered = false;
             }
 
@@ -731,12 +733,12 @@ Vue.component('custom-table-waterfall', {
             var temp = JSON.parse(JSON.stringify(this.completeRows));
             this.rows = this.subFilter(regex, temp);
             if (this.rows.length == 0) {
-                this.rows = [{ content: ["404","Sem resultados correspondentes..."] }];
+                this.rows = [{ content: ["404", "Sem resultados correspondentes..."] }];
             }
         },
         subFilter: function (regex, list) {
             //go through the list
-            for (let index = list.length-1; index >= 0; index--) {
+            for (let index = list.length - 1; index >= 0; index--) {
                 let line = list[index];
 
                 if (line.sublevel && line.sublevel.length > 0) {
@@ -850,18 +852,18 @@ Vue.component('custom-table-waterfall', {
                 this.$emit('row-clicked', event.params);
             }
             else if (event.type == "drop") {
-                if(event.suffix){
-                    this.$emit('drop-clicked-'+event.suffix, event.params);
+                if (event.suffix) {
+                    this.$emit('drop-clicked-' + event.suffix, event.params);
                 }
-                else{
+                else {
                     this.$emit('drop-clicked', event.params);
                 }
             }
             else if (event.type == "select") {
-                if(event.suffix){
-                    this.$emit('select-clicked-'+event.suffix, event.params);
+                if (event.suffix) {
+                    this.$emit('select-clicked-' + event.suffix, event.params);
                 }
-                else{
+                else {
                     this.$emit('select-clicked', event.params);
                 }
             }
@@ -877,6 +879,50 @@ Vue.component('custom-table-waterfall', {
     created: function () {
         if (!this.pagesOn) {
             this.rowsPerPage = this.completeRows.length;
+        }
+    }
+})
+
+
+Vue.component('hidden-table', {
+    template: `
+        <accordion type="custom">
+            <panel :header="titulo" :is-open="open">
+                <table class="hidden-table">
+                    <thead>
+                        <th v-for="item in cabecalho">
+                            <div :class="{ 'blue-border-box': item!=''}">
+                                {{item}}
+                            </div>
+                        </th>
+                    </thead>
+                    <tbody>
+                        <tr v-for="linha in linhas">
+                            <td v-for="(item,i) in linha">
+                                <div 
+                                    :class="{ 'blue-border-box': (i<linha.length-1)}" 
+                                    v-html="item"
+                                ></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </panel>
+        </accordion>
+    `,
+    props: [
+        'titulo',
+        'cabecalho',
+        'linhas',
+        'open'
+    ],
+    components: {
+        accordion: VueStrap.accordion,
+        panel: VueStrap.panel,
+    },
+    methods: {
+        emitEvent: function (evento) {
+            console.log(evento);
         }
     }
 })

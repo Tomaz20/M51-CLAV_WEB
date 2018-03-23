@@ -18,7 +18,7 @@ new Vue({
             {
                 valor: 'Tabelas de Seleção',
                 consultar: '/tabelasSelecao',
-                submeter: '/tabelasSelecao/escolha',
+                submeter: '/tabelasSelecao/submeter',
             },
             {
                 valor: 'Autos de Eliminação (WIP)',

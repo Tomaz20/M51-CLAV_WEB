@@ -36,7 +36,8 @@ var escolha = new Vue({
     components: {
         tabs: VueStrap.tabs,
         tabGroup: VueStrap.tabGroup,
-        tab: VueStrap.tab
+        tab: VueStrap.tab,
+        spinner: VueStrap.spinner
     },
     methods: {
         tipolSelected: function (row) {
@@ -437,7 +438,7 @@ var escolha = new Vue({
                     this.message += "<p>Nenhum processo específico selecionado!</p>";
                     ok=false;
                 }
-                if(this.getSelected(this.restPNSelected).length==0){
+                if(this.getSelected(this.restProcs).length==0){
                     this.message += "<p>Nenhum processo restante selecionado!</p>";
                     ok=false;
                 }
@@ -458,14 +459,17 @@ var escolha = new Vue({
                     this.createConfirm=false;
                 }
                 else {
-                    this.message="<p>A criar tabela de seleção!</p><p> Será redirecionado para a respectiva página após a criação.</p>";
+                    console.log("ola");
+                    this.$refs.spinner.show();
+                    
                     this.$http.post('/api/tabelasSelecao/', dataObj, {
                         headers: {
                             'content-type': 'application/json'
                         }
                     })
                         .then(function (response) {
-                            window.location.href = '/tabelasSelecao/consultar/' + response.body;
+                            window.location.href = '/tabelasSelecao/submeter/alterar_PNs/' + response.body;
+                            this.$refs.spinner.hide();
                         })
                         .catch(function (error) {
                             console.error(error);

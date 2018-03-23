@@ -84,6 +84,7 @@ SelTabs.createTab = function (id, name, classes) {
             INSERT DATA {
                 clav:${id} rdf:type owl:NamedIndividual ,
                         clav:TabelaSelecao ;
+                    clav:referencialClassificativoStatus 'H';
                     clav:designacao '${name}' .
         `;
 

@@ -10,6 +10,3 @@ TODOs:
 
     MISC
         -arrumar CSS
-
-    LOGs
-        Classe::timestamp::campo(alterado)::user::valor_antigo

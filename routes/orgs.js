@@ -38,6 +38,10 @@ router.get('/autenticacao_email', function(req, res) {
     res.render('orgs/autenticacao_email');
 });
 
+router.get('/area_trabalho', function(req, res) {
+    res.render('orgs/area_trabalho');
+});
+
 router.get('/entidade', function(req, res) {
     res.render('orgs/entidade');
 });
