@@ -54,7 +54,8 @@
     border:0px !important
 }
 
-.fixed {
+.cascata-table-within {
+    width:100%;
     table-layout: fixed;
 }
 
@@ -62,30 +63,43 @@
     text-align: center;
     background-color: #90CAF9; 
     border-right:1px solid #ddd; 
-    width: 100% !important;
+    width: 30px  !important; 
+    min-width: 30px  !important; 
+    max-width: 30px;
     overflow: hidden;
-    display: inline-block;
     white-space: nowrap;
 }
 
-.texto {
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-.cascata-drop-select {
-    text-align: center;
-    background-color: #90CAF9; 
-    border-right:1px solid #ddd; 
-    width: 49px !important;
-    overflow: hidden;
-    display: inline-block;
-    white-space: nowrap;
-}
-
-.codigo {
+.cascata-codigo {
     background-color: #E3F2FD;
+    overflow: hidden;
     white-space: nowrap;
+    width: 90px !important;
+    min-width: 90px !important;
+    max-width: 90px;
+}
+
+.cascata-texto {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.ownercheck {
+    width:56px;
+    text-align: center;
+    display:inline-block;
+}
+
+.partcheck {
+    width:73px;
+    text-align: center;
+    display:inline-block;
+}
+
+.checks {
+    width:141px;
+    float: right;
 }
 
 .drop-row {
@@ -382,24 +396,6 @@ a:hover{
 .nav-canto td{
     padding-left: 7px;
     padding-right: 7px;
-}
-
-.ownercheck {
-    width:56px;
-    text-align: center;
-    display:inline-block;
-}
-
-.partcheck {
-    width:108px;
-    text-align: center;
-    display:inline-block;
-}
-
-
-.checks {
-    width:168px;
-    float: right;
 }
 
 

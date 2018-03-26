@@ -418,12 +418,10 @@ Vue.component('row-waterfall', {
     template: `
         <tr>
             <td colspan=5 :class="[root ? 'cascata-row-root' : 'cascata-row']">
-                <table :class="[selectOn ? tableClass : (tableClass+' fixed')]"  class="partial-hover">
+                <table class="partial-hover cascata-table-within" :class="tableClass">
                     <tbody name="table">
                         <tr>
-                            <td v-if="row.sublevel"
-                                :class="[selectOn ? 'cascata-drop-select' : 'cascata-drop']"
-                            >
+                            <td v-if="row.sublevel" class="cascata-drop">
                                 <label
                                     :for="'toggle'+id+suffix"
                                     :class="[row.drop ? 'glyphicon glyphicon-minus' : 'glyphicon glyphicon-plus']"
@@ -435,40 +433,23 @@ Vue.component('row-waterfall', {
                                     @click="dropClicked"
                                     class="drop-row"
                                 />
-                                <input
-                                    v-if="selectOn"
-                                    :id="'select'+id+suffix"
-                                    type="checkbox"
-                                    v-model="row.selected"
-                                    @click="selectClicked"
-                                />
                             </td>
-                            <td v-else
-                                :class="[selectOn ? 'cascata-drop-select' : 'cascata-drop']"
-                            >
+                            
+                            <td v-else class="cascata-drop">
                                 <span style="padding-right:18px"></span>
-                                <span v-if="selectOn">
-                                    <input
-                                        :id="'select'+id+suffix"
-                                        type="checkbox"
-                                        v-model="row.selected"
-                                        @click="selectClicked"
-                                    />
-                                </span>
                             </td>
-                            <td
-                                v-for="(item,index) in row.content"
-                                :style="{width: cwidth[index]}"
-                                :class="[ index==0 ? 'codigo' : ( selectOn ? '' : 'texto' ) ]"
-                                @click="rowClicked"
-                                :colspan="[ (index==1 && !selectOn) ? '3' : '1' ]"
-                            >
+
+                            <td class="cascata-codigo" @click="rowClicked">
+                                {{ row.content[0] }}
+                            </td>
+
+                            <td class="cascata-texto"  @click="rowClicked">
                                 <div>
                                     <div style="float:left">
-                                        {{ item }}
+                                        {{ row.content[1] }}
                                     </div>
                                     <div
-                                        v-if="selectOn && level==3 && index==1" 
+                                        v-if="selectOn && level==3" 
                                         class="checks"
                                     >
                                         <div class="ownercheck">
@@ -545,12 +526,12 @@ Vue.component('row-waterfall', {
             this.$emit('eventWaterfall', eventContent);
         },
         ownerClicked: function () { //emit event when an owner "checkbox" is selected
-            if (!this.row.selected && !this.row.owner) {
+            if (!this.row.participant) {
                 this.selectClicked();
             }
         },
         participantClicked: function () { //emit event when a "participant" checkbox is selected
-            if (!this.row.selected) {
+            if (!this.row.owner) {
                 this.selectClicked();
             }
         },
@@ -599,13 +580,6 @@ Vue.component('custom-table-waterfall', {
                 </select>
                 entradas
             </div>
-            <div id="filter" class="col-sm-7" v-if="filterOn">
-                <input
-                    class="form-control"
-                    v-model="filt" type="text"
-                    placeholder="Filtrar"
-                />
-            </div>
             <div class="col-sm-1"  v-if="add">
                 <button type="button" class="btn btn-default btn-circle" @click="addClick">
                     <span class="glyphicon glyphicon-plus"/>
@@ -615,14 +589,13 @@ Vue.component('custom-table-waterfall', {
             <table id="masterTable" :class="tableClass">
                 <thead>
                     <tr>
-                        <th style="width: 4%"></th>
+                        <th style="width: 30px; min-width: 30px"></th>
                         <th
                             v-for="(item,index) in header"
-                            @click="sort(index)"
                             class="sorter"
                             :style="{width: cwidth[index]}"
                         >
-                            {{ item }} <span class="caret"></span>
+                            {{ item }} 
                         </th>
                         <th v-if="selectOn">
                             Dono
@@ -665,7 +638,6 @@ Vue.component('custom-table-waterfall', {
         'completeRows',
         'header',
         'pagesOn',
-        'filterOn',
         'add',
         'selectOn',
         'nEdits',
@@ -675,7 +647,6 @@ Vue.component('custom-table-waterfall', {
         return {
             "rows": [],
             "rowsShow": [[]],
-            "filt": '',
             "order": 0,
             "activePage": 1,
             "pages": [0],
@@ -684,16 +655,6 @@ Vue.component('custom-table-waterfall', {
         };
     },
     watch: {
-        filt: function () {
-            if (!this.filtered) {
-                this.filtered = true;
-            }
-            else if (!filt) {
-                this.filtered = false;
-            }
-
-            this.newFilter();
-        },
         rows: function () {
             this.loadPages();
         },
@@ -711,57 +672,6 @@ Vue.component('custom-table-waterfall', {
         }
     },
     methods: {
-        /*filter: function () { //filter rows according to what is written in the input box
-            regex = new RegExp(this.filt, "gi");
-
-            this.rows = this.completeRows.filter(function (item) {
-
-                for (var i = 0; i < item.content.length; i++) {
-                    if (regex.test(item.content[i])) {
-                        return true;
-                    }
-                }
-                return false;
-            })
-            if (this.rows.length == 0) {
-                this.rows = [{ content: ["Sem resultados correspondentes..."] }];
-            }
-        },*/
-        newFilter: function () { //filter rows and sublevels
-            var regex = new RegExp(this.filt, "gi");
-
-            var temp = JSON.parse(JSON.stringify(this.completeRows));
-            this.rows = this.subFilter(regex, temp);
-            if (this.rows.length == 0) {
-                this.rows = [{ content: ["404", "Sem resultados correspondentes..."] }];
-            }
-        },
-        subFilter: function (regex, list) {
-            //go through the list
-            for (let index = list.length - 1; index >= 0; index--) {
-                let line = list[index];
-
-                if (line.sublevel && line.sublevel.length > 0) {
-                    line.sublevel = this.subFilter(regex, line.sublevel);
-                }
-
-                //if line doesn't have sublevel, or it is empty, check if content matches regex, if not, cut it
-                if (!line.sublevel || !line.sublevel.length) {
-                    let check = false;
-                    for (let data of line.content) {
-                        if (regex.test(data)) {
-                            check = true;
-                            break;
-                        }
-                    }
-                    if (!check) {
-                        list.splice(index, 1);
-                    }
-                }
-            }
-            console.log(list);
-            return JSON.parse(JSON.stringify(list));
-        },
         genID: function (index) {
             for (var i = 0; i < this.completeRows.length; i++) {
                 if (this.rowsShow[index].codeID == this.completeRows[i].codeID) {

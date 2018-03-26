@@ -51,8 +51,8 @@ var escolha = new Vue({
                 }
             }
 
-            this.specPNSelected = this.getSelected(this.specificProcs);
-            this.restPNSelected = this.getSelected(this.restProcs);
+            this.specPNSelected = this.getSelected(this.specificProcs, 1);
+            this.restPNSelected = this.getSelected(this.restProcs, 1);
 
             this.specReady = false;
             this.restReady = false;
@@ -332,28 +332,43 @@ var escolha = new Vue({
                 destination[avo].sublevel[pai].sublevel.push(pninfo);
             }
         },
-        getSelected: function (location) {
+        getSelected: function (root, level) {
             var list = [];
+            var owns = [];
+            var participates = [];
 
-            for (var i = 0; i < location.length; i++) {
-                //if a node is selected add its ID to the list and check its descendants
-                if (location[i].selected) {
-                    list.push(location[i].codeID);
+            for (var node of root){
+                //check if a node is selected, if it's below level 3, also check if any of its 
+                //descendancy is selected. if it checks out, add it and the selected descendancy
+                //to the list
+                if (node.selected) {
+                    let subList = [];
 
-
-                    if (location[i].sublevel && location[i].sublevel.length) {
-                        list = list.concat(this.getSelected(location[i].sublevel));
+                    if (node.sublevel && node.sublevel.length) {
+                        subList = this.getSelected(node.sublevel, level+1);
                     }
+
+                    if(level>=3 || subList.length){
+                        list.push(node.codeID);
+                        list = list.concat(subList);
+                    }  
+
+                    if(level==3){
+                        if(node.owner) {owns.push(node.codeID)}
+                        if(node.participant) {participates.push(node.codeID)}
+                    }
+
                 }
             }
+
             return list;
         },
         getAllSelected: function () {
             var list = [];
 
-            list = list.concat(this.getSelected(this.commonProcs))
-                .concat(this.getSelected(this.specificProcs))
-                .concat(this.getSelected(this.restProcs));
+            list = list.concat(this.getSelected(this.commonProcs, 1))
+                .concat(this.getSelected(this.specificProcs, 1))
+                .concat(this.getSelected(this.restProcs, 1));
 
             return Array.from(new Set(list));
         },
@@ -378,9 +393,9 @@ var escolha = new Vue({
         saveInfo: function () {
             let selected = {
                 tipologias: this.myTipolList,
-                comuns: this.getSelected(this.commonProcs),
-                especificos: this.getSelected(this.specificProcs),
-                restantes: this.getSelected(this.restProcs),
+                comuns: this.getSelected(this.commonProcs, 1),
+                especificos: this.getSelected(this.specificProcs, 1),
+                restantes: this.getSelected(this.restProcs, 1),
             };
 
             this.$http.put('/users/save/escolhaProcessos', selected, {
@@ -390,7 +405,6 @@ var escolha = new Vue({
             })
                 .then(function (response) {
                     var resp = response.body;
-                    console.log(resp);
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -402,7 +416,6 @@ var escolha = new Vue({
                     content = response.body;
                 })
                 .then(function(){
-                    console.log(content);
 
                     this.commonPNSelected=content.comuns;
                     this.ready=false;
@@ -430,15 +443,15 @@ var escolha = new Vue({
             if(!ok){
                 this.message="";
                 ok=true;
-                if(this.getSelected(this.commonProcs).length==0){
+                if(this.getSelected(this.commonProcs, 1).length==0){
                     this.message += "<p>Nenhum processo comum selecionado!</p>";
                     ok=false;
                 }
-                if(this.getSelected(this.specificProcs).length==0){
+                if(this.getSelected(this.specificProcs, 1).length==0){
                     this.message += "<p>Nenhum processo específico selecionado!</p>";
                     ok=false;
                 }
-                if(this.getSelected(this.restProcs).length==0){
+                if(this.getSelected(this.restProcs, 1).length==0){
                     this.message += "<p>Nenhum processo restante selecionado!</p>";
                     ok=false;
                 }
@@ -459,7 +472,6 @@ var escolha = new Vue({
                     this.createConfirm=false;
                 }
                 else {
-                    console.log("ola");
                     this.$refs.spinner.show();
                     
                     this.$http.post('/api/tabelasSelecao/', dataObj, {

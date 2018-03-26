@@ -641,7 +641,10 @@ Classes.filterByOrgs = function(orgs) {
                     VALUES ?org { clav:${orgs.join(' clav:')} }
                     ?org clav:participaEm ?PN .
                 }
-            } 
+            } MINUS { 
+                ?PN clav:pertenceLC ?lc
+                filter( ?lc != clav:lc1 )
+            }
             
             ?PN clav:temPai ?Pai.
             ?Pai clav:temPai ?Avo.
@@ -701,6 +704,11 @@ Classes.filterCommon = function(orgs) {
                    clav:codigo ?FilhoCodigo;
                    clav:titulo ?FilhoTitulo
             }
+
+            MINUS { 
+                ?PN clav:pertenceLC ?lc
+                filter( ?lc != clav:lc1 )
+            }
         }
         Group By ?PN ?PNCodigo ?PNTitulo ?Pai ?PaiCodigo ?PaiTitulo ?Avo ?AvoCodigo ?AvoTitulo 
         Order By ?PN
@@ -724,6 +732,11 @@ Classes.filterRest = function(orgs) {
         WHERE { 
             ?PN rdf:type clav:Classe_N3 .
             ?PN clav:processoTipo "PE" .
+            
+            MINUS { 
+                ?PN clav:pertenceLC ?lc
+                filter( ?lc != clav:lc1 )
+            }
     `;
     if(orgs){
         fetchQuery+=`

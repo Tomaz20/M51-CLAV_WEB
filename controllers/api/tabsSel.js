@@ -93,13 +93,6 @@ SelTabs.createTab = function (id, name, classes) {
 
         let level = clas.Codigo.value.split('.').length;
 
-        var keyVal = {
-            ProcTipo: 'processoTipo',
-            ProcTransversal: 'processoTransversal',
-            Descricao: 'descricao',
-            Titulo: 'titulo'
-        };
-
         createQuery += `
             clav:${clasID} rdf:type owl:NamedIndividual ,
                     clav:Classe_N${level} ;
