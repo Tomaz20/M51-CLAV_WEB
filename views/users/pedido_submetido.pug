@@ -1,8 +1,10 @@
 extends ../layout 
 block corpo
     center
-        #pedido.whitebox(style="width:600px")
+        #pedido.whitebox(style="width:800px")
             hidden-table(
+                v-if="ready"
+
                 :titulo="titulo"
                 :cabecalho="cabecalho"
                 :linhas="linhas"
@@ -16,8 +18,6 @@ block corpo
                 p 
                     b Aguarde a notificação de resposta ao seu pedido.
     
-    p Em desenvolvimento
-    p Página exemplo
 
 append scripts
     script(src="/javascripts/users/pedido_submetido.vue")

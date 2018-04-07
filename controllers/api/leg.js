@@ -6,7 +6,6 @@ Leg.list = function () {
     return client.query(
         `SELECT * WHERE { 
                 ?id rdf:type clav:Legislacao;
-                    clav:diplomaAno ?Ano;
                     clav:diplomaData ?Data;
                     clav:diplomaNumero ?Número;
                     clav:diplomaTipo ?Tipo;

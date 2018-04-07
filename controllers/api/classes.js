@@ -45,7 +45,8 @@ Classes.stats = function (id) {
                 } OPTIONAL {
                     clav:${id} clav:descricao ?Desc.
                 } OPTIONAL {
-                    clav:${id} clav:processoTipo ?ProcTipo.
+                    clav:${id} clav:processoTipoVC ?PT.
+                    ?PT skos:prefLabel ?ProcTipo.
                 } OPTIONAL {
                     clav:${id} clav:processoTransversal ?ProcTrans.
                 }
@@ -283,10 +284,10 @@ Classes.related = function (id) {
                 clav:${id} clav:temRelProc ?id;
                     ?Type ?id.
                 
-                    ?id clav:codigo ?Code;
-                    clav:titulo ?Title
+                ?id clav:codigo ?Code;
+                    clav:titulo ?Title.
                 
-                    filter (?Type!=clav:temRelProc)
+                filter (?Type!=clav:temRelProc)
             } Order by ?Type
         `;
 
@@ -522,18 +523,20 @@ Classes.checkCodeAvailability = function (code) {
 Classes.pca = function (id) {
     var fetchQuery = `
         SELECT 
-            ?Contagem
+            ?SubContagem
             ?ContagemNorm
             (GROUP_CONCAT(DISTINCT ?Nota; SEPARATOR="###") AS ?Notas)
             (GROUP_CONCAT(DISTINCT ?Valor; SEPARATOR="###") AS ?Valores)
             (GROUP_CONCAT(DISTINCT ?Criterio; SEPARATOR="###") AS ?Criterios)
         WHERE { 
             clav:${id} clav:temPCA ?pca .
-            OPTIONAL {
-                ?pca clav:pcaFormaContagem ?Contagem .
+            optional {
+                ?pca clav:pcaSubformaContagem ?SubCont .
+                ?SubCont skos:scopeNote ?SubContagem .
             }
-            OPTIONAL {
-                ?pca clav:pcaFormaContagemNormalizada ?ContagemNorm .    
+            optional {
+                ?pca clav:pcaFormaContagemNormalizada ?ContNorm .    
+                ?ContNorm skos:prefLabel ?ContagemNorm .
             }
             OPTIONAL {
                 ?pca clav:pcaNota ?Nota ;
@@ -545,7 +548,7 @@ Classes.pca = function (id) {
                 ?pca clav:temJustificacao ?just .
                 ?just clav:temCriterio ?Criterio
             }    
-        }GROUP BY ?Contagem ?ContagemNorm
+        }GROUP BY ?SubContagem ?ContagemNorm
     `;
 
     return client.query(fetchQuery).execute()

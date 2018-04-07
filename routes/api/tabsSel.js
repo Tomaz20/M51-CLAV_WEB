@@ -69,6 +69,19 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
 
             Classes.completeData(dataObj.classes)
                 .then(function(classes){
+                    let relations = ["Rels1","Rels2","Rels3","Rels4","Rels5","Rels6","Rels7"];
+
+                    // filtrar relações por PNs que estejam na tabela
+                    for(let clas of classes){
+                        for(let rel of relations){
+                            clas[rel].value = clas[rel].value
+                                .split('%%')
+                                .map(a => a.replace(/[^#]+#(.*)/, '$1'))
+                                .filter(a=>dataObj.classes.indexOf(a)>-1)
+                                .map( a => id+"_"+a)
+                                .join('%%');
+                        }
+                    }
 
                     SelTabs.createTab(id, dataObj.name, classes)
                         .then(function () {

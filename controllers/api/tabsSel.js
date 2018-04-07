@@ -79,7 +79,6 @@ SelTabs.stats = function (id) {
 
 SelTabs.createTab = function (id, name, classes) {
 
-
     var createQuery = `
             INSERT DATA {
                 clav:${id} rdf:type owl:NamedIndividual ,
@@ -159,12 +158,10 @@ SelTabs.createTab = function (id, name, classes) {
                 }
             }
         }
-        console.log(clas);
     }
 
     createQuery += "}"
 
-    console.log(createQuery);
 
     return client.query(createQuery).execute()
         .then(response => Promise.resolve(response))

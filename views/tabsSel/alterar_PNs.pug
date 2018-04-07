@@ -273,8 +273,12 @@ block corpo
                                 tr
                                     td(style="width: 10%")
                                         .info-label Termos de Índice:
+                                    td(style="width:80%")
+                                        ul(style="padding-left:20px")
+                                            li(v-for="index in clas.Indexes")
+                                                | {{ index.Termo }}
 
-                        panel(header="Contecto de Avaliação" v-if="clas.Level==3")
+                        panel(header="Contexto de Avaliação" v-if="clas.Level>=3")
                             table.consulta(v-if="pageReady" style="border-color: white; border-style:solid; width:100%")
                                 //- TIPO/TRANSVERSAL
                                 tr
@@ -521,7 +525,7 @@ block corpo
                                                 v-model="edit.Legs"
                                             )
 
-                        panel(header="Decisões de Avaliação" v-if="clas.Level==3")
+                        panel(header="Decisões de Avaliação" v-if="clas.Level>=3")
                             table.consulta.noborder(v-if="pageReady" style="border-color: white; border-style:solid")
                                 //- PRAZO DE CONSERVAÇÃO ADMINISTRATIVA
                                 tr(v-if="clas.PCA.valores.length")

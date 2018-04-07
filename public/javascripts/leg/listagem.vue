@@ -19,7 +19,7 @@ new Vue({
         },
         parse: function(){    
             // key names for table header and parsing
-            var keys= ["Tipo", "Número", "Titulo", "Data", "Ano"]
+            var keys= ["Tipo", "Número", "Titulo", "Data"]
             // setting the table header
             this.tableHeader=["#", "Tipo", "Número", "Titulo", "Data"];
 
@@ -32,8 +32,6 @@ new Vue({
                 for (var j=0; j<keys.length; j++){
                     temp[j+1] = this.content[i][keys[j]].value;
                 }
-                temp[4]= temp[4]+" de "+temp[5];
-                temp.splice(5,1);
                 this.tableData[i]=temp.slice();
 
             }

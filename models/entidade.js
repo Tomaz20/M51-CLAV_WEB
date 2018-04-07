@@ -40,9 +40,9 @@ module.exports.getEntidadeByEmail = function (email, callback) {
 	Entidade.findOne(query, callback);
 }
 
-module.exports.getEntidadesByRepresentante = function (email, callback) {
+module.exports.getEntidadeByRepresentante = function (email, callback) {
 	var query = { representantes: email };
-	Entidade.find(query, callback);
+	Entidade.findOne(query, callback);
 }
 
 module.exports.getEntidadeById = function (id, callback) {

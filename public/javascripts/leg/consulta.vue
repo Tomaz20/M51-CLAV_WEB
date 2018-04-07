@@ -3,12 +3,6 @@ new Vue({
     data: {
         id: "",
         legData : {
-            year: {
-                label: "Ano",
-                original: "",
-                new: "",
-                edit: false
-            },
             date: {
                 label: "Data",
                 original: "",
@@ -122,7 +116,6 @@ new Vue({
             });
         },   
         parse: function(){    
-            this.legData.year.original=this.content[0].Ano.value;
             this.legData.date.original=this.content[0].Data.value;
             this.legData.number.original=this.content[0].Número.value;
             this.legData.type.original=this.content[0].Tipo.value;
@@ -136,7 +129,6 @@ new Vue({
 
             var dataObj = {
                 id: this.id,
-                year: null,
                 date: null,
                 number: null,
                 type: null,

@@ -25,7 +25,10 @@ block body
 				button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#users', aria-expanded='false', aria-controls='users')
 					span.sr-only Toggle authentication
 					span.glyphicon.glyphicon-user(style="color: white")
-				a(href="/").navbar-brand CLAV – Plataforma para a Classificação e Avaliação da Informação Pública
+				a(href="/").navbar-brand
+					span.glyphicon.glyphicon-home(style="color: white")
+				a(href="/").navbar-brand 
+					| CLAV – Plataforma para a Classificação e Avaliação da Informação Pública
 			
 			//collapsable on mobile, fixed in desktop
 			#users.navbar-collapse.collapse

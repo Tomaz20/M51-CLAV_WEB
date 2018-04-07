@@ -42,6 +42,7 @@ var alt = new Vue({
             AppNotes: [],
             DelNotes: [],
             RelProcs: [],
+            Indexes: [],
             Participants: [],
             PCA: {
                 formacontagem: "",
@@ -102,6 +103,8 @@ var alt = new Vue({
         classesReady: false,
         relProcsReady: false,
         pageReady: false,
+
+        editedClasses: [],
     },
     components: {
         modal: VueStrap.modal,
@@ -119,6 +122,21 @@ var alt = new Vue({
         }
     },
     methods: {
+        loadTS: function(){
+            var content = [];
+
+            this.$http.get("/api/tabelasSelecao/"+this.id+"/classes")
+            .then( function(response) {
+                content = response.body;
+            })
+            .then( function() {
+                this.parseTS(content);
+                this.table.ready=true;
+            })
+            .catch( function(error) { 
+                console.error(error); 
+            });
+        },
         swap: function(array,pos1,pos2){
             var temp=array[pos1];
             array[pos1]=array[pos2];
@@ -237,7 +255,12 @@ var alt = new Vue({
             
             return ret;
         },
+        classUpdated: function(id){
+            this.editedClasses.push(id);
 
+            this.table.ready=false;
+            this.loadTS(); 
+        },
 
 
         prepData: function (dataObj) {
@@ -257,7 +280,7 @@ var alt = new Vue({
             this.loadChildren();
             
             this.pageReady=true;
-            this.classShow = true;
+            this.classShow=true;
             this.$refs.spinner.hide();
 
             if (dataObj.Desc) {
@@ -268,6 +291,7 @@ var alt = new Vue({
             this.loadExAppNotes();
             this.loadAppNotes();
             this.loadDelNotes();
+            this.loadIndexes();
 
             if(this.clas.Level==3){
 
@@ -293,6 +317,22 @@ var alt = new Vue({
             this.loadOrgs();            
             this.loadLegList();            
         },
+        loadIndexes: function () {
+            var indexesToParse = [];
+            var keys = ["Termo"];
+
+            this.$http.get("/api/termosIndice/filtrar/"+this.id)
+                .then(function (response) {
+                    indexesToParse = response.body;
+                })
+                .then(function () {
+                    if(indexesToParse[0])
+                        this.clas.Indexes = this.parse(indexesToParse, keys);
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
         loadChildren: function () {
             var classesToParse = [];
             var keys = ["Child", "Code", "Title"];
@@ -303,7 +343,8 @@ var alt = new Vue({
                 })
                 .then(function () {
                     if(classesToParse[0].Code)
-                        this.clas.Children = this.parse(classesToParse, keys);
+                        this.clas.Children = this.parse(classesToParse, keys)
+                            .sort((a,b)=>a.Code.localeCompare(b.Code));
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -425,6 +466,13 @@ var alt = new Vue({
                 .then(function () {
                     this.clas.DelNotes = JSON.parse(JSON.stringify(this.parse(notesToParse, keys)));
                     this.newClass.DelNotes = JSON.parse(JSON.stringify(this.parse(notesToParse, keys)));
+
+                    this.clas.DelNote = this.clas.DelNotes.map(
+                        a => a.Nota = a.Nota.replace(
+                            /([0-9]{3}(\.[0-9]+)*)/g,
+                            '<a href="/classes/consultar/c$1">$1</a>'
+                        )
+                    );
 
                     this.delNotesReady = true;
                 })
@@ -1101,6 +1149,7 @@ var alt = new Vue({
                 }
             })
             .then(function (response) {
+                this.classUpdated(this.clas.ID);
                 this.$refs.spinner.hide();
                 this.message = response.body;
                 this.classShow=false;
@@ -1112,7 +1161,37 @@ var alt = new Vue({
 
 
         submeter: function(){
-            window.location.href= '/users/pedido_submetido/1';
+            this.$refs.spinner.show();
+
+            var dataObj = {
+                type: "Criação de TS",
+                desc: "Nova tabela de seleção.",
+                id: this.id,
+                alt: this.editedClasses
+            }
+
+            this.$http.post('/users/pedido', dataObj,{
+                headers: {
+                    'content-type' : 'application/json'
+                }
+            })
+            .then(function (response) {
+                regex = new RegExp(/[0-9]+\-[0-9]+/, "gi");
+
+                if(regex.test(response.body)){
+                    window.location.href = '/users/pedido_submetido/'+response.body;
+                }
+                else {
+                    this.message = response.body;
+                    console.log(this.message);
+                }
+
+                this.$refs.spinner.hide();
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
+
         },
         retroceder: function(){
             window.location.href= '/tabelasSelecao/submeter/escolher_processos';
@@ -1125,18 +1204,7 @@ var alt = new Vue({
             "CLASSE",
             "TÍTULO"
         ];
-        var content = [];
-
-        this.$http.get("/api/tabelasSelecao/"+this.id+"/classes")
-        .then( function(response) {
-            content = response.body;
-        })
-        .then( function() {
-            this.parseTS(content);
-            this.table.ready=true;
-        })
-        .catch( function(error) { 
-            console.error(error); 
-        });
+        
+        this.loadTS();
     }
 })

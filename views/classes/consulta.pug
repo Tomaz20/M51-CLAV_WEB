@@ -2,7 +2,7 @@ extends ../layout
 block corpo
     #classe-form.panel.panel-default
         .panel-heading
-            h1.page-header {{ clas.Title }}  
+            h3.page-header {{ clas.Code }} - {{ clas.Title }}  
         .panel-body
             .form-group
                 table.consulta(v-if="pageReady" style="border-color: white; border-style:solid; margin-bottom:20px")
@@ -198,7 +198,7 @@ block corpo
                                 td(v-else style="width:80%")
                                     ul(style="padding-left:20px" v-if="delNotesReady")
                                         li(v-for="note in clas.DelNotes")
-                                            | {{note.Nota}}
+                                            p(v-html="note.Nota")
 
                                 if user
                                     td(style="width:10%")
@@ -209,11 +209,15 @@ block corpo
                                         )
 
                             //- TERMOS DE ÍNDICE
-                            tr
+                            tr(v-if="clas.Level>=3")
                                 td(style="width: 10%")
                                     .info-label Termos de Índice:
+                                td(style="width:80%")
+                                    ul(style="padding-left:20px")
+                                        li(v-for="index in clas.Indexes")
+                                            | {{ index.Termo }}
 
-                    panel(header="Contecto de Avaliação" v-if="clas.Level==3")
+                    panel(header="Contexto de Avaliação" v-if="clas.Level>=3")
                         table.consulta(v-if="pageReady" style="border-color: white; border-style:solid; width:100%")
                             //- TIPO/TRANSVERSAL
                             tr
@@ -460,7 +464,7 @@ block corpo
                                             v-model="edit.Legs"
                                         )
 
-                    panel(header="Decisões de Avaliação" v-if="clas.Level==3")
+                    panel(header="Decisões de Avaliação" v-if="clas.Level>=3")
                         table.consulta.noborder(v-if="pageReady" style="border-color: white; border-style:solid")
                             //- PRAZO DE CONSERVAÇÃO ADMINISTRATIVA
                             tr
