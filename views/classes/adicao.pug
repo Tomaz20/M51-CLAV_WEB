@@ -5,268 +5,588 @@ block corpo
             h1.page-header Nova Classe  
         .panel-body
             .form-group
-                table.cria
+                table.consulta(style="border-color: white; border-style:solid; margin-bottom:20px")
+                    
                     //-TIPO/ NIVEL
                     tr
                         td(style="width:10%")
-                            label Tipo: 
-                        td(style="width:80%")
+                            .info-label Tipo: 
+                        td
                             select( v-model="type")
                                 option(value=1) Classe_N1
                                 option(value=2) Classe_N2
                                 option(value=3) Classe_N3
                                 option(value=4) Classe_N4
-                                
-                    //-PAI
+
+                    //- CLASSE PAI
                     tr(v-if="type>1 && parentsReady")
-                        td(style="width:10%")
-                            label Pai: 
+                        td(style="width: 10%")
+                            .info-label Classe Pai: 
                         td.smaller
                             v-select.custom-select(
                                 style="width=100px"
                                 v-model="parentvalue"
                                 :options="parents"
                             )
-            
-                    //-CODIGO
-                    tr
-                        td(style="padding-top:10px")
-                            label Código: 
+
+                    //- CÓDIGO
+                    tr 
+                        td(style="width: 10%")
+                            .info-label Código: 
                         td
                             input(
                                 size="70"
                                 v-model="code"
-                            )
+                            ) 
 
-                    //-TITULO   
+                    //- TÍTULO
                     tr
-                        td(style="padding-top:10px")
-                            label Título: 
+                        td(style="width: 10%")
+                            .info-label Título: 
                         td
                             input(
                                 size="70"
                                 v-model="title"
                             )
 
-                    //-DESCRIÇÃO
-                    tr
-                        td(style="padding-top:10px")
-                            label Descrição: 
-                        td
-                            textarea(
-                                cols="72"
-                                lines="5"
-                                v-model="description"
-                            )
+                accordion.info-classe
+                    panel(header="Descritivo da Classe" is-open=true)
+                        table.consulta(style="border-color: white; border-style:solid")                
 
-                    //-NOTAS DE APLICAÇÃO
-                    tr
-                        td(style="padding-top:10px")
-                            label Nota(s) de Aplicação: 
-                        td
-                            textarea(
-                                cols="72"
-                                lines="5"
-                                v-model="newAppNote"
-                                @keyup.ctrl.enter="addNewAppNote" 
-                            )
-                            button(@click="addNewAppNote") Ok
-                                   
-                            ul(v-if="appNotes && appNotes.length")
-                                li(v-for="(note,index) in appNotes")
-                                    button(@click="appNotes.splice(index,1)") x
-                                    | {{note.Note}}
-                    
-                    //-EXEMPLOS DE NA
-                    tr
-                        td(style="padding-top:10px")
-                            label Exemplo(s) de Nota(s) de Aplicação: 
-                        td
-                            textarea(
-                                cols="72"
-                                lines="5"
-                                v-model="newExAppNote"
-                                @keyup.ctrl.enter="addNewExAppNote" 
-                            )
-                            button(@click="addNewExAppNote") Ok
-                       
-                            ul(v-if="exAppNotes && exAppNotes.length")
-                                li(v-for="(ex,index) in exAppNotes")
-                                    button(@click="exAppNotes.splice(index,1)") x
-                                    | {{ex}}
+                            //- DESCRIÇÃO
+                            tr
+                                td(style="width: 10%")
+                                    .info-label Descrição: 
+                                td
+                                    textarea(
+                                        cols="72"
+                                        lines="5"
+                                        v-model="description"
+                                    )
 
-                    //-NOTAS DE EXCLUSÃO
-                    tr
-                        td(style="padding-top:10px")
-                            label Nota(s) de Exclusão: 
-                        td
-                            textarea(
-                                cols="72"
-                                lines="5"
-                                v-model="newDelNote"
-                                @keyup.ctrl.enter="addNewDelNote" 
-                            )
-                            button(@click="addNewDelNote") Ok
-                                   
-                            ul(v-if="delNotes && delNotes.length")
-                                li(v-for="(note,index) in delNotes")
-                                    button(@click="delNotes.splice(index,1)") x
-                                    | {{note.Note}}
+                            //- NOTAS DE APLICAçÃO                        
+                            tr
+                                td(style="width: 10%")
+                                    .info-label Nota(s) de Aplicação:
+                                td
+                                    textarea(
+                                        cols="72"
+                                        lines="5"
+                                        v-model="newAppNote"
+                                        @keyup.ctrl.enter="addNewAppNote" 
+                                    )
+                                    button(@click="addNewAppNote") Ok
+                                        
+                                    ul(v-if="appNotes && appNotes.length")
+                                        li(v-for="(note,index) in appNotes")
+                                            | {{note.Note}}
+                                            span.glyphicon.glyphicon-remove(
+                                                @click="appNotes.splice(index,1)"
+                                                style="padding-left: 20px"
+                                            )
+                                
+                            //- EXEMPLOS DE NOTAS DE APLICAçÃO                        
+                            tr
+                                td(style="width: 10%")
+                                    .info-label Exemplo(s) de Nota(s) de Aplicação:
+                                td
+                                    textarea(
+                                        cols="72"
+                                        lines="5"
+                                        v-model="newExAppNote"
+                                        @keyup.ctrl.enter="addNewExAppNote" 
+                                    )
+                                    button(@click="addNewExAppNote") Ok
+                            
+                                    ul(v-if="exAppNotes && exAppNotes.length")
+                                        li(v-for="(ex,index) in exAppNotes")
+                                            | {{ex}}
+                                            span.glyphicon.glyphicon-remove(
+                                                @click="exAppNotes.splice(index,1)"
+                                                style="padding-left: 20px"
+                                            )
 
-                    //-TIPO DE PROCESSO
-                    tr(v-if="type==3")
-                        td(style="padding-top:10px")
-                            label Tipo de Processo: 
-                        td
-                            input(
-                                type="radio"
-                                value="PC"
-                                v-model="procType"
-                            ) 
-                            |  Processo Comum
-                            br
-                            input(
-                                type="radio"
-                                value="PE"
-                                v-model="procType"
-                            )
-                            |  Processo Específico
+                            //- NOTAS DE EXCLUSÃO                        
+                            tr
+                                td(style="width: 10%")
+                                    .info-label Nota(s) de Exclusão:
+                                td
+                                    textarea(
+                                        cols="72"
+                                        lines="5"
+                                        v-model="newDelNote"
+                                        @keyup.ctrl.enter="addNewDelNote" 
+                                    )
+                                    button(@click="addNewDelNote") Ok
+                                        
+                                    ul(v-if="delNotes && delNotes.length")
+                                        li(v-for="(note,index) in delNotes")
+                                            | {{note.Note}}
+                                            span.glyphicon.glyphicon-remove(
+                                                @click="delNotes.splice(index,1)"
+                                                style="padding-left: 20px"
+                                            )
 
-                    //-PROCESSO TRANSVERSAL
-                    tr(v-if="type==3")
-                        td(style="padding-top:10px")
-                            label Processo Transversal: 
-                        td
-                            input(
-                                type="radio"
-                                value="S"
-                                v-model="procTrans"
-                            ) 
-                            |  Sim
-                            br
-                            input(
-                                type="radio"
-                                value="N"
-                                v-model="procTrans"
-                            )
-                            |  Não
+                            //- TERMOS DE ÍNDICE
+                            tr(v-if="type>=3")
+                                td(style="width: 10%")
+                                    .info-label Termos de Índice:
+                                td
+                                    textarea(
+                                        cols="72"
+                                        lines="5"
+                                        v-model="newIndex"
+                                        @keyup.ctrl.enter="addNewIndex" 
+                                    )
+                                    button(@click="addNewIndex") Ok
+                                        
+                                    ul(v-if="indexes && indexes.length")
+                                        li(v-for="(i,index) in indexes")
+                                            | {{i.Note}}
+                                            span.glyphicon.glyphicon-remove(
+                                                @click="indexes.splice(index,1)"
+                                                style="padding-left: 20px"
+                                            )
 
-                    //-DONOS
-                    tr(v-if="type==3 && orgsReady")
-                        td(style="padding-top:10px")
-                            label Dono(s): 
-                        td
-                            table
-                                tr
-                                    td
-                                        v-select.custom-select(
-                                            v-model="newOwner"
-                                            :options="orgList"
-                                        )
-                                    td
-                                        button(
-                                            @click="ownerList.push(newOwner.value)"
-                                        ) +
-                                tr
-                                    td(colspan="2")
-                                        ul(v-if="ownerList")
-                                            li(v-for="(o,index) in ownerList")
-                                                | {{ o.Sigla }} - {{ o.Nome }}
-                                                button(
-                                                    @click="ownerList.splice(index,1)"
-                                                ) x
 
-                    //-PARTICIPANTES
-                    tr(v-if="type==3 && procTrans=='S'")
-                        td(style="padding-top:10px")
-                            label Participantes: 
-                        td
-                            table
-                                tr
-                                    td(width="30%")
-                                        v-select.custom-select(
-                                            v-model="newParticipantType"
-                                            :options="Object.keys(participants)"
-                                        )
-                                    td(width="30%")
-                                        v-select.custom-select(
-                                            v-model="newParticipant"
-                                            :options="orgList"
-                                        )
-                                    td
-                                        button(
-                                            @click="participants[newParticipantType].push(newParticipant.value)"
-                                        ) +
-                                tr
-                                    td(colspan="3")
-                                        ul
-                                            li(v-for="key in Object.keys(participants)" v-if="participants[key] && participants[key].length>0")
-                                                b {{ key }}
-                                                    span(v-if="participants[key] && participants[key].length>1") es
+                    panel(header="Contexto de Avaliação" v-if="type>=3" is-open=true)
+                        table.consulta(style="border-color: white; border-style:solid; width:100%")
+                            //- TIPO/TRANSVERSAL
+                            tr
+                                td(colspan=2)
+                                    table.noborder
+                                        //- TIPO DE PROCESSO
+                                        td(style="width: 50%")
+                                            table
+                                                td(style="width: 10%")
+                                                    .info-label Tipo de Processo: 
+                                                td
+                                                    input(
+                                                        type="radio"
+                                                        value="pc"
+                                                        v-model="procType"
+                                                    ) 
+                                                    |  Processo Comum
+                                                    br
+                                                    input(
+                                                        type="radio"
+                                                        value="pe"
+                                                        v-model="procType"
+                                                    )
+                                                    |  Processo Específico
+
+                                        //- PROCESSO TRANVERSAL
+                                        td(style="width: 50%")
+                                            table
+                                                td(style="width: 10%")
+                                                    .info-label Processo Transversal: 
+                                                td
+                                                    input(
+                                                        type="radio"
+                                                        value="S"
+                                                        v-model="procTrans"
+                                                    ) 
+                                                    |  Sim
+                                                    br
+                                                    input(
+                                                        type="radio"
+                                                        value="N"
+                                                        v-model="procTrans"
+                                                    )
+                                                    |  Não
+
+                            
+                            //- DONOS
+                            tr(style="padding-bottom:30px")
+                                td(style="width: 10%")
+                                    .info-label Donos:
+
+                                td
+                                    custom-table-select(
+                                        v-if="orgsReady"
+
+                                        :header="orgsTableHeader"
+                                        :complete-rows="ownerList"
+                                        :ready="orgsReady"
+                                        :cwidth="orgsTableWidth"
+                                        
+                                        class-table='table table-condensed'
+
+                                        @select-clicked="orgSelected($event,selectedOwners)"
+                                    )
+                                    h4(
+                                        v-else
+                                    ) A carregar...
+
+
+                            //- PARTICIPANTES
+                            tr(v-if="type==3 && procTrans=='S'")
+                                td(style="width: 10%")
+                                    .info-label Participante(s):
+                                    
+                                td
+                                    table
+                                        tr
+                                            tabs
+                                                tab(:header="key" v-for="key in Object.keys(participantLists)")
+                                                    custom-table-select(
+                                                        v-if="orgsReady"
+
+                                                        :header="orgsTableHeader"
+                                                        :complete-rows="participantLists[key]"
+                                                        :ready="orgsReady"
+                                                        :cwidth="orgsTableWidth"
+                                                        
+                                                        class-table='table table-condensed'
+
+                                                        @select-clicked="orgSelected($event,participantsSelected[key], key)"
+                                                    )
+                                                    h4(
+                                                        v-else
+                                                    ) A carregar...
+                                        tr
+                                            td(colspan="3")
                                                 ul
-                                                    li(v-for="(p, index) in participants[key]")
-                                                        | {{ p.Sigla }} - {{ p.Nome }}
-                                                        button(
-                                                            @click="participants[key].splice(index, 1)"
-                                                        ) x
-                    
-                    //-PROCESSOS RELACIONADOS
-                    tr(v-if="type==3 && classesReady")
-                        td(style="padding-top:10px")
-                            label Processos Relacionados: 
-                        td
-                            table
-                                tr
-                                    td(width="30%")
-                                        v-select.custom-select(
-                                            v-model="newRelType"
-                                            :options="Object.keys(relProcs)"
-                                        )
-                                    td(width="30%")
-                                        v-select.custom-select(
-                                            v-model="newRelProc"
-                                            :options="classList"
-                                        )
-                                    td
-                                        button(
-                                            @click="relProcs[newRelType].push(newRelProc.value)"
-                                        ) +
-                                tr
-                                    td(colspan=3)
-                                        ul
-                                            li(v-for="key in Object.keys(relProcs)" v-if="relProcs[key].length>0")
-                                                b É {{ key }}:
-                                                ul
-                                                    li(v-for="(c, index) in relProcs[key]")
-                                                        | {{ c.Code }} - {{ c.Title }}
-                                                        button(
-                                                            @click="relProcs[key].splice(index, 1)"
-                                                        ) x
-                    //-LEGISLAÇÕES                            
-                    tr(v-if="type==3 && legsReady")
-                        td(style="padding-top:10px")
-                            label Legislação(s): 
-                        td
-                            table
-                                tr
-                                    td
-                                        v-select.custom-select( 
-                                            v-model="newLegislation"
-                                            :options="legList"
-                                        )
-                                    td
-                                        button(
-                                            @click="newLegList.push(newLegislation.value)"
-                                        ) +
-                                tr
-                                    td(colspan="2")
-                                        ul(v-if="newLegList")
-                                            li(v-for="(l,index) in newLegList")
-                                                | {{ l.Número }} - {{ l.Titulo }}
-                                                button(
-                                                    @click="newLegList.splice(index,1)"
-                                                ) x
+                                                    li(v-for="key in Object.keys(participantsSelected)" v-if="participantsSelected[key].length>0")
+                                                        b {{ key }}
+                                                            span(v-if="participantsSelected[key].length>1") es
+                                                        ul
+                                                            li(v-for="(p, index) in participantsSelectedInfo[key]")
+                                                                | {{ p[1] }} - {{ p[2] }}
+                            
 
+                            //- PROCESSOS RELACIONADOS
+                            tr
+                                td(style="width: 10%")
+                                    .info-label Processo(s) Relacionado(s):
+                                    
+                                td
+                                    table
+                                        tr
+                                            tabs
+                                                tab(:header="key" v-for="key in Object.keys(relationLists)")
+                                                    custom-table-waterfall(
+                                                        v-if="classesReady"
+
+                                                        select-left="true"
+                                                        pages-on="true"
+                                                        
+                                                        :suffix="key"
+
+                                                        :header="classesTableHeader"
+                                                        :complete-rows="relationLists[key]"
+                                                        :cwidth="cwidth"
+                                                        :n-edits="nEdits"
+                                                        
+                                                        table-class='table table-hover'
+                                                        
+                                                        @left-select-clicked="selectClicked($event)"
+                                                    )
+                                                    h4(
+                                                        v-else
+                                                    ) A carregar...
+                                        tr
+                                            td(colspan=3)
+                                                ul
+                                                    li(v-for="key in Object.keys(relationsSelectedInfo)" v-if="relationsSelectedInfo[key].length>0")
+                                                        b É {{ key }}:
+                                                        ul
+                                                            li(v-for="(c, index) in relationsSelectedInfo[key]")
+                                                                | {{ c[0] }} - {{ c[1] }}
+                                                                        
+
+                            //- LEGISLAÇÃO
+                            tr(style="padding-bottom:30px")
+                                td(style="width: 10%")
+                                    .info-label Legislação:
+
+                                td
+                                    custom-table-select(
+                                        v-if="legsReady"
+
+                                        :header="legsTableHeader"
+                                        :complete-rows="legList"
+                                        :ready="legsReady"
+                                        :cwidth="legsTableWidth"
+                                        
+                                        class-table='table table-condensed'
+
+                                        @select-clicked="orgSelected($event,selectedLegs)"
+                                    )
+                                    h4(
+                                        v-else
+                                    ) A carregar...
+
+
+
+                    panel(header="Decisões de Avaliação" v-if="type>=3" is-open)
+                        table.consulta.noborder(style="border-color: white; border-style:solid")
+                            //- PRAZO DE CONSERVAÇÃO ADMINISTRATIVA
+                            tr
+                                td
+                                    .info-label(style="text-align:center")
+                                        | Prazo de Conservação Administrativa
+                            tr
+                                td
+                                    table.noborder
+                                        //- PRAZO / FORMA DE CONTAGEM
+                                        tr
+                                            td
+                                                .info-label Prazo:
+                                            td(width="10%")
+                                                input(
+                                                    size="15"
+                                                    v-model="pca.dueDate"
+                                                )
+                                            td(style="padding-left:10px")
+                                                .info-label Forma de Contagem:
+                                            td
+                                                v-select.custom-select(
+                                                    :options="countTypes"
+                                                    v-model="pca.count"
+                                                )        
+                                        //- SUB-FORMA DE CONTAGEM
+                                        tr(v-if="pca.count.id=='vc_pcaFormaContagem_disposicaoLegal'")
+                                            td
+                                                .info-label Sub-forma de contagem:
+                                            td(colspan=3)
+                                                textarea(
+                                                    cols="72"
+                                                    lines="5"
+                                                    v-model="pca.subcount"
+                                                )
+                                        //- JUSTIFICAÇÃO (CRITÉRIOS)
+                                        tr
+                                            td
+                                                .info-label Justificação:
+                                            td(colspan=3)
+                                                table
+                                                    //- METAINFO
+                                                    tr
+                                                        td
+                                                            v-select.custom-select(
+                                                                v-model="pca.criteria.new.type"
+                                                                :options="pca.criteria.types"
+                                                            )
+                                                        td(rowspan=2)
+                                                            button(
+                                                                style="height:100%"
+                                                                @click="addNewJustCrit(pca)"  
+                                                            ) OK
+                                                    tr
+                                                        td 
+                                                            textarea(
+                                                                cols="72"
+                                                                lines="5"
+                                                                v-model="pca.criteria.new.content"
+                                                                @keyup.ctrl.enter="addNewJustCrit(pca)" 
+                                                            )
+
+                                                    //- PROCESSOS E LEGISLAÇÃO RELACIONADA
+                                                    tr
+                                                        td(colspan=2)
+                                                            accordion.info-classe
+                                                                //- PROCESSOS
+                                                                panel(v-if="pca.criteria.new.type.rel==2" header="Processos Relacionados")
+                                                                    
+                                                                    custom-table-waterfall(
+                                                                        v-if="classesReady"
+
+                                                                        select-left="true"
+                                                                        pages-on="true"
+                                                                        
+                                                                        :suffix="pca"
+
+                                                                        :header="classesTableHeader"
+                                                                        :complete-rows="pca.criteria.classes"
+                                                                        :cwidth="cwidth"
+                                                                        :n-edits="nEdits"
+                                                                        
+                                                                        table-class='table table-hover'
+                                                                        
+                                                                        @left-select-clicked="selectClickedCrit(pca, $event)"
+                                                                    )
+                                                                    h4(
+                                                                        v-else
+                                                                    ) A carregar...
+
+                                                                //- LEGISLAÇÃO
+                                                                panel(v-if="pca.criteria.new.type.rel==1" header="Legislação")
+                                                                    
+                                                                    custom-table-select(
+                                                                        v-if="legsReady"
+
+                                                                        :header="legsTableHeader"
+                                                                        :complete-rows="pca.criteria.legislation"
+                                                                        :ready="legsReady"
+                                                                        :cwidth="legsTableWidth"
+                                                                        
+                                                                        class-table='table table-condensed'
+
+                                                                        @select-clicked="legSelectedCrit($event,pca)"
+                                                                    )
+                                                                    h4(
+                                                                        v-else
+                                                                    ) A carregar...
+
+
+                                                table.whitebox(
+                                                    v-for="(crit, index) in pca.criteria.list"
+                                                    v-if="pca.criteria.list.length>0"
+                                                    width="90%"
+                                                )
+                                                    tr
+                                                        td 
+                                                            h4
+                                                                b {{ crit.type.label }}
+                                                        td
+                                                            span.glyphicon.glyphicon-remove(
+                                                                @click="pca.criteria.list.splice(index,1)"
+                                                                style="float:right; padding-right:10px"
+                                                            )
+                                                    tr 
+                                                        td(colspan=2)
+                                                            p {{ crit.content }}
+                                                            br   
+
+                                                            div(v-if="crit.pns.length>0")
+                                                                b Processos Relacionados:
+                                                                ul
+                                                                    li(v-for="pn in crit.pns")
+                                                                        | {{pn.Code}} - {{pn.Title}}
+
+                                                            div(v-if="crit.leg.length>0")            
+                                                                b Diplomas Legais Relacionados:    
+                                                                ul
+                                                                    li(v-for="doc in crit.leg")
+                                                                        | {{doc.Type}} - {{doc.Num}}
+
+                                                                                    
+                            //- DESTINO FINAL
+                            tr
+                                td
+                                    .info-label(style="text-align:center") 
+                                        | Destino Final
+                            tr
+                                td
+                                    table.noborder
+                                        //- DESTINO
+                                        tr
+                                            td
+                                                .info-label Destino:
+                                            td
+                                                input(
+                                                    size="50"
+                                                    v-model="df.end"
+                                                )                                        
+                                        //- JUSTIFICAÇÃO (CRITÉRIOS)
+                                        tr
+                                            td
+                                                .info-label Justificação:
+                                            td(colspan=3)
+                                                table
+                                                    //- METAINFO
+                                                    tr
+                                                        td
+                                                            v-select.custom-select(
+                                                                v-model="df.criteria.new.type"
+                                                                :options="df.criteria.types"
+                                                            )
+                                                        td(rowspan=2)
+                                                            button(
+                                                                style="height:100%"
+                                                                @click="addNewJustCrit(df)"  
+                                                            ) OK
+                                                    tr
+                                                        td 
+                                                            textarea(
+                                                                cols="72"
+                                                                lines="5"
+                                                                v-model="df.criteria.new.content"
+                                                                @keyup.ctrl.enter="addNewJustCrit(df)" 
+                                                            )
+
+                                                    //- PROCESSOS E LEGISLAÇÃO RELACIONADA
+                                                    tr
+                                                        td(colspan=2)
+                                                            accordion.info-classe
+                                                                //- PROCESSOS
+                                                                panel(v-if="df.criteria.new.type.rel==2" header="Processos Relacionados")
+                                                                    
+                                                                    custom-table-waterfall(
+                                                                        v-if="classesReady"
+
+                                                                        select-left="true"
+                                                                        pages-on="true"
+                                                                        
+                                                                        :suffix="df"
+
+                                                                        :header="classesTableHeader"
+                                                                        :complete-rows="df.criteria.classes"
+                                                                        :cwidth="cwidth"
+                                                                        :n-edits="nEdits"
+                                                                        
+                                                                        table-class='table table-hover'
+                                                                        
+                                                                        @left-select-clicked="selectClickedCrit(df, $event)"
+                                                                    )
+                                                                    h4(
+                                                                        v-else
+                                                                    ) A carregar...
+
+                                                                //- LEGISLAÇÃO
+                                                                panel(v-if="df.criteria.new.type.rel==1" header="Legislação")
+                                                                    
+                                                                    custom-table-select(
+                                                                        v-if="legsReady"
+
+                                                                        :header="legsTableHeader"
+                                                                        :complete-rows="df.criteria.legislation"
+                                                                        :ready="legsReady"
+                                                                        :cwidth="legsTableWidth"
+                                                                        
+                                                                        class-table='table table-condensed'
+
+                                                                        @select-clicked="legSelectedCrit($event,df)"
+                                                                    )
+                                                                    h4(
+                                                                        v-else
+                                                                    ) A carregar...
+
+                                                //- Adicionados
+                                                table.whitebox(
+                                                    v-for="(crit, index) in df.criteria.list"
+                                                    v-if="df.criteria.list.length>0"
+                                                    width="90%"
+                                                )
+                                                    tr
+                                                        td 
+                                                            h4
+                                                                b {{ crit.type.label }}
+                                                        td
+                                                            span.glyphicon.glyphicon-remove(
+                                                                @click="df.criteria.list.splice(index,1)"
+                                                                style="float:right; padding-right:10px"
+                                                            )
+                                                    tr 
+                                                        td(colspan=2)
+                                                            p {{ crit.content }}
+                                                            br   
+
+                                                            div(v-if="crit.pns.length>0")
+                                                                b Processos Relacionados:
+                                                                ul
+                                                                    li(v-for="pn in crit.pns")
+                                                                        | {{pn.Code}} - {{pn.Title}}
+
+                                                            div(v-if="crit.leg.length>0")            
+                                                                b Diplomas Legais Relacionados:    
+                                                                ul
+                                                                    li(v-for="doc in crit.leg")
+                                                                        | {{doc.Type}} - {{doc.Num}}
+
+                                        
+            
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 
             input.btn.btn-xs.btn-default.col-sm-2(
@@ -277,7 +597,7 @@ block corpo
                     ((type>1 && parent) || type==1) && 
                     code
                 )`
-            )
+             )
             p.col-sm-7 {{ message }}
     //-
 

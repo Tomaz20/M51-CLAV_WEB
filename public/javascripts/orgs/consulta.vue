@@ -56,12 +56,20 @@ new Vue({
         myTipolList: [],
         myNewTipolList: [],
 
+        participationsDic: {
+            Apreciador: "Aprecia",
+            Assessor: "Assessora",
+            Comunicador: "Comunica",
+            Decisor: "Decide",
+            Executor: "Executa",
+            Iniciador: "Inicia"
+        }
+
     },
     components: {
         spinner: VueStrap.spinner,
     },
     methods: {
-
         subtractArray: function (from, minus) {
             var ret;
 
@@ -127,7 +135,7 @@ new Vue({
                         a => (a.Tipo != "Tipologia")
                     ).map(function (item) {
                         return {
-                            label: item.Sigla,
+                            label: item.Sigla +"-"+ item.Nome,
                             value: item,
                         }
                     }).sort(function (a, b) {
@@ -139,7 +147,7 @@ new Vue({
                         a => (a.Tipo == "Conjunto")
                     ).map(function (item) {
                         return {
-                            label: item.Sigla,
+                            label: item.Sigla +"-"+ item.Nome,
                             value: item,
                         }
                     }).sort(function (a, b) {
@@ -151,7 +159,7 @@ new Vue({
                         a => (a.Tipo == "Tipologia")
                     ).map(function (item) {
                         return {
-                            label: item.Sigla,
+                            label: item.Sigla +"-"+ item.Nome,
                             value: item,
                         }
                     }).sort(function (a, b) {

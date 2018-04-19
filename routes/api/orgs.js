@@ -86,9 +86,9 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
             else {
                 Orgs.createOrg(id, name, initials, type)
                     .then(function () {
-                        Logging.logger.info('Criada organização \'' + id + '\' por utilizador \'' + req.user._id + '\'');
+                        Logging.logger.info('Criada entidade \'' + id + '\' por utilizador \'' + req.user._id + '\'');
 
-                        req.flash('success_msg', 'Organização adicionada');
+                        req.flash('success_msg', 'Entidade adicionada');
                         res.send(id);
                     })
                     .catch(error => console.error(error));
@@ -109,9 +109,9 @@ router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
             else {
                 Orgs.updateOrg(dataObj)
                     .then(function () {
-                        Logging.logger.info('Update a organização \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
+                        Logging.logger.info('Update a entidade \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
 
-                        req.flash('success_msg', 'Info. de Organização actualizada');
+                        req.flash('success_msg', 'Info. de Entidade atualizada');
                         res.send(dataObj.id);
                     })
                     .catch(error => console.error(error));

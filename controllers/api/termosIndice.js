@@ -37,3 +37,20 @@ TermosIndice.fromClass = function (clas) {
             console.error(error);
         });
 }
+
+TermosIndice.lastID = function () {
+    let fetchQuery = `
+        SELECT * WHERE { 
+            ?id rdf:type clav:TermoIndice
+        } ORDER BY DESC(?id)
+        LIMIT 1
+    `;
+
+    return client.query(fetchQuery)
+        .execute()
+        //getting the content we want
+        .then(response => Promise.resolve(response.results.bindings[0]))
+        .catch(function (error) {
+            console.error(error);
+        });
+}

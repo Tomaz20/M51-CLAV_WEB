@@ -23,8 +23,7 @@ Leg.list = function () {
 Leg.stats = function (id) {
     var fetchQuery = `
             SELECT * WHERE { 
-                    clav:${id} clav:diplomaAno ?Ano;
-                    clav:diplomaData ?Data;
+                    clav:${id} clav:diplomaData ?Data;
                     clav:diplomaNumero ?Número;
                     clav:diplomaTipo ?Tipo;
                     clav:diplomaTitulo ?Titulo;
@@ -42,11 +41,27 @@ Leg.stats = function (id) {
 
 Leg.regulates = function (id) {
     var fetchQuery = `
-            SELECT * WHERE { 
-                ?id clav:temLegislacao clav:`+ id + `;
-                    clav:codigo ?Code;
-                    clav:titulo ?Title;
-            }`;
+        SELECT DISTINCT ?id ?Code ?Title WHERE { 
+            {
+                ?id clav:temLegislacao clav:${id};
+            } 
+            UNION {
+                ?crit clav:temLegislacao clav:${id} .
+                ?just clav:temCriterio ?crit .
+                ?aval clav:temJustificacao ?just .
+
+                {
+                    ?id clav:temPCA ?aval ;
+                } 
+                UNION {
+                    ?id clav:temDF ?aval ;
+                }
+            }
+            ?id clav:codigo ?Code;
+                clav:titulo ?Title;
+                
+        } ORDER BY ?Code
+    `;
 
     return client.query(fetchQuery).execute()
         .then(response => Promise.resolve(response.results.bindings))
@@ -76,12 +91,11 @@ Leg.createDoc = function (newID, dataObj) {
         INSERT DATA {
             clav:${newID} rdf:type owl:NamedIndividual ,
                     clav:Legislacao ;
-                clav:diplomaAno '${dataObj.year}' ;
-                clav:diplomaData '${dataObj.date}' ;
-                clav:diplomaNumero '${dataObj.number}' ;
-                clav:diplomaTipo '${dataObj.type}' ;
-                clav:diplomaTitulo '${dataObj.title}' ;
-                clav:diplomaLink '${dataObj.link}' .
+                clav:diplomaData '${dataObj.Data}' ;
+                clav:diplomaNumero '${dataObj.Numero}' ;
+                clav:diplomaTipo '${dataObj.Tipo}' ;
+                clav:diplomaTitulo '${dataObj.Titulo}' ;
+                clav:diplomaLink '${dataObj.Link}' .
         }
     `;
 

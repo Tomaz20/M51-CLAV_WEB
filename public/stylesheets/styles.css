@@ -70,6 +70,17 @@
     white-space: nowrap;
 }
 
+.cascata-drop-select {
+    text-align: center;
+    background-color: #90CAF9; 
+    border-right:1px solid #ddd; 
+    width: 50px  !important; 
+    min-width: 50px  !important; 
+    max-width: 50px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
 .cascata-codigo {
     background-color: #E3F2FD;
     overflow: hidden;

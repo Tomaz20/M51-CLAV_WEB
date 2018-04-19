@@ -52,6 +52,9 @@ new Vue({
         spinner: VueStrap.spinner,
     },
     methods: {
+        dateChosen: function(payload){
+            this.legData.date.new=""+payload;
+        },
         loadClasses: function () {
             var classesToParse = [];
             var keys = ["id", "Code", "Title"];

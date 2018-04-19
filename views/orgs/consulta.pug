@@ -20,10 +20,15 @@ block corpo
                             | {{ orgName }}  
                         if user
                             td(style="width:10%")
-                                label(style="padding-right:5px") Editar
+                                label(
+                                    for="editName"
+                                    :class="[editName ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']" 
+                                ) 
                                 input(
+                                    id="editName"
                                     type="checkbox"
                                     v-model="editName"
+                                    class="drop-row"
                                 )
                     
                     //- SIGLA
@@ -75,10 +80,15 @@ block corpo
                                 span(v-else) Mostrar menos...
                         if user
                             td(style="width:10%")
-                                label(style="padding-right:5px") Editar
+                                label(
+                                    for="editDomain"
+                                    :class="[editDomain ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                )
                                 input(
+                                    id="editDomain"
                                     type="checkbox"
                                     v-model="editDomain"
+                                    class="drop-row"
                                 )
 
                     //- PARTICIPAÇÕES
@@ -107,7 +117,7 @@ block corpo
                                     td(colspan="3")
                                         ul(v-if="partsReady" style="padding-left:20px")
                                             li(v-for="key in Object.keys(newParticipations)" v-if="newParticipations[key].length>0")
-                                                b Como {{ key }}
+                                                b {{ participationsDic[key] }}:
                                                 ul
                                                     li(v-for="(p, index) in newParticipations[key]")
                                                         | {{ p.Code }} - {{ p.Title }}
@@ -117,7 +127,7 @@ block corpo
                         td(v-else style="width:80%")
                             ul(v-if="partsReady" style="padding-left:20px")
                                 li(v-for="key in Object.keys(participations)" v-if="participations[key].length>0")
-                                    b Como {{ key }}:
+                                    b  {{ participationsDic[key] }}:
                                     ul(:class="{'is-collapsed' : partsCollapsed[key] }")
                                         li(v-for="p in participations[key]")
                                             a(:href="'/classes/consultar/'+p.id") {{ p.Code }}
@@ -127,10 +137,15 @@ block corpo
                                         span(v-else) Mostrar menos...
                         if user
                             td(style="width:10%")
-                                label(style="padding-right:5px") Editar
+                                label(
+                                    for="editParts"
+                                    :class="[editParts ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                )
                                 input(
+                                    id="editParts"
                                     type="checkbox"
                                     v-model="editParts"
+                                    class="drop-row"
                                 )
 
                     //- CONJUNTOS A QUE PERTENCE
@@ -164,10 +179,15 @@ block corpo
                                     | - {{ o.Nome }}
                         if user
                             td(style="width:10%")
-                                label(style="padding-right:5px") Editar
+                                label(
+                                    for="editConj"
+                                    :class="[editConj ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                )
                                 input(
+                                    id="editConj"
                                     type="checkbox"
                                     v-model="editConj"
+                                    class="drop-row"
                                 )
 
                     //- TIPOLOGIAS A QUE PERTENCE
@@ -201,10 +221,15 @@ block corpo
                                     | - {{ o.Nome }}
                         if user
                             td(style="width:10%")
-                                label(style="padding-right:5px") Editar
+                                label(
+                                    for="editTipol"
+                                    :class="[editTipol ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                )
                                 input(
+                                    id="editTipol"
                                     type="checkbox"
                                     v-model="editTipol"
+                                    class="drop-row"
                                 )
 
                     //- ELEMENTOS
@@ -238,10 +263,15 @@ block corpo
                                     | - {{ o.Nome }}
                         if user
                             td(style="width:10%")
-                                label(style="padding-right:5px") Editar
+                                label(
+                                    for="editElems"
+                                    :class="[editElems ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                )
                                 input(
+                                    id="editElems"
                                     type="checkbox"
                                     v-model="editElems"
+                                    class="drop-row"
                                 )
 
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")            

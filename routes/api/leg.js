@@ -55,7 +55,7 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
 
     var dataObj = req.body;
 
-    Leg.checkNumberAvailability(dataObj.number)
+    Leg.checkNumberAvailability(dataObj.Number)
         .then(function (count) {
             if (count > 0) {
                 res.send("Número já existente!");
@@ -69,7 +69,7 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
                             .then(function () {
                                 Logging.logger.info('Criada legislação \'' + newID + '\' por utilizador \'' + req.user._id + '\'');
 
-                                req.flash('success_msg', 'Documento inserido');
+                                req.flash('success_msg', 'Diploma inserido');
                                 res.send(newID);
                             })
                             .catch(error => console.error(error));
@@ -93,9 +93,9 @@ router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
                 else {
                     Leg.updateDoc(dataObj)
                         .then(function () {
-                            Logging.logger.info('Update a Legislação \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
+                            Logging.logger.info('Update a Diploma \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
 
-                            req.flash('success_msg', 'Info. de Documento actualizada');
+                            req.flash('success_msg', 'Info. de Diploma actualizada');
                             res.send("Actualizado!");
                         })
                         .catch(error => console.error(error));
@@ -106,9 +106,9 @@ router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
     else {
         Leg.updateDoc(dataObj)
             .then(function () {
-                Logging.logger.info('Update a Legislação \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
+                Logging.logger.info('Update a Diploma \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
 
-                req.flash('success_msg', 'Info. de Documento actualizada');
+                req.flash('success_msg', 'Informação de Diploma actualizada');
                 res.send("Actualizado!");
             })
             .catch(error => console.error(error));

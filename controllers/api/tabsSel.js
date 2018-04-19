@@ -107,8 +107,7 @@ SelTabs.createTab = function (id, name, classes) {
         }
 
         var keyVal = {
-            ProcTipo: 'processoTipo',
-            ProcTransversal: 'processoTransversal',
+            ProcTrans: 'processoTransversal',
             Descricao: 'descricao',
             Titulo: 'titulo'
         };
@@ -130,6 +129,7 @@ SelTabs.createTab = function (id, name, classes) {
         }
 
         var keyMultVal = {
+            ProcTipo: 'processoTipoVC',
             Donos: 'temDono',
             NotasA: 'temNotaAplicacao',
             NotasE: 'temNotaExclusao',
@@ -150,7 +150,7 @@ SelTabs.createTab = function (id, name, classes) {
         }
 
         for (const key in keyMultVal) {
-            if (clas[key].value) {
+            if (clas[key] && clas[key].value) {
                 for (let val of clas[key].value.split('%%')) {
                     createQuery += `
                         clav:${clasID} clav:${keyMultVal[key]} clav:${val.replace(/[^#]+#(.*)/, '$1')} .

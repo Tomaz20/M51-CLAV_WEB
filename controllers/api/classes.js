@@ -109,7 +109,7 @@ Classes.completeData = function (classes) {
                 ?id clav:descricao ?Descricao.
             } 
             OPTIONAL {
-                ?id clav:processoTipo ?ProcTipo.
+                ?id clav:processoTipoVC ?ProcTipo.
             } 
             OPTIONAL {
                 ?id clav:processoTransversal ?ProcTrans.
@@ -381,7 +381,7 @@ Classes.updateClass = function (dataObj) {
             wherePart += "\tclav:" + dataObj.id + " clav:descricao ?desc .\n";
         }
         if (dataObj.ProcType) {
-            wherePart += "\tclav:" + dataObj.id + " clav:processoTipo ?ptipo .\n";
+            wherePart += "\tclav:" + dataObj.id + " clav:processoTipoVC ?ptipo .\n";
         }
         if (dataObj.ProcTrans) {
             wherePart += "\tclav:" + dataObj.id + " clav:processoTransversal ?ptrans .\n";
@@ -418,7 +418,7 @@ Classes.updateClass = function (dataObj) {
             insertPart += "\tclav:" + dataObj.id + " clav:descricao '" + dataObj.Desc.replace(/\n/g, '\\n') + "' .\n";
         }
         if (dataObj.ProcType) {
-            insertPart += "\tclav:" + dataObj.id + " clav:processoTipo '" + dataObj.ProcType + "' .\n";
+            insertPart += "\tclav:" + dataObj.id + " clav:processoTipoVC clav:vc_processoTipo_" + dataObj.ProcType + " .\n";
         }
         if (dataObj.ProcTrans) {
             insertPart += "\tclav:" + dataObj.id + " clav:processoTransversal '" + dataObj.ProcTrans + "' .\n";
@@ -679,6 +679,52 @@ Classes.filterByOrgs = function(orgs) {
         });
 }
 
+Classes.filterNone = function() {
+    var fetchQuery = `
+        SELECT DISTINCT
+            ?Avo ?AvoCodigo ?AvoTitulo 
+            ?Pai ?PaiCodigo ?PaiTitulo 
+            ?PN ?PNCodigo ?PNTitulo   
+            (GROUP_CONCAT(CONCAT(STR(?Filho),":::",?FilhoCodigo, ":::",?FilhoTitulo); SEPARATOR="###") AS ?Filhos)
+        WHERE {  
+            
+            ?PN rdf:type clav:Classe_N3
+
+            MINUS { 
+                ?PN clav:pertenceLC ?lc
+                filter( ?lc != clav:lc1 )
+            }
+            
+            ?PN clav:temPai ?Pai.
+            ?Pai clav:temPai ?Avo.
+            
+            ?PN clav:codigo ?PNCodigo;
+                clav:titulo ?PNTitulo.
+            
+            ?Pai clav:codigo ?PaiCodigo;
+                clav:titulo ?PaiTitulo.
+            
+            ?Avo clav:codigo ?AvoCodigo;
+                clav:titulo ?AvoTitulo.
+            
+            OPTIONAL {
+                ?Filho clav:temPai ?PN;
+                   clav:codigo ?FilhoCodigo;
+                   clav:titulo ?FilhoTitulo
+            }
+        }
+        Group By ?PN ?PNCodigo ?PNTitulo ?Pai ?PaiCodigo ?PaiTitulo ?Avo ?AvoCodigo ?AvoTitulo 
+        Order By ?PN
+    `;
+
+    return client.query(fetchQuery).execute()
+        //Getting the content we want
+        .then(response => Promise.resolve(response.results.bindings))
+        .catch(function (error) {
+            console.error("Error in check:\n" + error);
+        });
+}
+
 Classes.filterCommon = function(orgs) {
     var fetchQuery = `
         SELECT DISTINCT
@@ -688,7 +734,7 @@ Classes.filterCommon = function(orgs) {
             (GROUP_CONCAT(CONCAT(STR(?Filho),":::",?FilhoCodigo, ":::",?FilhoTitulo); SEPARATOR="###") AS ?Filhos)
         WHERE {  
             ?PN rdf:type clav:Classe_N3 .
-            ?PN clav:processoTipo "PC" .
+            ?PN clav:processoTipoVC clav:vc_processoTipo_pc .
             
             ?PN clav:temPai ?Pai.
             ?Pai clav:temPai ?Avo.
@@ -734,7 +780,7 @@ Classes.filterRest = function(orgs) {
             (GROUP_CONCAT(CONCAT(STR(?Filho),":::",?FilhoCodigo, ":::",?FilhoTitulo); SEPARATOR="###") AS ?Filhos)
         WHERE { 
             ?PN rdf:type clav:Classe_N3 .
-            ?PN clav:processoTipo "PE" .
+            ?PN clav:processoTipoVC clav:vc_processoTipo_pe .
             
             MINUS { 
                 ?PN clav:pertenceLC ?lc
@@ -836,52 +882,154 @@ Classes.createClass = function (data) {
         }
     }
 
-    if (data.Level == 3 && data.Type) {
-        createQuery += 'clav:' + id + ' clav:processoTipo "' + data.Type + '" .\n';
-    }
-
-    if (data.Level == 3 && data.Trans) {
-        createQuery += 'clav:' + id + ' clav:processoTransversal "' + data.Trans + '" .\n';
-    }
-
-    if (data.Level == 3 && data.Owners && data.Owners.length) {
-        for (var i = 0; i < data.Owners.length; i++) {
-            createQuery += 'clav:' + id + ' clav:temDono clav:' + data.Owners[i].id + ' .\n';
+    if(data.Level >= 3 && data.Indexes && data.Indexes.length ) {
+        for(let [i,index] of data.Indexes.entries()){
+            createQuery += `
+                clav:ti_${id}_${i+1} rdf:type owl:NamedIndividual ,
+                        clav:TermoIndice ;
+                    clav:termo "${index.Note.replace(/\n/g, '\\n')}" ;
+                    clav:estaAssocClasse clav:${id} .
+            `;
         }
     }
 
-    if (data.Level == 3 && data.Trans == 'S' && data.Participants) {
-        var keys = Object.keys(data.Participants);
+    if (data.Level >= 3 && data.Type) {
+        createQuery += 'clav:' + id + ' clav:processoTipoVC clav:vc_processoTipo_' + data.Type + ' .\n';
+    }
 
-        for (var k = 0; k < keys.length; k++) {
-            for (var i = 0; i < data.Participants[keys[k]].length; i++) {
-                createQuery += 'clav:' + id + ' clav:temParticipante' + keys[k] + ' clav:' + data.Participants[keys[k]][i].id + ' .\n';
+    if (data.Level >= 3 && data.Trans) {
+        createQuery += 'clav:' + id + ' clav:processoTransversal "' + data.Trans + '" .\n';
+    }
+
+    if (data.Level >= 3 && data.Owners && data.Owners.length) {
+        for (let owner of data.Owners) {
+            createQuery += `clav:${id} clav:temDono clav:${owner} .\n`;
+        }
+    }
+
+    if (data.Level >= 3 && data.Trans == 'S' && data.Participants) {
+        for (let key in data.Participants) {
+            for (let part of data.Participants[key]) {
+                createQuery += `clav:${id} clav:temParticipante${key} clav:${part} .\n`;
             }
         }
     }
 
-    if (data.Level == 3 && data.RelProcs) {
-        var keys = Object.keys(data.RelProcs);
-
-        for (var k = 0; k < keys.length; k++) {
-            for (var i = 0; i < data.RelProcs[keys[k]].length; i++) {
-                createQuery += 'clav:' + id + ' clav:e' + keys[k].replace(/ /, '') + ' clav:' + data.RelProcs[keys[k]][i].id + ' .\n';
+    if (data.Level >= 3 && data.RelProcs) {
+        for (let key in data.RelProcs) {
+            for (let proc of data.RelProcs[key]) {
+                createQuery += `clav:${id} clav:e${key.replace(/ /, '')} clav:${proc} .\n`;
             }
         }
     }
 
     if (data.Legislations && data.Legislations.length) {
-        for (var i = 0; i < data.Legislations.length; i++) {
-            createQuery += 'clav:' + id + ' clav:temLegislacao clav:' + data.Legislations[i].id + ' .\n';
+        for (let doc of data.Legislations) {
+            createQuery += `clav:${id} clav:temLegislacao clav:${doc} .\n`;
+        }
+    }
+
+    if (data.Level >=3 && data.PCA){
+        createQuery += `
+            clav:pca_${id} rdf:type owl:NamedIndividual ,
+                    clav:PCA ;
+                clav:pcaFormaContagemNormalizada clav:${data.PCA.count.id} ;
+                clav:pcaValor '${data.PCA.dueDate}' .
+            
+            clav:just_pca_${id} rdf:type owl:NamedIndividual ,
+                    clav:JustificacaoPCA .
+            clav:pca_${id} clav:temJustificacao clav:just_pca_${id} .
+
+            clav:${id} clav:temPCA clav:pca_${id} .
+        `;
+
+        if(data.PCA.count.id=='vc_pcaFormaContagem_disposicaoLegal'){
+            createQuery+= `
+                clav:vc_pcaSubformaContagem_${id} rdf:type owl:NamedIndividual ,
+                        skos:Concept ;
+                    skos:scopeNote '${data.PCA.subcount}' .
+                clav:pca_${id} clav:pcaSubformaContagem clav:vc_pcaSubformaContagem_${id} .
+            `;
+        }
+
+        if(data.PCA.criteria){
+            for(let [i, crit] of data.PCA.criteria.entries()){
+                let critID = `clav:crit_jpca_${id}_${i+1}`;
+
+                createQuery+=`
+                    ${critID} rdf:type owl:NamedIndividual ,
+                            clav:${crit.type.value} ;
+                        clav:conteudo '${crit.content.replace(/\n/g, '\\n')}' .
+                    clav:just_pca_${id} clav:temCriterio ${critID} .
+                `;
+
+                if(crit.pns){
+                    for(let pn of crit.pns){
+                        createQuery+=`
+                            ${critID} clav:temProcessoRelacionado clav:${pn.id} .
+                        `;
+                    }
+                }
+                if(crit.leg){
+                    for(let doc of crit.leg){
+                        createQuery+=`
+                            ${critID} clav:temLegislacao clav:${doc.id} .
+                        `;
+                    }
+                }
+            } 
+        }
+    }
+
+    if (data.Level >=3 && data.DF){
+        createQuery += `
+            clav:df_${id} rdf:type owl:NamedIndividual ,
+                    clav:DestinoFinal ;
+                clav:dfValor '${data.DF.end}' .
+
+            clav:just_df_${id} rdf:type owl:NamedIndividual ,
+                    clav:JustificacaoDF . 
+            
+            clav:df_${id} clav:temJustificacao clav:just_df_${id} .
+
+            clav:${id} clav:temDF clav:df_${id} .
+        `;        
+
+        if(data.DF.criteria){
+            for(let [i, crit] of data.DF.criteria.entries()){
+                let critID = `clav:crit_just_df_${id}_${i+1}`;
+
+                createQuery+=`
+                    ${critID} rdf:type owl:NamedIndividual ,
+                            clav:${crit.type.value} ;
+                        clav:conteudo '${crit.content.replace(/\n/g, '\\n')}' .
+                    clav:just_df_${id} clav:temCriterio ${critID} .
+                `;
+
+                if(crit.pns){
+                    for(let pn of crit.pns){
+                        createQuery+=`
+                            ${critID} clav:temProcessoRelacionado clav:${pn.id} .
+                        `;
+                    }
+                }
+                if(crit.leg){
+                    for(let doc of crit.leg){
+                        createQuery+=`
+                            ${critID} clav:temLegislacao clav:${doc.id} .
+                        `;
+                    }
+                }
+            } 
         }
     }
 
     createQuery += '}';
 
-
     return client.query(createQuery).execute()
         .then(response => Promise.resolve(response))
         .catch(error => console.error("Error in create:\n" + error));
+    
 
 }
 

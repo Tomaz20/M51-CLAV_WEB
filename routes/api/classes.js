@@ -1,6 +1,7 @@
 var Logging = require('../../controllers/logging');
 var Auth = require('../../controllers/auth.js');
 var Classes = require('../../controllers/api/classes.js');
+var TermosIndice = require('../../controllers/api/termosIndice.js');
 
 var express = require('express');
 var router = express.Router();
@@ -16,6 +17,14 @@ router.get('/', function (req, res) {
 
 router.get('/nivel=:n', function (req, res) {
     Classes.list(req.params.n)
+        .then(list => res.send(list))
+        .catch(function (error) {
+            console.error(error);
+        });
+})
+
+router.get('/filtrar', function (req, res) {
+    Classes.filterNone()
         .then(list => res.send(list))
         .catch(function (error) {
             console.error(error);
@@ -169,7 +178,7 @@ router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
         .catch(error => console.error(error));
 })
 
-router.post('/', Auth.isLoggedInAPI, function (req, res) {
+router.post('/', function (req, res) {
     var dataObj = req.body;
 
     Classes.checkCodeAvailability(dataObj.Code)

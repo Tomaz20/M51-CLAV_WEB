@@ -14,7 +14,7 @@ Vue.component('custom-table-simple', {
             <div class="col-sm-7">
                 <input class="form-control" v-model="filt" type="text" placeholder="Filtrar"/>
             </div>
-            <div class="col-sm-1"  v-if="add">
+            <div class="col-sm-1"  v-if="add" style="float:right">
                 <button type="button" class="btn btn-default btn-circle" @click="addClick">
                     <span class="glyphicon glyphicon-plus"/>
                 </button>
@@ -202,7 +202,7 @@ Vue.component('custom-table-simple', {
 
 Vue.component('custom-table-select', {
     template: `
-        <div>
+        <div style="padding-bottom:30px">
             <div class="col-sm-4">
                 Mostrar
                 <select v-model="rowsPerPage">
@@ -421,7 +421,14 @@ Vue.component('row-waterfall', {
                 <table class="partial-hover cascata-table-within" :class="tableClass">
                     <tbody name="table">
                         <tr>
-                            <td v-if="row.sublevel" class="cascata-drop">
+                            <td v-if="row.sublevel" :class="[(selectLeft && level>=3) ? 'cascata-drop-select' :'cascata-drop']">
+                                <input
+                                    v-if="selectLeft && level>=3"
+                                    :id="'left'+id+suffix"
+                                    type="checkbox"
+                                    v-model="row.selected"
+                                    @click="leftSelectClicked"
+                                />
                                 <label
                                     :for="'toggle'+id+suffix"
                                     :class="[row.drop ? 'glyphicon glyphicon-minus' : 'glyphicon glyphicon-plus']"
@@ -436,6 +443,13 @@ Vue.component('row-waterfall', {
                             </td>
                             
                             <td v-else class="cascata-drop">
+                                <input
+                                    v-if="selectLeft && level>=3"
+                                    :id="'left'+id+suffix"
+                                    type="checkbox"
+                                    v-model="row.selected"
+                                    @click="leftSelectClicked"
+                                />
                                 <span style="padding-right:18px"></span>
                             </td>
 
@@ -477,6 +491,7 @@ Vue.component('row-waterfall', {
                             v-for="(line,index) in row.sublevel"
 
                             :select-on="selectOn"
+                            :select-left="selectLeft"
                             :id="genId(index)"
                             :row="line"
                             :key="index"
@@ -502,6 +517,7 @@ Vue.component('row-waterfall', {
         'cwidth',
         'id',
         'selectOn',
+        'selectLeft',
         'root',
         'suffix',
     ],
@@ -522,6 +538,15 @@ Vue.component('row-waterfall', {
                     id: this.id,
                     rowData: this.row
                 }
+            };
+            this.$emit('eventWaterfall', eventContent);
+        },
+        leftSelectClicked: function () { //emit event when a row is selected
+            var eventContent = {
+                type: "left-select",
+                suffix: this.suffix,
+                id: this.id,
+                rowData: this.row
             };
             this.$emit('eventWaterfall', eventContent);
         },
@@ -580,7 +605,7 @@ Vue.component('custom-table-waterfall', {
                 </select>
                 entradas
             </div>
-            <div class="col-sm-1"  v-if="add">
+            <div class="col-sm-1"  v-if="add" style="float:right">
                 <button type="button" class="btn btn-default btn-circle" @click="addClick">
                     <span class="glyphicon glyphicon-plus"/>
                 </button>
@@ -610,6 +635,7 @@ Vue.component('custom-table-waterfall', {
                         v-for="(row,index) in rowsShow"
 
                         :select-on="selectOn"
+                        :select-left="selectLeft"
                         :row="row"
                         :id="genID(index)"
                         :key="row.index"
@@ -640,6 +666,7 @@ Vue.component('custom-table-waterfall', {
         'pagesOn',
         'add',
         'selectOn',
+        'selectLeft',
         'nEdits',
         'suffix'
     ],
@@ -776,6 +803,9 @@ Vue.component('custom-table-waterfall', {
                 else {
                     this.$emit('select-clicked', event.params);
                 }
+            }
+            else if (event.type == "left-select") {
+                this.$emit('left-select-clicked', event);
             }
         },
         addClick: function (index) { //emit event when the '+' button is clicked

@@ -2,35 +2,75 @@ extends ../layout
 block corpo
     #nova-legislacao-form.panel.panel-default
         .panel-heading
-            h1.page-header Novo Documento  
+            h3.page-header Novo Diploma
         .panel-body
             .form-group
-                table
-                    tr(v-for="item in legData")
-                        td(style="width:10%")
-                            label {{item.label}}: 
+                table.consulta(style="border-color: white; border-style:solid; margin-bottom:20px")
+                    
+                    //- TÍTULO
+                    tr
+                        td(style="width: 10%")
+                            .info-label Título: 
                         td(style="width:80%")
                             input(
-                                size="70"
-                                v-model="item.value"
+                                size="50"
+                                v-model="diploma.Titulo"
+                            )
+                    
+                    //- Tipo
+                    tr
+                        td(style="width: 10%")
+                            .info-label Tipo: 
+                        td(style="width:80%")
+                            input(
+                                size="50"
+                                v-model="diploma.Tipo"
+                            )
+                    
+                    //- Número
+                    tr
+                        td(style="width: 10%")
+                            .info-label Número: 
+                        td(style="width:80%")
+                            input(
+                                size="50"
+                                v-model="diploma.Numero"
+                                pattern="[0-9]+(\-\w)?/[0-9]+"
+                            )
+                    
+                    //- Data
+                    tr
+                        td(style="width: 10%")
+                            .info-label Data: 
+                        td(style="width:80%")
+                            datepicker(
+                                value=""
+                                @input="dataEscolhida($event)"
+                                format="dd/MM/yyyy"
+                                placeholder="DD/MM/AAAA"
+                            )
+                    
+                    //- Link
+                    tr
+                        td(style="width: 10%")
+                            .info-label Link: 
+                        td(style="width:80%")
+                            input(
+                                size="50"
+                                v-model="diploma.Link"
                             )
 
-            spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
-
-            input.btn.btn-xs.btn-default.col-sm-2(
+            spinner(ref="spinner" size="lg" fixed text="Por favor aguarde...")
+            input.btn.btn-xs.btn-default.col-sm-1(
                 type="button" 
                 @click="add" 
-                value="Adicionar" 
-                :disabled="!(\
-                    legData.year.value &&\
-                    legData.date.value &&\
-                    legData.number.value &&\
-                    legData.type.value &&\
-                    legData.title.value &&\
-                    legData.link.value\
-                )"
+                value="Confirmar" 
+                :disabled="!readyToCreate()"
+
+                style="margin-right:10px"
             )
-            p.col-sm-7 {{ message }}
+            div(v-html="message")
+
     //-
     
 
