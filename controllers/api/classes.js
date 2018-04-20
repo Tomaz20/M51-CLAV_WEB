@@ -504,11 +504,16 @@ Classes.updateClass = function (dataObj) {
 
 }
 
-Classes.checkCodeAvailability = function (code) {
+Classes.checkCodeAvailability = function (code, level) {
     var checkQuery = `
             SELECT (count(*) AS ?Count) WHERE {
-                ?c rdf:type clav:Classe_N1 ;
+                ?c rdf:type clav:Classe_N${level} ;
                     clav:codigo '${code}'
+
+                MINUS { 
+                    ?c clav:pertenceLC ?lc
+                    filter( ?lc != clav:lc1 )
+                }
             }
         `;
 

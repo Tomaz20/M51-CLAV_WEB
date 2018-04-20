@@ -167,6 +167,15 @@ router.get('/:id/df', function (req, res) {
         .catch(error=>console.error(error));
 })
 
+router.get('/:code/check/:level', function (req, res) {
+    Classes.checkCodeAvailability(req.params.code, req.params.level)
+        .then(function (count) {
+            res.send(count);
+        })
+        .catch(error=>console.error(error));
+})
+
+
 router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
     Classes.updateClass(req.body.dataObj)
         .then(function (response) {
@@ -178,10 +187,12 @@ router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
         .catch(error => console.error(error));
 })
 
+
+
 router.post('/', function (req, res) {
     var dataObj = req.body;
 
-    Classes.checkCodeAvailability(dataObj.Code)
+    Classes.checkCodeAvailability(dataObj.Code, dataObj.Level)
         .then(function (count) {
             if (count > 0) {
                 res.send("Código já existente!");

@@ -495,10 +495,15 @@ new Vue({
                         legislacao: []
                     }
 
-                    newCrit.tipo = criterio.Tipo.value
-                        .replace(/[^#]+#(.*)/, '$1')
-                        .split(/(?=[A-Z])/)
-                        .join(' ');
+                    let critTypes = {
+                        CriterioJustificacaoComplementaridadeInfo: "Critério Complementaridade Informacional",
+                        CriterioJustificacaoUtilidadeAdministrativa: "Critério Utilidade Administrativa",
+                        CriterioJustificacaoLegal: "Critério Legal",
+                        CriterioJustificacaoGestionario: "Critério Gestionário",
+                        CriterioJustificacaoDensidadeInfo: "Critério Densidade Informacional",
+                    }
+
+                    newCrit.tipo = critTypes[criterio.Tipo.value.replace(/[^#]+#(.*)/, '$1')];
                     
                     newCrit.nota = criterio.Conteudo.value;
                     
@@ -598,10 +603,15 @@ new Vue({
                         legislacao: []
                     }
 
-                    newCrit.tipo = criterio.Tipo.value
-                        .replace(/[^#]+#(.*)/, '$1')
-                        .split(/(?=[A-Z])/)
-                        .join(' ');
+                    let critTypes = {
+                        CriterioJustificacaoComplementaridadeInfo: "Critério Complementaridade Informacional",
+                        CriterioJustificacaoUtilidadeAdministrativa: "Critério Utilidade Administrativa",
+                        CriterioJustificacaoLegal: "Critério Legal",
+                        CriterioJustificacaoGestionario: "Critério Gestionário",
+                        CriterioJustificacaoDensidadeInfo: "Critério Densidade Informacional",
+                    }
+
+                    newCrit.tipo = critTypes[criterio.Tipo.value.replace(/[^#]+#(.*)/, '$1')];
                     
                     newCrit.nota = criterio.Conteudo.value;
 

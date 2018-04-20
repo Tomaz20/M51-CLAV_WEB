@@ -24,8 +24,8 @@ new Vue({
 
         title: null,
 
-        orgsTableHeader: ["#", "Sigla", "Nome"],
-        orgsTableWidth: ["4%", "20%", "80%"],
+        orgsTableHeader: ["#", "Sigla", "Nome", "Tipo"],
+        orgsTableWidth: ["4%", "15%", "70%", "15%"],
         ownerList: [],
         selectedOwners: [],
         orgsReady: false,
@@ -182,7 +182,7 @@ new Vue({
         },
 
         message: null,
-
+        codeMessage: "",
         parentvalue: "",
     },
     watch: {
@@ -202,6 +202,8 @@ new Vue({
             }
         },
         code: function () {
+            this.codeMessage="";
+
             if (this.type > 1) {
                 if (this.code.indexOf(this.parent.slice(1, this.parent.length)) != 0) {
                     this.code = this.parent.slice(1, this.parent.length) + ".";
@@ -210,9 +212,38 @@ new Vue({
                     this.code = this.parent.slice(1, this.parent.length) + ".";
                 }
             }
+            let reg = {
+                1: /^[0-9]{3}$/,
+                2: /^[0-9]{3}\.[0-9]{2}$/,
+                3: /^[0-9]{3}\.[0-9]{2}\.[0-9]{3}$/,
+                4: /^[0-9]{3}\.[0-9]{2}\.[0-9]{3}\.[0-9]{3}$/,
+            }
+            
+            if(!reg[this.type].test(this.code)){
+                this.codeMessage="Formato inválido";
+            }
+            else{
+                this.checkCodeAvailability(this.code);
+            }
         }
     },
     methods: {
+        checkCodeAvailability: _.debounce(
+            function(code){
+                var count;
+
+                this.$http.get(`/api/classes/${code}/check/${this.type}`)
+                .then(function (response) {
+                    count = response.body;
+                })
+                .then(function () {
+                    if(parseInt(count)>0){
+                        this.codeMessage = "Codigo já existe!";
+                    }  
+                })
+            },
+            1000
+        ),
         loadCountTypes: function(){
             var dataToParse = [];
             var keys = ["id", "Label"];
@@ -437,7 +468,7 @@ new Vue({
         },
         loadOrgs: function () {
             var orgsToParse = [];
-            var keys = ["id", "Sigla", "Nome"];
+            var keys = ["id", "Sigla", "Nome", "Tipo"];
             var i = 0;
 
             this.$http.get("/api/organizacoes")
@@ -445,10 +476,25 @@ new Vue({
                     orgsToParse = response.body;
                 })
                 .then(function () {
+                    conj = new RegExp("#Conjunto", "g");
+                    tipol = new RegExp("#Tipologia", "g");
+
                     this.ownerList = this.parse(orgsToParse, keys)
+                        .map( function(item){
+                            if (conj.test(item.Tipo)){
+                                item.Tipo="Conjunto";
+                            }
+                            else if (tipol.test(item.Tipo)){
+                                item.Tipo="Tipologia";
+                            }
+                            else {
+                                item.Tipo="Organização";
+                            }
+                            return item;
+                        })
                         .map(function (item) {
                             return {
-                                data: [i++, item.Sigla, item.Nome],
+                                data: [i++, item.Sigla, item.Nome, item.Tipo],
                                 selected: false,
                                 id: item.id
                             }
@@ -596,6 +642,11 @@ new Vue({
         },
         checkready: function (dataObj) {
             if (!this.code.match(/^([0-9]+\.)*[0-9]+$/)) {
+                this.message = "Formato do código errado!";
+                return false;
+            }
+
+            if (this.codeMessage.length>0){
                 this.message = "Formato do código errado!";
                 return false;
             }
