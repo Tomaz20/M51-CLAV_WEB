@@ -464,14 +464,14 @@ new Vue({
 
             let PCA = {
                 formacontagem: "",
-                contagemnormalizada: "",
+                subContagem: "",
                 notas: [],
                 valores: [],
                 criterios: [],
             }
 
-            if(data.Contagem){
-                PCA.formacontagem = data.Contagem.value;
+            if(data.SubContagem){
+                PCA.subContagem = data.SubContagem.value;
             }
             
             if(data.ContagemNorm){

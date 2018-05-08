@@ -1,20 +1,18 @@
 extends ../layout
 block corpo 
-
-    table(style="width:70%")
-        td(valign="middle" align="center")
-            .titlebox   
-                | Indique o tipo de Tabela de Seleção
-
-        td(valign="middle" align="center")
-            table
-                tr(style="padding:8px")
-                    td(style="padding:8px").greybox
-                        |  Tabela Organizacional
-                    td  
-                        button.next(onclick='window.location.href="/tabelasSelecao/submeter/passos"') >
-                tr(style="padding:8px")
-                    td(style="padding:8px").greybox
-                        |  Tabela Pluriorganizacional
-                    td  
-                        button.next >
+    center
+        table.table.tabela-navegacao( style="width:400px")
+            tr
+                td(colspan="2")
+                    .labelbox
+                        | Indique o tipo de Tabela de Seleção
+            tr
+                td
+                    a(href="/tabelasSelecao/submeter/passos")
+                        .linkbox(style="margin-bottom:0px")
+                            | Tabela Organizacional
+            tr
+                td
+                    a(href="#")
+                        .linkbox(style="margin-bottom:0px")
+                            | Tabela Pluriorganizacional

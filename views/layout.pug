@@ -1,10 +1,12 @@
 extends ./_bootstrap
 append head
-	title M51-CLAV
+	title M51-CLAV 
+		if title
+			| - #{title}
 
 append styles
 	meta(name="author",content="Tomás Ferreira")
-	link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css")
+	link(rel="stylesheet", href="/stylesheets/bootstrap-theme.min.css")
 	link(href="/stylesheets/styles.css" rel="stylesheet" type="text/css")
 	link(href='/stylesheets/dashboard.css', rel='stylesheet')
 	link(href='/stylesheets/theme.css', rel='stylesheet')
@@ -14,7 +16,7 @@ append styles
 	
 
 block body
-	nav.navbar.navbar-inverse.navbar-fixed-top
+	nav.navbar.navbar-inverse.navbar-fixed-top.nav-top-custom-style
 		.container-fluid
 			.navbar-header
 				button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#navbar', aria-expanded='false', aria-controls='navbar')
@@ -25,13 +27,39 @@ block body
 				button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#users', aria-expanded='false', aria-controls='users')
 					span.sr-only Toggle authentication
 					span.glyphicon.glyphicon-user(style="color: white")
-				a(href="/").navbar-brand
-					span.glyphicon.glyphicon-home(style="color: white")
-				a(href="/").navbar-brand 
-					| CLAV – Plataforma para a Classificação e Avaliação da Informação Pública
-			
+				if page=="index"
+					a(href="/").navbar-brand
+						span.glyphicon.glyphicon-home(style="color: white; padding-right:10px")
+						| CLAV – Plataforma para a Classificação e Avaliação da Informação Pública
+				else
+					a(href="/").navbar-brand
+						span.glyphicon.glyphicon-home(style="color: white; padding-right:10px")
+						| CLAV
+
 			//collapsable on mobile, fixed in desktop
-			#users.navbar-collapse.collapse
+			#navbartop.navbar-collapse.collapse
+				if page!="index"
+					ul.nav.navbar-nav.navbar-left
+						//--------------------------------------------------------------------
+						
+						if user
+							li(v-for="linha in linhas" :style="linha.style")
+								a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-expanded='false' style="padding-left:7px;padding-right:7px")
+									| {{ linha.valor }} 
+									span.caret
+								ul.dropdown-menu(role="menu")
+									li
+										a(:href='linha.consultar') Consultar
+									li
+										a(:href='linha.submeter') Submeter
+							
+						else
+							li(v-for="(linha,index) in linhas" :style="linha.style")
+								a(:href="linha.consultar")
+									| {{linha.valor}}
+
+						//--------------------------------------------------------------------
+
 				ul.nav.navbar-nav.navbar-right
 					if user
 						li 
@@ -80,67 +108,88 @@ block body
 	.container-fluid
 		.row
 			//does not appear on mobile
-			.col-sm-3.col-md-2.sidebar
-				ul.nav.nav-sidebar#navegacaoleft
-					if user
-						li(v-for="linha in linhas")
+			if sidebar
+				.col-sm-3.col-md-2.sidebar(style="padding-bottom:60px")
+					block lateral
+
+					//-ul.nav.nav-sidebar#navegacaoleft
+						if user
+							li(v-for="linha in linhas")
+								accordion
+									panel(:header="linha.valor")
+										ul.nav
+											li
+												a(:href='linha.consultar') Consultar
+											li
+												a(:href='linha.submeter') Submeter
+						
+						else
+							li(v-for="linha in linhas")
+								a(:href="linha.consultar")
+									| {{linha.valor}}
+
+						li
 							accordion
-								panel(:header="linha.valor")
+								panel(header="Testes")
 									ul.nav
 										li
-											a(:href='linha.consultar') Consultar
+											a(href='/users/pedido_submetido/1') Pedido Submetido
 										li
-											a(:href='linha.submeter') Submeter
-					
-					else
-						li(v-for="linha in linhas")
-							a(:href="linha.consultar")
-								| {{linha.valor}}
+											a(href='/organizacoes/area_trabalho') Área de Entidade
+										li
+											a(href='/organizacoes/registo_entidade') Registo de Entidades
+										li
+											a(href='/organizacoes/registo_utilizador') Registo de Utilizadores
+										li
+											a(href='/organizacoes/questionario') Questionário
+										li
+											a(href='/organizacoes/autenticacao') Autenticação
+										li
+											a(href='/organizacoes/autenticacao_email') Autenticação por Email
+										li
+											a(href='/organizacoes/entidade') Página da Entidade
+										li
+											a(href='/tabelasSelecao/submeter') Escolha do Tipo de TS
+										li
+											a(href='/tabelasSelecao/submeter/escolher_processos') Escolha de Processos
+										li
+											a(href='/tabelasSelecao/submeter/passos') Passos para criação de TS
+										li
+											a(href='/tabelasSelecao/alteracao') Alteração da TS
 
-					//li
-						accordion
-							panel(header="Testes")
-								ul.nav
-									li
-										a(href='/users/pedido_submetido/1') Pedido Submetido
-									li
-										a(href='/organizacoes/area_trabalho') Área de Entidade
-									li
-										a(href='/organizacoes/registo_entidade') Registo de Entidades
-									li
-										a(href='/organizacoes/registo_utilizador') Registo de Utilizadores
-									li
-										a(href='/organizacoes/questionario') Questionário
-									li
-										a(href='/organizacoes/autenticacao') Autenticação
-									li
-										a(href='/organizacoes/autenticacao_email') Autenticação por Email
-									li
-										a(href='/organizacoes/entidade') Página da Entidade
-									li
-										a(href='/tabelasSelecao/submeter') Escolha do Tipo de TS
-									li
-										a(href='/tabelasSelecao/submeter/escolher_processos') Escolha de Processos
-									li
-										a(href='/tabelasSelecao/submeter/passos') Passos para criação de TS
-									li
-										a(href='/tabelasSelecao/alteracao') Alteração da TS
+				.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+					h3
+						if success_msg!=""
+							.alert.alert-success #{success_msg}
 
-			.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
-				h3
-					if success_msg!=""
-						.alert.alert-success #{success_msg}
+						if warn_msg!=""
+							.alert.alert-warning #{warn_msg}
+						
+						if error_msg!=""
+							.alert.alert-danger #{error_msg}
 
-					if warn_msg!=""
-						.alert.alert-warning #{warn_msg}
-					
-					if error_msg!=""
-						.alert.alert-danger #{error_msg}
+						if error!=""
+							.alert.alert-danger #{error}
+						
+					block corpo
 
-					if error!=""
-						.alert.alert-danger #{error}
-					
-				block corpo
+			
+			else
+				.col-lg-12.main(style="margin-left:30px; margin-right:30px")
+					h3
+						if success_msg!=""
+							.alert.alert-success #{success_msg}
+
+						if warn_msg!=""
+							.alert.alert-warning #{warn_msg}
+						
+						if error_msg!=""
+							.alert.alert-danger #{error_msg}
+
+						if error!=""
+							.alert.alert-danger #{error}
+						
+					block corpo
 
 block footer
 	table

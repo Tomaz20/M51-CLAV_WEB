@@ -19,17 +19,36 @@ SelTabs.list = function () {
 
 SelTabs.listClasses = function (table) {
     var listQuery = `
-            SELECT ?id ?Code ?Title (count(?sub) as ?NChilds) FROM noInferences:
-            WHERE {
-                ?id rdf:type clav:Classe_N1 ;
-                    clav:codigo ?Code ;
-                    clav:titulo ?Title ;
-                    clav:pertenceLC clav:${table} .
-                optional {
-                    ?sub clav:temPai ?id ;
-                        clav:pertenceLC clav:${table} .
-                }
-            }Group by ?id ?Code ?Title
+        SELECT DISTINCT
+            ?Avo ?AvoCodigo ?AvoTitulo 
+            ?Pai ?PaiCodigo ?PaiTitulo 
+            ?PN ?PNCodigo ?PNTitulo   
+            (GROUP_CONCAT(CONCAT(STR(?Filho),":::",?FilhoCodigo, ":::",?FilhoTitulo); SEPARATOR="###") AS ?Filhos)
+        WHERE {  
+            
+            ?PN rdf:type clav:Classe_N3.
+            ?PN clav:pertenceLC clav:${table}.
+            
+            ?PN clav:temPai ?Pai.
+            ?Pai clav:temPai ?Avo.
+            
+            ?PN clav:codigo ?PNCodigo;
+                clav:titulo ?PNTitulo.
+            
+            ?Pai clav:codigo ?PaiCodigo;
+                clav:titulo ?PaiTitulo.
+            
+            ?Avo clav:codigo ?AvoCodigo;
+                clav:titulo ?AvoTitulo.
+            
+            OPTIONAL {
+                ?Filho clav:temPai ?PN;
+                clav:codigo ?FilhoCodigo;
+                clav:titulo ?FilhoTitulo
+            }
+        }
+        Group By ?PN ?PNCodigo ?PNTitulo ?Pai ?PaiCodigo ?PaiTitulo ?Avo ?AvoCodigo ?AvoTitulo 
+        Order By ?PN
         `;
 
 
@@ -84,7 +103,7 @@ SelTabs.createTab = function (id, name, classes) {
                 clav:${id} rdf:type owl:NamedIndividual ,
                         clav:TabelaSelecao ;
                     clav:referencialClassificativoStatus 'H';
-                    clav:designacao '${name}' .
+                    clav:designacao '${name} ${id.replace("ts_","")}' .
         `;
 
     for (let clas of classes) {

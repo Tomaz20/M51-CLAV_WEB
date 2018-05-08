@@ -62,15 +62,20 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
     }
 
     var dataObj = req.body;
-
+    console.log("A criar TS...");
     SelTabs.list()
         .then(function (list) {
+            console.log("A gerar id...");
             var id = genID(list);
-
+            console.log("ID gerado!");            
+            console.log("Copiando informação das classes...");
             Classes.completeData(dataObj.classes)
                 .then(function(classes){
+                    console.log("Info. de classes copiada!");
+                    
                     let relations = ["Rels1","Rels2","Rels3","Rels4","Rels5","Rels6","Rels7"];
-
+                    console.log("A filtrar relações entre classes...");
+                    
                     // filtrar relações por PNs que estejam na tabela
                     for(let clas of classes){
                         for(let rel of relations){
@@ -82,9 +87,11 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
                                 .join('%%');
                         }
                     }
+                    console.log("Relações entre classes filtradas!");
 
                     SelTabs.createTab(id, dataObj.name, classes)
                         .then(function () {
+                            console.log("TS criada!");
                             Logging.logger.info('Criada Tabela de Seleção \'' + id + '\' por utilizador \'' + req.user._id + '\'');
 
                             req.flash('success_msg', 'Tabela de Seleção criada');

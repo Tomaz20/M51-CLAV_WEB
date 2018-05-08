@@ -4,15 +4,15 @@ var router = express.Router();
 var Auth = require('../controllers/auth.js');
 
 router.get('/', function(req, res, next) {
-	res.render('orgs/listagem');
+	res.render('orgs/listagem', {title: "Entidades"});
 });
 
 router.get('/adicionar', Auth.isLoggedIn, function(req, res) {
-    res.render('orgs/adicao');
+    res.render('orgs/adicao', {title: "Nova entidade"});
 });
 
 router.get('/consultar/:id', function(req, res) {
-    res.render('orgs/consulta',{orgID: req.params.id});
+    res.render('orgs/consulta',{orgID: req.params.id, title: "Dados de entidade"});
 });
 
 

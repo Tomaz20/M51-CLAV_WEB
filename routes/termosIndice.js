@@ -4,7 +4,7 @@ var router = express.Router();
 var Auth = require('../controllers/auth.js');
 
 router.get('/', function(req, res, next) {
-	res.render('termosIndice/listagem');
+	res.render('termosIndice/listagem', {title: "Termos de Índice"});
 });
 /*
 router.get('/adicionar', Auth.isLoggedIn, function(req, res) {

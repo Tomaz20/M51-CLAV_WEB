@@ -1,11 +1,12 @@
 ﻿extends layout
 block corpo
-    .col-lg-6
+    .col-lg-12
         #acordeao
-            accordion(type="info")
+            accordion(type="info-custom")
                 panel( header="O que é a CLAV")
                     p Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-
+    
+    .col-lg-6
         table#navegacao.table.tabela-navegacao
             tr 
                 td
@@ -14,7 +15,7 @@ block corpo
             tr(v-for="linha in linhas")
                 td(style="padding-left:50px !important")
                     a(:href="linha.consultar")
-                        .titlebox(style="margin-bottom:0px")
+                        .linkbox(style="margin-bottom:0px")
                             | {{linha.valor}}
             tr 
                 td(style="padding-top:15px !important")
@@ -22,20 +23,20 @@ block corpo
                         | Documentação Técnica de Apoio
     .col-lg-1
     .col-lg-5
-        table.nav-canto(style="float:right; margin-bottom:40px")
+        table.table.tabela-navegacao
             tr
-                td(rowspan="2")
-                    .greybox(style="border:none !important; font-weight:bolder")
-                        | Entidades
-                
-                td
+                td(colspan="2")
+                    .labelbox
+                        | Entidades:
+            tr
+                td(style="padding-left:50px !important")
                     a(href="/organizacoes/registo_entidade")
-                        .botao
+                        .linkbox(style="margin-bottom:0px")
                             | Identificação de Representantes
-            tr 
-                td 
+            tr
+                td(style="padding-left:50px !important")
                     a(href="#")
-                        .botao
+                        .linkbox(style="margin-bottom:0px")
                             | Área de Trabalho
         
         table#noticias.table.tabela-navegacao

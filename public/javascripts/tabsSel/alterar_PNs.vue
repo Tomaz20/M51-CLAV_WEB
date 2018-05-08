@@ -130,56 +130,12 @@ var alt = new Vue({
                 content = response.body;
             })
             .then( function() {
-                this.parseTS(content);
+                this.table.data = this.parseTS(content);
                 this.table.ready=true;
             })
             .catch( function(error) { 
                 console.error(error); 
             });
-        },
-        swap: function(array,pos1,pos2){
-            var temp=array[pos1];
-            array[pos1]=array[pos2];
-            array[pos2]=temp;
-
-            return array;
-        },
-        dropClicked: function(params){
-            var id = params.id;
-            var ready = params.rowData.subReady;
-            
-            if (!ready) {
-                var path = id.split('.');
-                this.loadSub(path,this.table.data,params);
-            }
-        },
-        loadSub: function(indexes,location,params){
-            if(indexes.length==1){
-                this.$http.get("/api/tabelasSelecao/"+this.id+"/classes/"+params.rowData.codeID+"/descendencia")
-                .then( function(response) { 
-                    this.table.subTemp = response.body;
-                })
-                .then( function() {
-                    //load child classes on the sublevel of the parent
-                    location[indexes[0]].sublevel= this.parseSub();
-
-                    //let child components know that the rows are ready to render
-                    location[indexes[0]].subReady = true;
-                    this.table.nEdits++;
-                })
-                .catch( function(error) { 
-                    console.error(error); 
-                });
-            }
-            else{
-                //get the path tail
-                var tail = indexes.splice(1,indexes.length-1);
-
-                //next level in the data structure
-                var newLocation = location[indexes[0]].sublevel;
-
-                this.loadSub(tail,newLocation,params);
-            }
         },
         rowClicked: function(params){
             this.$refs.spinner.show();
@@ -201,59 +157,88 @@ var alt = new Vue({
                     console.error(error);
                 });
         },
-        parseTS: function(content){
-            // parsing the JSON
-            for (var i=0; i<content.length; i++) {
-                var temp={content:"",sublevel:false};
-                
-                var id= content[i].id.value.replace(/[^#]+#(.*)/,'$1');
-                var code= content[i].Code.value;
-                var title= content[i].Title.value;
+        parseTS: function (dataToParse) {
+            var destination = [];
+            const indexes = {};
+            let avo;
+            let pai;
 
-                temp.content = [code, title];
-                temp.codeID=id;
+            let level= this.level;
+            let activeClass= this.activeClass;
 
-                if(content[i].NChilds.value>0){
-                    temp.sublevel=true;
+            for (let pn of dataToParse) {
+                let codeAvo = pn.AvoCodigo.value;
+                let indexesAvo = indexes[codeAvo];
+                let codePai = pn.PaiCodigo.value;
+
+                if (indexesAvo) {
+                    avo = indexesAvo.i;
+
+                    if (indexesAvo.sub[codePai] != undefined) {
+                        pai = indexesAvo.sub[codePai];
+                    }
+                    else {
+                        pai = Object.keys(indexesAvo.sub).length;
+
+                        indexes[codeAvo].sub[codePai] = pai;
+
+                        let infoPai = {
+                            codeID: pn.Pai.value.replace(/[^#]+#(.*)/, '$1'),
+                            content: [codePai, pn.PaiTitulo.value],
+                            drop: false,
+                            subReady: true,
+                            sublevel: []
+                        }
+                        destination[avo].sublevel.push(infoPai);
+                    }
                 }
-
-                this.table.data[i]=JSON.parse(JSON.stringify(temp));
-            }
-            this.table.data.sort(function(a,b) {
-                return a.content[0].localeCompare(b.content[0]);
-            })
-        },
-        parseSub: function(location){
-            var ret=[]
-            var temp={content:"",sublevel:false};
-            // parsing the JSON
-            for (var i=0; i<this.table.subTemp.length; i++) {
-
-                var id= this.table.subTemp[i].Child.value.replace(/[^#]+#(.*)/,'$1');
-                var code= this.table.subTemp[i].Code.value;
-                var title= this.table.subTemp[i].Title.value;
-
-                temp.content = [code, title];
-                temp.codeID=id;
-
-                if(parseInt(this.table.subTemp[i].NChilds.value)>0){
-                    temp.sublevel=true;
-                } 
                 else {
-                    temp.sublevel=false;
+                    avo = Object.keys(indexes).length;
+                    pai = 0;
+
+                    indexes[codeAvo] = { i: avo, sub: {} };
+                    indexes[codeAvo].sub[codePai] = pai;
+
+                    let infoAvo = {
+                        codeID: pn.Avo.value.replace(/[^#]+#(.*)/, '$1'),
+                        content: [codeAvo, pn.AvoTitulo.value],
+                        drop: false,
+                        subReady: true,
+                        sublevel: [{
+                            codeID: pn.Pai.value.replace(/[^#]+#(.*)/, '$1'),
+                            content: [codePai, pn.PaiTitulo.value],
+                            drop: false,
+                            subReady: true,
+                            sublevel: [],
+                        }]
+                    }
+                    destination.push(infoAvo);
                 }
 
-                ret[i]=JSON.parse(JSON.stringify(temp));
+                let pninfo = {
+                    codeID: pn.PN.value.replace(/[^#]+#(.*)/, '$1'),
+                    content: [pn.PNCodigo.value, pn.PNTitulo.value],
+                    drop: false,
+                }
+
+                if (pn.Filhos.value.length) {
+                    pninfo.subReady = true;
+                    pninfo.sublevel = [];
+
+                    for (let filho of pn.Filhos.value.split('###')) {
+                        let filhoInfo = filho.split(':::');
+
+                        pninfo.sublevel.push({
+                            codeID: filhoInfo[0].replace(/[^#]+#(.*)/, '$1'),
+                            content: [filhoInfo[1], filhoInfo[2]],
+                            drop: false,
+                        });
+                    }
+                }
+                destination[avo].sublevel[pai].sublevel.push(pninfo);
             }
-            
-            ret.sort(function(a,b) {
-                a1=parseInt(a.content[0].replace(/([0-9]+\.)*([0-9]+)/,'$2'));
-                b1=parseInt(b.content[0].replace(/([0-9]+\.)*([0-9]+)/,'$2'));
-    
-                return a1-b1;
-            })
-            
-            return ret;
+
+            return destination;
         },
         classUpdated: function(id){
             this.editedClasses.push(id);

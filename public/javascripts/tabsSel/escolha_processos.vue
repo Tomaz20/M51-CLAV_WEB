@@ -223,15 +223,6 @@ var escolha = new Vue({
             }
         },
         selectSons: function (location, selected, params) {
-            if (!selected) {
-                if (location.owner) {
-                    location.owner = false;
-                }
-                if (location.participant) {
-                    location.participant = false;
-                }
-            }
-
             location.selected = selected;
             var tempParams = null;
 

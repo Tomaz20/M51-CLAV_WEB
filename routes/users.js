@@ -9,19 +9,19 @@ var Pedido = require('../models/pedido');
 var Entidade = require('../models/entidade');
 
 router.get('/registar', function(req, res) {
-    res.render('users/registar');
+    res.render('users/registar', {title: "Registo"});
 });
 
 router.get('/login', function(req, res) {
-    res.render('users/login');
+    res.render('users/login', {title: "Login"});
 });
 
 router.get('/perfil', Auth.isLoggedIn, function(req, res) {
-    res.render('users/perfil');
+    res.render('users/perfil', {title: "Perfil"});
 });
 
 router.get('/pedido_submetido/:id', Auth.isLoggedIn, function(req, res) {
-    res.render('users/pedido_submetido');
+    res.render('users/pedido_submetido', {title: "Pedido submetido"});
 });
 
 // Guardar trabalho
@@ -136,7 +136,6 @@ router.get('/pedido/:num', function (req, res) {
         }
     });
 });
-
 
 // Carregar trabalho
 router.get('/load/:type', Auth.isLoggedInAPI, function (req, res) {

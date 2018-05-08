@@ -5,7 +5,7 @@ new Vue({
         tableData: [[]],
         ready: false,
         content: [],
-        cwidth: ['5%','19%','11%','50%','15%'],
+        cwidth: ['1%','15%','10%','60%','15%'],
     },
     methods: {
         rowClicked: function(row){

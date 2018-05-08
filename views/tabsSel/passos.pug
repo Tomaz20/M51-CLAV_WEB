@@ -1,65 +1,116 @@
 extends ../layout 
 block corpo
-    div(style="vertical-align:middle")
+    div(style="vertical-align:middle;width:1400px")
         .titlebox(style="width:30%;display:inline-block")
             | Designação de Nova Tabela de Seleção
         .textbox(style="width:65%;display:inline-block")
                     | Tabela de seleção #{entidade}
 
-    .infobox(style="width:50%")
-        b Passos para a construção da TS organizacional:
-
-    table(style="table-layout:fixed")
-        tr
-            td
-                .infobox
-                    b Passo 1
-            td(rowspan="3" width="25%" style="height:1px;padding-top:5px;padding-bottom:5px")
-                .whitebox(style="height:100%")
-                    | Identificação da natureza de intervenção da sua entidade, 
-                    | como dono ou participante, em cada processo de negócio, a 
-                    | partir da lista de:
-            td
-                .whitebox
-                    | Processos comuns (passíveis de existirem em qualquer entidade)
-            td
-                button.next(onclick='window.location.href="/tabelasSelecao/submeter/escolher_processos"') >
-        
-        tr
-            td
-                .infobox
-                    b Passo 2
-            td
-                .whitebox
-                    | Processos de negócio específicos da entidade e tipologia em que se enquadre
-            td
-        tr
-            td
-                .infobox
-                    b Passo 3
-            td
-                .whitebox
-                    | Processos de negócio específicos restantes 
-            td
-        tr
-            td
-                .infobox
-                    b Passo 4
-            td(colspan="2")
-                .whitebox
-                    | Alteração do conteúdo dos campos nos processos de negócio selecionados: 
-                    | Notas de aplicação; Exemplos de NA; Notas de exclusão; 
-                    | Termos de índice; Legislação.
-            td
-        tr
-            td
-                .infobox
-                    b Passo 5
-            td(colspan="2")
-                .whitebox
-                    | Proposta de novos processos de negócio
-            td
-                button.next(href="/classes/adicionar") >
-        
-
-            
+    #passos.panel-custom(style="width:1400px")
+        //.titlebox
+            | Escolha o tipo de Tabela de Seleção
+        accordion.info-classe
+            panel(header="Tabela de Seleção organizacional")
+                table(style="table-layout:fixed")
+                    tr
+                        td
+                            .infobox(style="text-align:center")
+                                b Passo 1
+                        td(rowspan="3" width="25%" style="height:1px;padding-top:5px;padding-bottom:5px")
+                            .whitebox(style="height:100%")
+                                | Identificação da natureza de intervenção da sua entidade, 
+                                | como dono ou participante, em cada processo de negócio, a 
+                                | partir da lista de:
+                        td
+                            .whitebox
+                                | Processos comuns (passíveis de existirem em qualquer entidade)
+                        td
+                            button.next(onclick='window.location.href="/tabelasSelecao/submeter/escolher_processos"') >
+                    
+                    tr
+                        td
+                            
+                        td
+                            .whitebox
+                                | Processos de negócio específicos da entidade e tipologia em que se enquadre
+                        td
+                    tr
+                        td
+                            
+                        td
+                            .whitebox
+                                | Processos de negócio específicos restantes 
+                        td
+                    tr
+                        td
+                            .infobox(style="text-align:center")
+                                b Passo 2
+                        td(colspan="2")
+                            .whitebox
+                                | Alteração do conteúdo dos campos nos processos de negócio selecionados: 
+                                | Notas de aplicação; Exemplos de NA; Notas de exclusão; 
+                                | Termos de índice; Legislação.
+                        td
+                    tr
+                        td
+                            .infobox(style="text-align:center")
+                                b Passo 3
+                        td(colspan="2")
+                            .whitebox
+                                | Proposta de novos processos de negócio
+                        td
+                            button.next(href="/classes/adicionar") >
+                
+            panel(header="Tabela de Seleção pluriorganizacional")
+                table(style="table-layout:fixed")
+                    tr
+                        td
+                            .infobox
+                                b Passo 1
+                        td(rowspan="2" width="25%" style="height:1px;padding-top:5px;padding-bottom:5px")
+                            .whitebox(style="height:100%")
+                                | Identificação da natureza de intervenção de cada entidade, 
+                                | como dono ou participante, em cada processo de negócio, a 
+                                | partir da lista de:
+                        td
+                            .whitebox
+                                | Processos comuns (passíveis de existirem em qualquer entidade)
+                        td
+                            button.next(onclick='window.location.href="#"') >
+                    
+                    tr
+                        td
+                            
+                        td
+                            .whitebox
+                                | Processos de negócio específicos da entidade e tipologia em que se enquadrem
+                        td
+                    //tr
+                        td
+                            
+                        td
+                            .whitebox
+                                | Processos de negócio específicos restantes 
+                        td
+                    tr
+                        td
+                            .infobox
+                                b Passo 2
+                        td(colspan="2")
+                            .whitebox
+                                | Alteração do conteúdo dos campos nos processos de negócio selecionados: 
+                                | Notas de aplicação; Exemplos de NA; Notas de exclusão; 
+                                | Termos de índice; Legislação.
+                        td
+                    tr
+                        td
+                            .infobox
+                                b Passo 3
+                        td(colspan="2")
+                            .whitebox
+                                | Proposta de novos processos de negócio
+                        td
+                            button.next(href="/classes/adicionar") >
+                
+append scripts
+    script(src="/javascripts/tabsSel/passos.vue")

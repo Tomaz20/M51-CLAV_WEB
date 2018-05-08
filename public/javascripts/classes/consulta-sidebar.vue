@@ -1,13 +1,9 @@
-new Vue({
-    el: '#tabela-classes',
+var classesSide = new Vue({
+    el: '#sidebar-tabela-classes',
     data: {
-        subReady: {},
-        tableHeader: [],
+        activeClass: "",
         tableData: [],
         ready: false,
-        content: [],
-        cwidth: ['9%','88%'],
-        subTemp: [],
         nEdits: 0,
     },
     methods: {
@@ -18,7 +14,18 @@ new Vue({
             this.ready=false;
             let content = [];
 
-            this.$http.get("/api/classes/filtrar")
+            let TS = /^ts_/;
+
+            let link;
+
+            if(TS.test(this.activeClass)){
+                link = "/api/tabelasSelecao/"+this.activeClass.replace(/(ts_[0-9]+).+/,"$1")+"/classes";
+            }
+            else {
+                link = "/api/classes/filtrar";
+            }
+
+            this.$http.get(link)
                 .then(function (response) {
                     content = response.body;
                 })
@@ -38,12 +45,16 @@ new Vue({
             let pai;
 
             let level= this.level;
-            let activeClass= this.activeClass;
+            let active= this.activeClass.substring(1);
+            this.activeClass=this.activeClass.slice(1,-1);
 
             for (let pn of dataToParse) {
                 let codeAvo = pn.AvoCodigo.value;
                 let indexesAvo = indexes[codeAvo];
                 let codePai = pn.PaiCodigo.value;
+
+                let pnSelected = false;
+
 
                 if (indexesAvo) {
                     avo = indexesAvo.i;
@@ -58,10 +69,12 @@ new Vue({
 
                         let infoPai = {
                             codeID: pn.Pai.value.replace(/[^#]+#(.*)/, '$1'),
-                            content: [codePai, pn.PaiTitulo.value],
-                            drop: false,
+                            content: [codePai],
+                            drop: this.activeClass.includes(codePai),
+                            selected: pnSelected,
                             subReady: true,
-                            sublevel: []
+                            sublevel: [],
+                            active: active==codePai
                         }
                         destination[avo].sublevel.push(infoPai);
                     }
@@ -75,15 +88,19 @@ new Vue({
 
                     let infoAvo = {
                         codeID: pn.Avo.value.replace(/[^#]+#(.*)/, '$1'),
-                        content: [codeAvo, pn.AvoTitulo.value],
-                        drop: false,
+                        content: [codeAvo],
+                        drop: this.activeClass.includes(codeAvo),
+                        selected: pnSelected,
                         subReady: true,
+                        active: active==codeAvo,
                         sublevel: [{
                             codeID: pn.Pai.value.replace(/[^#]+#(.*)/, '$1'),
-                            content: [codePai, pn.PaiTitulo.value],
-                            drop: false,
+                            content: [codePai],
+                            drop: this.activeClass.includes(codePai),
+                            selected: pnSelected,
                             subReady: true,
                             sublevel: [],
+                            active: active==codePai
                         }]
                     }
                     destination.push(infoAvo);
@@ -91,8 +108,10 @@ new Vue({
 
                 let pninfo = {
                     codeID: pn.PN.value.replace(/[^#]+#(.*)/, '$1'),
-                    content: [pn.PNCodigo.value, pn.PNTitulo.value],
-                    drop: false,
+                    content: [pn.PNCodigo.value],
+                    drop: this.activeClass.includes(pn.PNCodigo.value),
+                    selected: pnSelected,
+                    active: active==pn.PNCodigo.value
                 }
 
                 if (pn.Filhos.value.length) {
@@ -104,8 +123,10 @@ new Vue({
 
                         pninfo.sublevel.push({
                             codeID: filhoInfo[0].replace(/[^#]+#(.*)/, '$1'),
-                            content: [filhoInfo[1], filhoInfo[2]],
+                            content: [filhoInfo[1]],
                             drop: false,
+                            selected: pnSelected,
+                            active: active==filhoInfo[1]
                         });
                     }
                 }
@@ -114,16 +135,9 @@ new Vue({
 
             return destination;
         },
-        addClass: function(row){
-            window.location.href = '/classes/adicionar';
-        },
     },
     created: function(){
-        this.tableHeader=[
-            "CLASSE",
-            "TÍTULO"
-        ];
-
+        this.activeClass = window.location.pathname.split('/')[3];
         this.loadClasses();
     }
 })
