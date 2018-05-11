@@ -171,6 +171,12 @@
     height: 27px;
 }
 
+.relations-select div{  
+    border-color: #9FA8DA !important;
+    height: 27px;
+    width: 200px;
+}
+
 .custom-select i {
     padding-top: 5px;
 }

@@ -83,36 +83,43 @@ new Vue({
 
         classesTableHeader: ["CLASSE","TÍTULO"],
         cwidth: ['16%', '81%'],
-        relationLists: {
-            'Antecessor De': [],
-            'Sucessor De': [],
-            'Complementar De': [],
-            'Cruzado Com': [],
-            'Sintese De': [],
-            'Sintetizado Por': [],
-            'Suplemento De': [],
-            'Suplemento Para': [],
-        },
-        relationsSelected: {
-            'Antecessor De': [],
-            'Sucessor De': [],
-            'Complementar De': [],
-            'Cruzado Com': [],
-            'Sintese De': [],
-            'Sintetizado Por': [],
-            'Suplemento De': [],
-            'Suplemento Para': [],
-        },
-        relationsSelectedInfo: {
-            'Antecessor De': [],
-            'Sucessor De': [],
-            'Complementar De': [],
-            'Cruzado Com': [],
-            'Sintese De': [],
-            'Sintetizado Por': [],
-            'Suplemento De': [],
-            'Suplemento Para': [],
-        },
+        relationList: [],
+        relationsSelected: [],
+        relationTypes: [
+            {
+                label:'Antecessor de',
+                value:'eAntecessorDe'
+            },
+            {
+                label: 'Sucessor de',
+                value: 'eSucessorDe',
+            },
+            {
+                label: 'Complementar de',
+                value: 'eComplementarDe',
+            },
+            {
+                label: 'Cruzado com',
+                value: 'eCruzadoCom',
+            },
+            {
+                label: 'Sintese de',
+                value: 'eSinteseDe',
+            },
+            {
+                label: 'Sintetizado por',
+                value: 'eSintetizadoPor',
+            },
+            {
+                label: 'Suplemento de',
+                value: 'eSuplementoDe',
+            },
+            {
+                label: 'Suplemento para',
+                value: 'eSuplementoPara',
+            }
+        ],
+        relationsSelectedInfo: [],
         classesReady: false,
 
         pca: {
@@ -242,7 +249,7 @@ new Vue({
                     }  
                 })
             },
-            1000
+            500
         ),
         loadCountTypes: function(){
             var dataToParse = [];
@@ -345,14 +352,14 @@ new Vue({
                     var classList = [];
                     classList = this.parseClasses(content);
 
-                    for(let key in this.relationLists){
-                        this.relationLists[key]= JSON.parse(
-                            JSON.stringify(classList)
-                        );
-                    }
+                    this.relationLists= JSON.parse(
+                        JSON.stringify(classList)
+                    );
+
                     this.pca.criteria.classes= JSON.parse(
                         JSON.stringify(classList)
                     );
+
                     this.df.criteria.classes= JSON.parse(
                         JSON.stringify(classList)
                     );
@@ -455,14 +462,37 @@ new Vue({
             var row= payload.rowData;
 
             if (!row.selected) {
-                this.relationsSelected[payload.suffix].push(row.codeID);
-                this.relationsSelectedInfo[payload.suffix].push(row.content);
+                let newPN = {
+                    name: row.content[1],
+                    code: row.content[0],
+                    id: row.codeID,
+                    relType: {
+                        value: null,
+                        label: 'Tipo de Relação'
+                    }
+                };
+
+                this.relationsSelected.push(newPN);
+
+                this.relationsSelected.sort(
+                    function(a,b){
+                        return a.code.localeCompare(b.code);
+                    }
+                );
             }
+            
             else {
-                let index = this.relationsSelected[payload.suffix].indexOf(row.codeID);
-                if (index != -1) {
-                    this.relationsSelected[payload.suffix].splice(index, 1);
-                    this.relationsSelectedInfo[payload.suffix].splice(index, 1);
+                let index=0;
+
+                for(pn of this.relationsSelected){
+                    if(pn.id == row.codeID){
+                        break;
+                    }
+                    index++;
+                }
+                
+                if (index < this.relationsSelected.length) {
+                    this.relationsSelected.splice(index, 1);
                 }
             }
         },

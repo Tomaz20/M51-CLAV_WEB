@@ -921,10 +921,8 @@ Classes.createClass = function (data) {
     }
 
     if (data.Level >= 3 && data.RelProcs) {
-        for (let key in data.RelProcs) {
-            for (let proc of data.RelProcs[key]) {
-                createQuery += `clav:${id} clav:e${key.replace(/ /, '')} clav:${proc} .\n`;
-            }
+        for (let proc of data.RelProcs) {
+            createQuery += `clav:${id} clav:${proc.relType} clav:${proc.id} .\n`;
         }
     }
 

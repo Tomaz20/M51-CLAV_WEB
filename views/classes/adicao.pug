@@ -262,38 +262,43 @@ block corpo
                                     .info-label Processo(s) Relacionado(s):
                                     
                                 td
-                                    table
-                                        tr
-                                            tabs
-                                                tab(:header="key" v-for="key in Object.keys(relationLists)")
-                                                    custom-table-waterfall(
-                                                        v-if="classesReady"
+                            
+                                    custom-table-waterfall(
+                                        v-if="classesReady"
 
-                                                        select-left="true"
-                                                        pages-on="true"
-                                                        
-                                                        :suffix="key"
+                                        select-left="true"
+                                        pages-on="true"
 
-                                                        :header="classesTableHeader"
-                                                        :complete-rows="relationLists[key]"
-                                                        :cwidth="cwidth"
-                                                        :n-edits="nEdits"
-                                                        
-                                                        table-class='table table-hover'
-                                                        
-                                                        @left-select-clicked="selectClicked($event)"
-                                                    )
-                                                    h4(
-                                                        v-else
-                                                    ) A carregar...
-                                        tr
-                                            td(colspan=3)
-                                                ul
-                                                    li(v-for="key in Object.keys(relationsSelectedInfo)" v-if="relationsSelectedInfo[key].length>0")
-                                                        b É {{ key }}:
-                                                        ul
-                                                            li(v-for="(c, index) in relationsSelectedInfo[key]")
-                                                                | {{ c[0] }} - {{ c[1] }}
+                                        :header="classesTableHeader"
+                                        :complete-rows="relationLists"
+                                        :cwidth="cwidth"
+                                        :n-edits="nEdits"
+
+                                        filter-on="true"
+                                        
+                                        table-class='table table-hover'
+                                        
+                                        @left-select-clicked="selectClicked($event)"
+                                    )
+                                    h4(
+                                        v-else
+                                    ) A carregar...
+                                    
+                                    div(v-if="relationsSelected.length>0")
+                                        .info-label(style="text-align:center;width:100%;margin-top:25px;margin-bottom:10px")
+                                            | Tipos de Relação
+                                        
+                                        ul
+                                            li(
+                                                style="padding-bottom:5px"
+                                                v-for="pn in relationsSelected" 
+                                            )
+                                                select(v-model="pn.relType")
+                                                    option(v-for="rel in relationTypes" :value="rel.value")
+                                                        | {{rel.label}}
+                                                b(style="margin-left:5px")
+                                                    | {{pn.code}}
+                                                |  - {{pn.name}}
                                                                         
 
                             //- LEGISLAÇÃO
@@ -317,7 +322,6 @@ block corpo
                                     h4(
                                         v-else
                                     ) A carregar...
-
 
 
                     panel(header="Decisões de Avaliação" v-if="type>=3" is-open)
