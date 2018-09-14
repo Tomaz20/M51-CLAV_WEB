@@ -205,9 +205,15 @@ block corpo
                                             | {{ l.Tipo }} - 
                                             a(:href="'/legislacao/consultar/'+l.id") {{ l.Número }} 
                                             | - {{ l.Titulo }}
-                                
 
-                    panel(header="Decisões de Avaliação" v-if="clas.Level>=3")
+                    panel(header="Decisões de Avaliação" v-if="(clas.Level==3)&&(clas.Children)") Consultar as decisões de avaliação nas classes descendentes:
+                        ul(style="padding-left:20px")
+                                li(v-for="child in clas.Children")
+                                    a(:href="'/classes/consultar/c'+child.Code")
+                                        | {{ child.Code }}
+                                    |  - {{ child.Title }}
+
+                    panel(header="Decisões de Avaliação" v-else-if="clas.Level>=3")
                         table.consulta.noborder(v-if="pageReady" style="border-color: white; border-style:solid")
                             //- PRAZO DE CONSERVAÇÃO ADMINISTRATIVA
                             tr(v-if="clas.PCA.valores.length")
@@ -276,6 +282,8 @@ block corpo
                                                     tr
                                                         td 
                                                             p(v-html="criterio.nota")
+
+                    panel(header="Notas" v-if="clas.Notas")
                                                              
             //- Buttons
             spinner(ref="spinner" size="lg" fixed text="Por favor aguarde...")
